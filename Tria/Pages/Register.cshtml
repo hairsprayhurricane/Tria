@@ -1,0 +1,55 @@
+﻿@page
+@model Tria.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<div class="container-fluid p-0 min-vh-100 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-5 col-lg-4 col-xl-4">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-gradient text-white text-center py-4 rounded-top-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h2 class="mb-1">🧾 Tria</h2>
+                    <p class="mb-0 opacity-90">Создание аккаунта</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label fw-bold text-dark">Email</label>
+                            <input asp-for="Input.Email" class="form-control form-control-lg rounded-3" autocomplete="email" />
+                            <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label fw-bold text-dark">Пароль</label>
+                            <input asp-for="Input.Password" class="form-control form-control-lg rounded-3" autocomplete="new-password" />
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Input.ConfirmPassword" class="form-label fw-bold text-dark">Подтвердить пароль</label>
+                            <input asp-for="Input.ConfirmPassword" class="form-control form-control-lg rounded-3" autocomplete="new-password" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 fw-bold py-2">
+                            Зарегистрироваться
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <a asp-page="./Login" class="text-decoration-none fw-bold link-primary">
+                            ← Уже есть аккаунт? Войти
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

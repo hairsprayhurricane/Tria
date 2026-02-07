@@ -1,0 +1,68 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Дашборд";
+}
+
+<div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        
+        <div style="text-align: center; margin-bottom: 50px; color: white;">
+            <h1 style="font-size: 2.5em; margin: 0; font-weight: 700;">🎓 Обучение кибербезопасности</h1>
+            <p style="font-size: 1.1em; opacity: 0.9; margin-top: 10px;">Версия 1.0 - Полностью переписанная архитектура</p>
+            
+            <div style="margin-top: 30px;">
+                @if (Model.OverallProgress >= 80)
+                {
+                    <div style="display: inline-block; background: #10b981; padding: 15px 30px; border-radius: 8px; color: white; font-weight: bold; font-size: 1.1em;">
+                        ✅ Вы сертифицированы! Прогресс: @Model.OverallProgress%
+                    </div>
+                }
+                else
+                {
+                    <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 15px 30px; border-radius: 8px; color: white; font-weight: bold; font-size: 1.1em;">
+                        📊 Общий прогресс: @Model.OverallProgress%
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            @foreach (var block in Model.Blocks)
+            {
+                <a href="/Blocks/@block.Id" style="text-decoration: none; color: inherit;">
+                    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;"
+                         onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 40px rgba(0,0,0,0.3)';"
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.2)';">
+                        
+                        <div style="background: @block.Color; padding: 30px; text-align: center; color: white;">
+                            <div style="font-size: 3em;">@Html.Raw(block.Title.Split(' ')[0])</div>
+                            <h2 style="margin: 15px 0 0 0; font-size: 1.5em;">@block.Title</h2>
+                        </div>
+                        
+                        <div style="padding: 20px;">
+                            <p style="margin: 0 0 15px 0; color: #666;">@block.Description</p>
+                            
+                            <div style="background: #f0f0f0; border-radius: 8px; overflow: hidden; height: 10px; margin-bottom: 10px;">
+                                <div style="background: @block.Color; height: 100%; width: @Model.BlockProgress[@block.Id]%; transition: width 0.5s;"></div>
+                            </div>
+                            
+                            <div style="text-align: center; color: #333; font-weight: bold;">
+                                @Model.BlockProgress[@block.Id]% завершено
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+
+        <div style="text-align: center; margin-top: 50px;">
+            <form method="post" style="display: inline;">
+                <button type="submit" style="background: #dc2626; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1em; cursor: pointer; font-weight: bold;">
+                    🚪 Выход
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,50 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Вход";
+}
+
+<div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="width: 100%; max-width: 400px; background: white; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden;">
+
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; color: white;">
+            <h1 style="margin: 0; font-size: 2em;">🔐 Tria Cyber Security</h1>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Войдите в систему</p>
+        </div>
+
+        <div style="padding: 40px;">
+            <form method="post">
+                <div style="margin-bottom: 20px;">
+                    <label asp-for="Input.Email" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;"></label>
+                    <input asp-for="Input.Email" class="form-control" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; transition: border-color 0.3s;" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label asp-for="Input.Password" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;"></label>
+                    <input asp-for="Input.Password" class="form-control" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; transition: border-color 0.3s;" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background 0.3s;">Войти</button>
+            </form>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <a asp-page="./Register" style="color: #667eea; text-decoration: none; font-weight: bold;">Зарегистрируйтесь</a>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 8px; text-align: center;">
+                <button onclick="guestLogin()" style="background: none; border: none; color: #667eea; font-size: 1em; cursor: pointer; text-decoration: underline;">
+                    👥 Вход как гость (24 часа)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function guestLogin() {
+        // Создаём гостевую сессию (можно реализовать через localStorage или отдельный endpoint)
+        window.location.href = '/Index';
+    }
+</script>

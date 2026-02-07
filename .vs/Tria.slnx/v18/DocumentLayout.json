@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\trued\\source\\repos\\Tria\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\register.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\register.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Register.cshtml.cs",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Register.cshtml.cs",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Register.cshtml.cs",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Register.cshtml.cs",
+              "RelativeToolTip": "Tria\\Pages\\Register.cshtml.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAAowE0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-07T13:43:55.676Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Register.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Register.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Register.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Register.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Register.cshtml",
+              "ViewState": "AgIAABUAAAAAAAAAAAAIwDcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-07T13:43:43Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
