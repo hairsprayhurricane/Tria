@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CourseTexts Culture="ru">
+	<Blocks>
+		<Block Key="communications" Title="📧 Коммуникации" Description="Фишинг, SMS, звонки" />
+		<Block Key="devices" Title="🖥️ Устройства" Description="Защита ПК и мобильных" />
+		<Block Key="networks" Title="🌐 Сети" Description="Wi‑Fi, VPN, прокси" />
+	</Blocks>
+
+	<Modules>
+		<Module Key="phishing-video" Title="Видео: Что такое фишинг?" />
+		<Module Key="phishing-quiz" Title="Тест: Фишинг" />
+
+		<Module Key="antivirus-video" Title="Видео: Защита от вирусов" />
+		<Module Key="devices-quiz" Title="Тест: Устройства" />
+
+		<Module Key="networks-video" Title="Видео: Безопасность сетей" />
+		<Module Key="networks-quiz" Title="Тест: Сети" />
+	</Modules>
+</CourseTexts>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Course>
+	<Blocks>
+		<Block Key="communications" Color="#4a9eff" Order="1" IsActive="true">
+			<Modules>
+				<Module Key="phishing-video" Type="Video" YoutubeId="P3ynj6w2tII" Order="1" IsActive="true" />
+				<Module Key="phishing-quiz" Type="Quiz" Order="2" IsActive="true" QuizKey="quiz-phishing" />
+			</Modules>
+		</Block>
+
+		<Block Key="devices" Color="#7c3aed" Order="2" IsActive="true">
+			<Modules>
+				<Module Key="antivirus-video" Type="Video" YoutubeId="jNQXAC9IVRw" Order="1" IsActive="true" />
+				<Module Key="devices-quiz" Type="Quiz" Order="2" IsActive="true" QuizKey="quiz-devices" />
+			</Modules>
+		</Block>
+
+		<Block Key="networks" Color="#06b6d4" Order="3" IsActive="true">
+			<Modules>
+				<Module Key="networks-video" Type="Video" YoutubeId="9bZkp7q19f0" Order="1" IsActive="true" />
+				<Module Key="networks-quiz" Type="Quiz" Order="2" IsActive="true" QuizKey="quiz-networks" />
+			</Modules>
+		</Block>
+	</Blocks>
+</Course>

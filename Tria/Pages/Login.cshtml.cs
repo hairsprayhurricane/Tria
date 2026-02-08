@@ -1,80 +1,80 @@
-using Microsoft.AspNetCore.Authentication;
+п»їusing Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace Tria.Pages
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager)
         {
             _signInManager = signInManager;
-            _logger = logger;
         }
 
         [BindProperty]
-        public InputModel Input { get; set; } = null!;
-
-        public string ReturnUrl { get; set; } = null!;
-        public IList<AuthenticationScheme> ExternalLogins { get; set; } = null!;
+        public InputModel Input { get; set; } = new();
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; } = null!;
+            [Required, EmailAddress]
+            public string Email { get; set; } = "";
 
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; } = null!;
+            [Required, DataType(DataType.Password)]
+            public string Password { get; set; } = "";
 
-            [Display(Name = "Запомнить меня")]
-            public bool RememberMe { get; set; }
+            public bool RememberMe { get; set; } = false;
         }
 
-        public async Task OnGetAsync(string returnUrl = null!)
-        {
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-            {
-                ReturnUrl = returnUrl;
-            }
-        }
+        public void OnGet() { }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null!)
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
 
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            if (!ModelState.IsValid)
+                return Page();
 
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Неверный email или пароль.");
-                    return Page();
-                }
-            }
+            await HttpContext.SignOutAsync("Guest");
 
+            var result = await _signInManager.PasswordSignInAsync(
+                Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+                return LocalRedirect(returnUrl);
+
+            ModelState.AddModelError(string.Empty, "РќРµРІРµСЂРЅС‹Р№ email РёР»Рё РїР°СЂРѕР»СЊ.");
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostGuestAsync()
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, "guest:" + Guid.NewGuid().ToString("N")),
+                new Claim(ClaimTypes.Name, "Guest"),
+                new Claim("IsGuest", "true")
+            };
+
+            var identity = new ClaimsIdentity(claims, "Guest");
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                "Guest",
+                principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24)
+                });
+
+            return RedirectToPage("/Index");
         }
     }
 }

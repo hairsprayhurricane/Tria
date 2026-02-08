@@ -1,11 +1,13 @@
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Tria.Services;
 
 namespace Tria.Pages
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Identity.Application,Guest")]
     public class IndexModel : PageModel
     {
         private readonly ILearningService _learningService;
@@ -22,21 +24,21 @@ namespace Tria.Pages
         public async Task OnGetAsync()
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
-            
+
             var blocks = await _learningService.GetAllBlocksAsync();
             Blocks = blocks.Cast<dynamic>().ToList();
-            
+
             OverallProgress = await _learningService.GetOverallProgressPercentAsync(userId);
-            
+
             foreach (var block in blocks)
-            {
                 BlockProgress[block.Id] = await _learningService.GetBlockProgressPercentAsync(userId, block.Id);
-            }
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostLogoutAsync()
         {
-            return SignOut("Identity.Application");
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            await HttpContext.SignOutAsync("Guest");
+            return RedirectToPage("/Login");
         }
     }
 }

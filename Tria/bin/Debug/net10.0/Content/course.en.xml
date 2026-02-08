@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CourseTexts Culture="en">
+	<Blocks>
+		<Block Key="communications" Title="📧 Communications" Description="Phishing, SMS, calls" />
+		<Block Key="devices" Title="🖥️ Devices" Description="PC and mobile protection" />
+		<Block Key="networks" Title="🌐 Networks" Description="Wi‑Fi, VPN, proxies" />
+	</Blocks>
+
+	<Modules>
+		<Module Key="phishing-video" Title="Video: What is phishing?" />
+		<Module Key="phishing-quiz" Title="Quiz: Phishing" />
+
+		<Module Key="antivirus-video" Title="Video: Malware protection" />
+		<Module Key="devices-quiz" Title="Quiz: Devices" />
+
+		<Module Key="networks-video" Title="Video: Network security" />
+		<Module Key="networks-quiz" Title="Quiz: Networks" />
+	</Modules>
+</CourseTexts>
