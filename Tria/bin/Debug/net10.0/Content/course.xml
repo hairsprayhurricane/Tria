@@ -1,25 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Course>
-	<Blocks>
-		<Block Key="communications" Color="#4a9eff" Order="1" IsActive="true">
-			<Modules>
-				<Module Key="phishing-video" Type="Video" YoutubeId="P3ynj6w2tII" Order="1" IsActive="true" />
-				<Module Key="phishing-quiz" Type="Quiz" Order="2" IsActive="true" QuizKey="quiz-phishing" />
-			</Modules>
-		</Block>
+  <Blocks>
+    <Block Key="communications" Color="#4a9eff" Order="1" IsActive="true">
+      <Modules>
+        <Module Key="comm_video_1" Type="Video" YoutubeId="dQw4w9WgXcQ" Order="1" IsActive="true" />
+        <Module Key="comm_quiz_1" Type="Quiz" Order="2" IsActive="true"
+                ContentJson="{&quot;Title&quot;:&quot;Quiz: Communications&quot;,&quot;Description&quot;:&quot;2 questions&quot;,&quot;PassScore&quot;:50,&quot;Questions&quot;:[{&quot;Text&quot;:&quot;What is phishing?&quot;,&quot;Options&quot;:[&quot;Stealing data using fake messages&quot;,&quot;A type of antivirus&quot;,&quot;A Wi‑Fi encryption method&quot;],&quot;CorrectOptionIndex&quot;:0},{&quot;Text&quot;:&quot;Best action on a suspicious email?&quot;,&quot;Options&quot;:[&quot;Open attachments to check&quot;,&quot;Do not click links; verify sender&quot;,&quot;Reply with your password&quot;],&quot;CorrectOptionIndex&quot;:1}]}" />
+      </Modules>
+    </Block>
 
-		<Block Key="devices" Color="#7c3aed" Order="2" IsActive="true">
-			<Modules>
-				<Module Key="antivirus-video" Type="Video" YoutubeId="jNQXAC9IVRw" Order="1" IsActive="true" />
-				<Module Key="devices-quiz" Type="Quiz" Order="2" IsActive="true" QuizKey="quiz-devices" />
-			</Modules>
-		</Block>
+    <Block Key="devices" Color="#7c3aed" Order="2" IsActive="true">
+      <Modules>
+        <Module Key="dev_video_1" Type="Video" YoutubeId="jNQXAC9IVRw" Order="1" IsActive="true" />
+        <Module Key="dev_quiz_1" Type="Quiz" Order="2" IsActive="true"
+                ContentJson="{&quot;Title&quot;:&quot;Quiz: Devices&quot;,&quot;Description&quot;:&quot;2 questions&quot;,&quot;PassScore&quot;:50,&quot;Questions&quot;:[{&quot;Text&quot;:&quot;Why install OS updates?&quot;,&quot;Options&quot;:[&quot;To close security vulnerabilities&quot;,&quot;To increase screen brightness&quot;,&quot;To speed up charging&quot;],&quot;CorrectOptionIndex&quot;:0},{&quot;Text&quot;:&quot;Best practice for passwords?&quot;,&quot;Options&quot;:[&quot;Same password everywhere&quot;,&quot;Use a password manager &amp; unique passwords&quot;,&quot;Password 123456&quot;],&quot;CorrectOptionIndex&quot;:1}]}" />
+      </Modules>
+    </Block>
 
-		<Block Key="networks" Color="#06b6d4" Order="3" IsActive="true">
-			<Modules>
-				<Module Key="networks-video" Type="Video" YoutubeId="9bZkp7q19f0" Order="1" IsActive="true" />
-				<Module Key="networks-quiz" Type="Quiz" Order="2" IsActive="true" QuizKey="quiz-networks" />
-			</Modules>
-		</Block>
-	</Blocks>
+    <Block Key="networks" Color="#06b6d4" Order="3" IsActive="true">
+      <Modules>
+        <Module Key="net_video_1" Type="Video" YoutubeId="9bZkp7q19f0" Order="1" IsActive="true" />
+        <Module Key="net_quiz_1" Type="Quiz" Order="2" IsActive="true"
+                ContentJson="{&quot;Title&quot;:&quot;Quiz: Networks&quot;,&quot;Description&quot;:&quot;2 questions&quot;,&quot;PassScore&quot;:50,&quot;Questions&quot;:[{&quot;Text&quot;:&quot;Is public Wi‑Fi always safe?&quot;,&quot;Options&quot;:[&quot;Yes&quot;,&quot;No, traffic can be intercepted&quot;,&quot;Only safe at night&quot;],&quot;CorrectOptionIndex&quot;:1},{&quot;Text&quot;:&quot;What does a VPN help with?&quot;,&quot;Options&quot;:[&quot;Protecting traffic on untrusted networks&quot;,&quot;Removing viruses&quot;,&quot;Charging faster&quot;],&quot;CorrectOptionIndex&quot;:0}]}" />
+      </Modules>
+    </Block>
+  </Blocks>
 </Course>

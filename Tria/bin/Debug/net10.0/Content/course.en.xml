@@ -1,19 +1,76 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CourseTexts Culture="en">
+<Course Lang="en">
 	<Blocks>
-		<Block Key="communications" Title="📧 Communications" Description="Phishing, SMS, calls" />
-		<Block Key="devices" Title="🖥️ Devices" Description="PC and mobile protection" />
-		<Block Key="networks" Title="🌐 Networks" Description="Wi‑Fi, VPN, proxies" />
+		<Block Id="1" Key="communications" Title="📧 Communications" Description="Phishing, messages, calls" Color="#4a9eff" Order="1" IsActive="true">
+			<Modules>
+				<Module Id="1" Key="comm_video_1" Title="Video: Phishing basics" Type="Video" YoutubeId="dQw4w9WgXcQ" Order="1" IsActive="true" />
+				<Module Id="2" Key="comm_quiz_1" Title="Quiz: Communications" Type="Quiz" Order="2" IsActive="true">
+					<Quiz PassScore="50" Description="2 questions">
+						<Question>
+							<Text>What is phishing?</Text>
+							<Option>Trying to steal data using fake emails/websites</Option>
+							<Option>A type of antivirus</Option>
+							<Option>A Wi‑Fi setting</Option>
+							<CorrectOptionIndex>0</CorrectOptionIndex>
+						</Question>
+						<Question>
+							<Text>Best action for a suspicious email?</Text>
+							<Option>Open the attachment immediately</Option>
+							<Option>Do not click links; verify the sender</Option>
+							<Option>Reply with your password</Option>
+							<CorrectOptionIndex>1</CorrectOptionIndex>
+						</Question>
+					</Quiz>
+				</Module>
+			</Modules>
+		</Block>
+
+		<Block Id="2" Key="devices" Title="🖥️ Devices" Description="PC and mobile security basics" Color="#7c3aed" Order="2" IsActive="true">
+			<Modules>
+				<Module Id="3" Key="dev_video_1" Title="Video: Updates and protection" Type="Video" YoutubeId="jNQXAC9IVRw" Order="1" IsActive="true" />
+				<Module Id="4" Key="dev_quiz_1" Title="Quiz: Devices" Type="Quiz" Order="2" IsActive="true">
+					<Quiz PassScore="50" Description="2 questions">
+						<Question>
+							<Text>Why install OS updates?</Text>
+							<Option>To close security vulnerabilities</Option>
+							<Option>To increase brightness</Option>
+							<Option>To speed up charging</Option>
+							<CorrectOptionIndex>0</CorrectOptionIndex>
+						</Question>
+						<Question>
+							<Text>Best practice for passwords?</Text>
+							<Option>Same password everywhere</Option>
+							<Option>Password manager and unique passwords</Option>
+							<Option>Password 123456</Option>
+							<CorrectOptionIndex>1</CorrectOptionIndex>
+						</Question>
+					</Quiz>
+				</Module>
+			</Modules>
+		</Block>
+
+		<Block Id="3" Key="networks" Title="🌐 Networks" Description="Wi‑Fi, VPN and safer internet" Color="#06b6d4" Order="3" IsActive="true">
+			<Modules>
+				<Module Id="5" Key="net_video_1" Title="Video: Public Wi‑Fi" Type="Video" YoutubeId="9bZkp7q19f0" Order="1" IsActive="true" />
+				<Module Id="6" Key="net_quiz_1" Title="Quiz: Networks" Type="Quiz" Order="2" IsActive="true">
+					<Quiz PassScore="50" Description="2 questions">
+						<Question>
+							<Text>Is public Wi‑Fi always safe?</Text>
+							<Option>Yes</Option>
+							<Option>No, traffic can be intercepted</Option>
+							<Option>Only safe at night</Option>
+							<CorrectOptionIndex>1</CorrectOptionIndex>
+						</Question>
+						<Question>
+							<Text>What does a VPN help with?</Text>
+							<Option>Protecting traffic on untrusted networks</Option>
+							<Option>Removing viruses</Option>
+							<Option>Charging faster</Option>
+							<CorrectOptionIndex>0</CorrectOptionIndex>
+						</Question>
+					</Quiz>
+				</Module>
+			</Modules>
+		</Block>
 	</Blocks>
-
-	<Modules>
-		<Module Key="phishing-video" Title="Video: What is phishing?" />
-		<Module Key="phishing-quiz" Title="Quiz: Phishing" />
-
-		<Module Key="antivirus-video" Title="Video: Malware protection" />
-		<Module Key="devices-quiz" Title="Quiz: Devices" />
-
-		<Module Key="networks-video" Title="Video: Network security" />
-		<Module Key="networks-quiz" Title="Quiz: Networks" />
-	</Modules>
-</CourseTexts>
+</Course>

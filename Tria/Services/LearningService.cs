@@ -24,11 +24,26 @@ public class LearningService : ILearningService
         => Task.FromResult(LoadBlocks().FirstOrDefault(b => b.IsActive && b.Id == blockId));
 
     public Task<List<Module>> GetModulesByBlockIdAsync(int blockId)
-        => Task.FromResult(LoadBlocks().FirstOrDefault(b => b.IsActive && b.Id == blockId)?.Modules
-            .Where(m => m.IsActive).OrderBy(m => m.Order).ToList() ?? new List<Module>());
+        => Task.FromResult(
+            LoadBlocks()
+                .FirstOrDefault(b => b.IsActive && b.Id == blockId)?
+                .Modules.Where(m => m.IsActive).OrderBy(m => m.Order).ToList()
+            ?? new List<Module>());
 
     public Task<Module?> GetModuleByIdAsync(int moduleId)
-        => Task.FromResult(LoadBlocks().SelectMany(b => b.Modules).FirstOrDefault(m => m.IsActive && m.Id == moduleId));
+        => Task.FromResult(
+            LoadBlocks()
+                .SelectMany(b => b.Modules)
+                .FirstOrDefault(m => m.IsActive && m.Id == moduleId));
+
+    public Task<QuizContent?> GetQuizByModuleIdAsync(int moduleId)
+    {
+        var module = LoadBlocks().SelectMany(b => b.Modules).FirstOrDefault(m => m.Id == moduleId && m.IsActive);
+        if (module == null || module.Type != "Quiz") return Task.FromResult<QuizContent?>(null);
+
+        // QuizContent уже построен при парсинге XML и положен в module.Quiz
+        return Task.FromResult(module.Quiz);
+    }
 
     public async Task CompleteModuleAsync(string userId, int moduleId, int? score = null)
     {
@@ -88,84 +103,58 @@ public class LearningService : ILearningService
     public async Task<bool> IsCertifiedAsync(string userId)
         => await GetOverallProgressPercentAsync(userId) >= 80;
 
-    private sealed record BlockText(string? Title, string? Description);
-
     private List<LearningBlock> LoadBlocks()
     {
-        var coursePath = Path.Combine(_env.ContentRootPath, "Content", "course.xml");
-
         var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-        if (lang != "ru" && lang != "en") lang = "ru";
+        if (lang.Length != 2) lang = "ru";
 
-        var textsPath = Path.Combine(_env.ContentRootPath, "Content", $"course.{lang}.xml");
+        var path = Path.Combine(_env.ContentRootPath, "Content", $"course.{lang}.xml");
 
-        var courseDoc = XDocument.Load(coursePath);
-        var textsDoc = XDocument.Load(textsPath);
+        // fallback
+        if (!File.Exists(path))
+            path = Path.Combine(_env.ContentRootPath, "Content", "course.ru.xml");
 
-        var blockTexts = textsDoc.Root?
-            .Element("Blocks")?
-            .Elements("Block")
-            .Select(x => new
-            {
-                Key = (string?)x.Attribute("Key") ?? "",
-                Title = (string?)x.Attribute("Title"),
-                Description = (string?)x.Attribute("Description")
-            })
-            .Where(x => x.Key.Length > 0)
-            .ToDictionary(x => x.Key, x => new BlockText(x.Title, x.Description))
-            ?? new Dictionary<string, BlockText>();
-
-        var moduleTexts = textsDoc.Root?
-            .Element("Modules")?
-            .Elements("Module")
-            .Select(x => new
-            {
-                Key = (string?)x.Attribute("Key") ?? "",
-                Title = (string?)x.Attribute("Title")
-            })
-            .Where(x => x.Key.Length > 0)
-            .ToDictionary(x => x.Key, x => x.Title)
-            ?? new Dictionary<string, string?>();
+        var doc = XDocument.Load(path);
 
         var blocks = new List<LearningBlock>();
-        var blockId = 1;
-        var moduleId = 1;
+        var blockEls = doc.Root?.Element("Blocks")?.Elements("Block") ?? Enumerable.Empty<XElement>();
 
-        var blockEls = courseDoc.Root?.Element("Blocks")?.Elements("Block") ?? Enumerable.Empty<XElement>();
         foreach (var b in blockEls)
         {
-            var key = (string?)b.Attribute("Key") ?? "";
-            var isActive = (bool?)b.Attribute("IsActive") ?? true;
-
             var block = new LearningBlock
             {
-                Id = blockId++,
-                Title = blockTexts.TryGetValue(key, out var bt) ? (bt.Title ?? key) : key,
-                Description = blockTexts.TryGetValue(key, out var bt2) ? bt2.Description : null,
+                Id = (int?)b.Attribute("Id") ?? 0,
+                Key = (string?)b.Attribute("Key") ?? "",
+                Title = (string?)b.Attribute("Title") ?? "",
+                Description = (string?)b.Attribute("Description"),
                 Color = (string?)b.Attribute("Color") ?? "#000000",
                 Order = (int?)b.Attribute("Order") ?? 0,
-                IsActive = isActive,
+                IsActive = (bool?)b.Attribute("IsActive") ?? true,
                 Modules = new List<Module>()
             };
 
             var moduleEls = b.Element("Modules")?.Elements("Module") ?? Enumerable.Empty<XElement>();
             foreach (var m in moduleEls)
             {
-                var mKey = (string?)m.Attribute("Key") ?? "";
-                var mIsActive = (bool?)m.Attribute("IsActive") ?? true;
-
-                block.Modules.Add(new Module
+                var module = new Module
                 {
-                    Id = moduleId++,
+                    Id = (int?)m.Attribute("Id") ?? 0,
+                    Key = (string?)m.Attribute("Key") ?? "",
                     BlockId = block.Id,
-                    Key = mKey,
-                    Title = moduleTexts.TryGetValue(mKey, out var mt) && !string.IsNullOrWhiteSpace(mt) ? mt! : mKey,
+                    Title = (string?)m.Attribute("Title") ?? "",
                     Type = (string?)m.Attribute("Type") ?? "Video",
                     YoutubeId = (string?)m.Attribute("YoutubeId"),
                     Order = (int?)m.Attribute("Order") ?? 0,
-                    IsActive = mIsActive,
+                    IsActive = (bool?)m.Attribute("IsActive") ?? true,
                     CreatedAt = DateTime.UtcNow
-                });
+                };
+
+                if (module.Type == "Quiz")
+                {
+                    module.Quiz = ParseQuiz(m.Element("Quiz"), module.Title);
+                }
+
+                block.Modules.Add(module);
             }
 
             block.Modules = block.Modules.Where(x => x.IsActive).OrderBy(x => x.Order).ToList();
@@ -177,4 +166,31 @@ public class LearningService : ILearningService
         return blocks.OrderBy(x => x.Order).ToList();
     }
 
+    private static QuizContent? ParseQuiz(XElement? quizEl, string moduleTitle)
+    {
+        if (quizEl == null) return null;
+
+        var quiz = new QuizContent
+        {
+            Title = moduleTitle,
+            Description = (string?)quizEl.Attribute("Description") ?? "",
+            PassScore = (int?)quizEl.Attribute("PassScore") ?? 80,
+            Questions = new List<QuizQuestion>()
+        };
+
+        foreach (var q in quizEl.Elements("Question"))
+        {
+            var question = new QuizQuestion
+            {
+                Text = (string?)q.Element("Text") ?? "",
+                Options = q.Elements("Option").Select(x => (string?)x ?? "").ToList(),
+                CorrectOptionIndex = (int?)q.Element("CorrectOptionIndex") ?? 0
+            };
+
+            if (!string.IsNullOrWhiteSpace(question.Text) && question.Options.Count > 0)
+                quiz.Questions.Add(question);
+        }
+
+        return quiz.Questions.Count == 0 ? null : quiz;
+    }
 }

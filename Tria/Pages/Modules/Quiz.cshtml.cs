@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Text.Json;
 using Tria.Models;
 using Tria.Services;
 
 namespace Tria.Pages.Modules
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = "Identity.Application,Guest")]
     public class ModulesQuizModel : PageModel
     {
         private readonly ILearningService _learningService;
@@ -26,51 +25,40 @@ namespace Tria.Pages.Modules
         public async Task OnGetAsync(int moduleId)
         {
             Module = await _learningService.GetModuleByIdAsync(moduleId);
-            
-            if (Module?.ContentJson != null)
-            {
-                Quiz = JsonSerializer.Deserialize<QuizContent>(Module.ContentJson);
-            }
+            Quiz = await _learningService.GetQuizByModuleIdAsync(moduleId);
         }
 
         public async Task<IActionResult> OnPostAsync(int moduleId)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
-            
+
             Module = await _learningService.GetModuleByIdAsync(moduleId);
-            
-            if (Module?.ContentJson != null)
-            {
-                Quiz = JsonSerializer.Deserialize<QuizContent>(Module.ContentJson);
-            }
+            Quiz = await _learningService.GetQuizByModuleIdAsync(moduleId);
 
             if (Request.Form.TryGetValue("resetQuiz", out _))
-            {
                 return RedirectToPage(new { moduleId });
-            }
+
+            if (Quiz == null)
+                return Page();
 
             int correctCount = 0;
-            
-            if (Quiz != null)
+
+            for (int i = 0; i < Quiz.Questions.Count; i++)
             {
-                for (int i = 0; i < Quiz.Questions.Count; i++)
+                if (Request.Form.TryGetValue($"answer_{i}", out var answer) &&
+                    int.TryParse(answer, out int selectedIndex) &&
+                    selectedIndex == Quiz.Questions[i].CorrectOptionIndex)
                 {
-                    if (Request.Form.TryGetValue($"answer_{i}", out var answer) && 
-                        int.TryParse(answer, out int selectedIndex) &&
-                        selectedIndex == Quiz.Questions[i].CorrectOptionIndex)
-                    {
-                        correctCount++;
-                    }
+                    correctCount++;
                 }
             }
 
-            Score = Quiz!.Questions.Count > 0 ? (int)((double)correctCount / Quiz.Questions.Count * 100) : 0;
+            Score = Quiz.Questions.Count > 0 ? (int)((double)correctCount / Quiz.Questions.Count * 100) : 0;
             Passed = Score >= Quiz.PassScore;
 
             await _learningService.CompleteModuleAsync(userId, moduleId, Score);
 
             ShowResult = true;
-
             return Page();
         }
     }
