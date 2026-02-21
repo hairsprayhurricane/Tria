@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Tria.Pages
 {
@@ -10,7 +11,7 @@ namespace Tria.Pages
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<RegisterModel> _logger;
-
+        
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
@@ -26,23 +27,24 @@ namespace Tria.Pages
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "РЈРєР°Р¶РёС‚Рµ email.")]
+            [EmailAddress(ErrorMessage = "РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ С„РѕСЂРјР°С‚ email.")]
             [Display(Name = "Email")]
             public string Email { get; set; } = "";
 
-            [Required]
-            [StringLength(100, ErrorMessage = "Пароль должен быть длиной минимум {2} символов.", MinimumLength = 6)]
+            [Required(ErrorMessage = "РЈРєР°Р¶РёС‚Рµ РїР°СЂРѕР»СЊ.")]
+            [StringLength(100, ErrorMessage = "РџР°СЂРѕР»СЊ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РѕС‚ {2} РґРѕ {1} СЃРёРјРІРѕР»РѕРІ.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Пароль")]
+            [Display(Name = "РџР°СЂРѕР»СЊ")]
             public string Password { get; set; } = "";
 
-            [Required]
+            [Required(ErrorMessage = "РџРѕРґС‚РІРµСЂРґРёС‚Рµ РїР°СЂРѕР»СЊ.")]
             [DataType(DataType.Password)]
-            [Display(Name = "Подтвердить пароль")]
-            [Compare("Password", ErrorMessage = "Пароль и подтверждение не совпадают.")]
+            [Display(Name = "РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ РїР°СЂРѕР»СЏ")]
+            [Compare("Password", ErrorMessage = "РџР°СЂРѕР»СЊ Рё РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ РЅРµ СЃРѕРІРїР°РґР°СЋС‚.")]
             public string ConfirmPassword { get; set; } = "";
         }
+
 
         public void OnGet()
         {

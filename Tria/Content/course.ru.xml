@@ -3,7 +3,7 @@
 	<Blocks>
 		<Block Id="1" Key="communications" Title="📧 Коммуникации" Description="Фишинг, сообщения, звонки" Color="#4a9eff" Order="1" IsActive="true">
 			<Modules>
-				<Module Id="1" Key="comm_video_1" Title="Видео: Фишинг (база)" Type="Video" YoutubeId="dQw4w9WgXcQ" Order="1" IsActive="true" />
+				<Module Id="1" Key="comm_video_1" Title="Видео: Фишинг (база)" Type="Video" YoutubeId="kTM5ko9c4Sk" Order="1" IsActive="true" />
 				<Module Id="2" Key="comm_quiz_1" Title="Тест: Коммуникации" Type="Quiz" Order="2" IsActive="true">
 					<Quiz PassScore="50" Description="2 вопроса">
 						<Question>
@@ -27,7 +27,7 @@
 
 		<Block Id="2" Key="devices" Title="🖥️ Устройства" Description="Защита ПК и смартфона" Color="#7c3aed" Order="2" IsActive="true">
 			<Modules>
-				<Module Id="3" Key="dev_video_1" Title="Видео: Обновления и защита" Type="Video" YoutubeId="jNQXAC9IVRw" Order="1" IsActive="true" />
+				<Module Id="3" Key="dev_video_1" Title="Видео: Обновления и защита" Type="Video" YoutubeId="FdmsevEh6gQ" Order="1" IsActive="true" />
 				<Module Id="4" Key="dev_quiz_1" Title="Тест: Устройства" Type="Quiz" Order="2" IsActive="true">
 					<Quiz PassScore="50" Description="2 вопроса">
 						<Question>
@@ -51,7 +51,7 @@
 
 		<Block Id="3" Key="networks" Title="🌐 Сети" Description="Wi‑Fi, VPN и безопасный интернет" Color="#06b6d4" Order="3" IsActive="true">
 			<Modules>
-				<Module Id="5" Key="net_video_1" Title="Видео: Публичный Wi‑Fi" Type="Video" YoutubeId="9bZkp7q19f0" Order="1" IsActive="true" />
+				<Module Id="5" Key="net_video_1" Title="Видео: Публичный Wi‑Fi" Type="Video" YoutubeId="pIamTzHVdnw" Order="1" IsActive="true" />
 				<Module Id="6" Key="net_quiz_1" Title="Тест: Сети" Type="Quiz" Order="2" IsActive="true">
 					<Quiz PassScore="50" Description="2 вопроса">
 						<Question>

@@ -2,96 +2,235 @@
 @model BlocksIndexModel
 @{
     ViewData["Title"] = Model.Block?.Title ?? "Блок";
+    Layout = null;
 }
 
-<div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px;">
-    <div style="max-width: 900px; margin: 0 auto;">
-        
-        <a href="/" style="color: white; text-decoration: none; font-size: 1.1em; margin-bottom: 20px; display: inline-block;">
-            ← Вернуться на дашборд
-        </a>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] – Tria</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .page { min-height: 100vh; padding: 24px; }
+        .shell { max-width: 900px; margin: 0 auto; }
 
-        @if (Model.Block != null)
-        {
-            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); margin-bottom: 30px;">
-                
-                <div style="background: @Model.Block.Color; padding: 40px; color: white;">
-                    <div style="font-size: 3em; margin-bottom: 10px;">@Html.Raw(Model.Block.Title.Split(' ')[0])</div>
-                    <h1 style="margin: 0; font-size: 2em;">@Model.Block.Title</h1>
-                    <p style="margin: 15px 0 0 0; font-size: 1.1em; opacity: 0.9;">@Model.Block.Description</p>
-                </div>
+        .back-link {
+            display: inline-block;
+            font-size: 13px;
+            color: #2563eb;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .back-link:hover { text-decoration: underline; }
 
-                <div style="padding: 30px;">
-                    <div style="background: #f0f0f0; border-radius: 8px; overflow: hidden; height: 12px; margin-bottom: 15px;">
-                        <div style="background: @Model.Block.Color; height: 100%; width: @Model.Progress%; transition: width 0.5s;"></div>
-                    </div>
-                    <div style="text-align: center; color: #333; font-weight: bold; font-size: 1.1em;">
-                        @Model.Progress% завершено
-                    </div>
-                </div>
-            </div>
+        .block-shell {
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+        .block-main-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+        }
+        .block-main-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .block-main-desc {
+            font-size: 13px;
+            color: #4b5563;
+        }
+        .block-main-body {
+            padding: 18px 20px 20px 20px;
+        }
 
-            <h2 style="color: white; margin-bottom: 20px; font-size: 1.8em;">📚 Модули:</h2>
-            
-            @if (Model.Modules.Any())
+        .progress-wrap {
+            margin-bottom: 14px;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background-color: #2563eb;
+            transition: width 0.4s ease;
+        }
+        .progress-text {
+            font-size: 13px;
+            color: #374151;
+            text-align: right;
+        }
+
+        .modules-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .modules-list {
+            display: grid;
+            gap: 10px;
+        }
+        .module-link {
+            text-decoration: none;
+            color: inherit;
+        }
+        .module-row {
+            background-color: #ffffff;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+        .module-row:hover {
+            background-color: #f3f4ff;
+            border-color: #9ca3af;
+        }
+        .module-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .module-icon {
+            font-size: 20px;
+        }
+        .module-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .module-status {
+            font-size: 12px;
+        }
+        .status-done {
+            color: #15803d;
+        }
+        .status-pending {
+            color: #b45309;
+        }
+        .module-arrow {
+            font-size: 16px;
+            color: #6b7280;
+        }
+
+        .empty-box {
+            background-color: #ffffff;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 20px;
+            text-align: center;
+            color: #4b5563;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="shell">
+
+            <a href="/" class="back-link">← Вернуться на дашборд</a>
+
+            @if (Model.Block != null)
             {
-                <div style="display: grid; gap: 15px;">
-                    @foreach (var module in Model.Modules)
-                    {
-                        <a href="@(module.Type == "Video" ? $"/Modules/video/{module.Id}" : $"/Modules/quiz/{module.Id}")" 
-                           style="text-decoration: none; color: inherit;">
-                            <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.3s;"
-                                 onmouseover="this.style.transform='translateX(5px)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.15)';"
-                                 onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='0 5px 15px rgba(0,0,0,0.1)';">
-                                
-                                <div style="font-size: 2.5em; min-width: 60px;">
-                                    @if (module.Type == "Video")
-                                    {
-                                        <span>🎬</span>
-                                    }
-                                    else if (module.Type == "Quiz")
-                                    {
-                                        <span>✏️</span>
-                                    }
-                                    else
-                                    {
-                                        <span>🎮</span>
-                                    }
-                                </div>
-                                
-                                <div style="flex: 1;">
-                                    <h3 style="margin: 0 0 8px 0; font-size: 1.2em;">@module.Title</h3>
-                                    <div style="color: #666; font-size: 0.9em;">
-                                        @if (Model.CompletedModules.Contains(module.Id))
-                                        {
-                                            <span style="color: #10b981; font-weight: bold;">✅ Завершено</span>
-                                        }
-                                        else
-                                        {
-                                            <span style="color: #f97316;">⏳ Не начинали</span>
-                                        }
-                                    </div>
-                                </div>
-                                
-                                <div style="font-size: 1.2em; color: @Model.Block.Color;">→</div>
+                <section class="block-shell">
+                    <header class="block-main-header">
+                        <div class="block-main-title">@Model.Block.Title</div>
+                        <div class="block-main-desc">@Model.Block.Description</div>
+                    </header>
+                    <div class="block-main-body">
+                        <div class="progress-wrap">
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"
+                                     style="width: @Model.Progress%"></div>
                             </div>
-                        </a>
+                            <div class="progress-text">
+                                @Model.Progress% завершено
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="modules-title">Модули</div>
+
+                    @if (Model.Modules.Any())
+                    {
+                        <div class="modules-list">
+                            @foreach (var module in Model.Modules)
+                            {
+                                var url = module.Type == "Video"
+                                    ? $"/Modules/video/{module.Id}"
+                                    : $"/Modules/quiz/{module.Id}";
+                                <a href="@url" class="module-link">
+                                    <div class="module-row">
+                                        <div class="module-left">
+                                            <div class="module-icon">
+                                                @if (module.Type == "Video")
+                                                {
+                                                    @:🎬
+                                                }
+                                                else if (module.Type == "Quiz")
+                                                {
+                                                    @:✏️
+                                                }
+                                                else
+                                                {
+                                                    @:🧪
+                                                }
+                                            </div>
+                                            <div class="module-title">@module.Title</div>
+                                        </div>
+                                        <div>
+                                            @if (Model.CompletedModules.Contains(module.Id))
+                                            {
+                                                <span class="module-status status-done">Завершено</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="module-status status-pending">Не начато</span>
+                                            }
+                                        </div>
+                                        <div class="module-arrow">→</div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
                     }
-                </div>
+                    else
+                    {
+                        <div class="empty-box">
+                            Модули ещё не добавлены.
+                        </div>
+                    }
+                </section>
             }
             else
             {
-                <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; color: #666;">
-                    <p style="font-size: 1.1em;">Модули еще не добавлены</p>
+                <div class="empty-box">
+                    Блок не найден.
                 </div>
             }
-        }
-        else
-        {
-            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; color: #666;">
-                <p style="font-size: 1.1em;">Блок не найден</p>
-            </div>
-        }
 
+        </div>
     </div>
-</div>
+</body>
+</html>

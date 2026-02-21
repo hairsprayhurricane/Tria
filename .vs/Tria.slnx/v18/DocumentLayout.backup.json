@@ -3,8 +3,52 @@
   "WorkspaceRootPath": "C:\\Users\\trued\\source\\repos\\Tria\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Migrations\\20260209202342_XmlQuiz_NotMappedFix.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Tria\\Migrations\\20260209202342_XmlQuiz_NotMappedFix.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\content\\course.ru.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\content\\course.ru.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\content\\course.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\content\\course.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\content\\course.en.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\content\\course.en.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\modules\\video.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\modules\\video.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\modules\\quiz.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\modules\\quiz.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\blocks\\blocksindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\blocks\\blocksindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\migrations\\20260209202342_xmlquiz_notmappedfix.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\migrations\\20260209202342_xmlquiz_notmappedfix.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\migrations\\20260208210321_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -23,10 +67,6 @@
       "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\models\\learningblock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\content\\course.ru.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\content\\course.ru.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\pages\\modules\\quiz.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\pages\\modules\\quiz.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -37,14 +77,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\services\\ilearningservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\services\\ilearningservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\content\\course.en.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\content\\course.en.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\content\\course.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\content\\course.xml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
   "DocumentGroupContainers": [
@@ -54,11 +86,35 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 9,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Login.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Login.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Login.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:33:00.331Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Index.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Index.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Index.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:31:49.959Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "20260209202342_XmlQuiz_NotMappedFix.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Migrations\\20260209202342_XmlQuiz_NotMappedFix.cs",
               "RelativeDocumentMoniker": "Tria\\Migrations\\20260209202342_XmlQuiz_NotMappedFix.cs",
@@ -66,12 +122,11 @@
               "RelativeToolTip": "Tria\\Migrations\\20260209202342_XmlQuiz_NotMappedFix.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:23:42.141Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:23:42.141Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 12,
               "Title": "20260208210321_InitialCreate.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Migrations\\20260208210321_InitialCreate.cs",
               "RelativeDocumentMoniker": "Tria\\Migrations\\20260208210321_InitialCreate.cs",
@@ -79,12 +134,11 @@
               "RelativeToolTip": "Tria\\Migrations\\20260208210321_InitialCreate.cs",
               "ViewState": "AgIAADEAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:23:25.568Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:23:25.568Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 15,
               "Title": "LearningBlock.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Models\\LearningBlock.cs",
               "RelativeDocumentMoniker": "Tria\\Models\\LearningBlock.cs",
@@ -92,12 +146,11 @@
               "RelativeToolTip": "Tria\\Models\\LearningBlock.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:20:39.594Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:20:39.594Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 16,
               "Title": "Quiz.cshtml.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Quiz.cshtml.cs",
               "RelativeDocumentMoniker": "Tria\\Pages\\Modules\\Quiz.cshtml.cs",
@@ -105,12 +158,120 @@
               "RelativeToolTip": "Tria\\Pages\\Modules\\Quiz.cshtml.cs",
               "ViewState": "AgIAAAEAAAAAAAAAAAAiwEEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:20:23.148Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:20:23.148Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "course.en.xml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.en.xml",
+              "RelativeDocumentMoniker": "Tria\\Content\\course.en.xml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.en.xml",
+              "RelativeToolTip": "Tria\\Content\\course.en.xml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
+              "WhenOpened": "2026-02-09T20:12:30.246Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "course.xml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.xml",
+              "RelativeDocumentMoniker": "Tria\\Content\\course.xml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.xml",
+              "RelativeToolTip": "Tria\\Content\\course.xml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
+              "WhenOpened": "2026-02-09T20:12:32.52Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "course.ru.xml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.ru.xml",
+              "RelativeDocumentMoniker": "Tria\\Content\\course.ru.xml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.ru.xml",
+              "RelativeToolTip": "Tria\\Content\\course.ru.xml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUAAABnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
+              "WhenOpened": "2026-02-09T20:12:27.416Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Privacy.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Privacy.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Privacy.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:33:06.269Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Register.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Register.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Register.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Register.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Register.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:33:08.667Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Video.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Video.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Modules\\Video.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Video.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Modules\\Video.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:33:31.095Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Error.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Error.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Error.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Error.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Error.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:33:18.536Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "BlocksIndex.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Blocks\\BlocksIndex.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Blocks\\BlocksIndex.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Blocks\\BlocksIndex.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Blocks\\BlocksIndex.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:33:22.936Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Quiz.cshtml",
+              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Quiz.cshtml",
+              "RelativeDocumentMoniker": "Tria\\Pages\\Modules\\Quiz.cshtml",
+              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Quiz.cshtml",
+              "RelativeToolTip": "Tria\\Pages\\Modules\\Quiz.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-09T20:33:26.394Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "Module.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Models\\Module.cs",
               "RelativeDocumentMoniker": "Tria\\Models\\Module.cs",
@@ -118,12 +279,11 @@
               "RelativeToolTip": "Tria\\Models\\Module.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:19:56.158Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:19:56.158Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 17,
               "Title": "QuizModels.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Models\\QuizModels.cs",
               "RelativeDocumentMoniker": "Tria\\Models\\QuizModels.cs",
@@ -131,12 +291,11 @@
               "RelativeToolTip": "Tria\\Models\\QuizModels.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:19:15.275Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:19:15.275Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 18,
               "Title": "ILearningService.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Services\\ILearningService.cs",
               "RelativeDocumentMoniker": "Tria\\Services\\ILearningService.cs",
@@ -144,51 +303,11 @@
               "RelativeToolTip": "Tria\\Services\\ILearningService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:19:00.131Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:19:00.131Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "course.xml",
-              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.xml",
-              "RelativeDocumentMoniker": "Tria\\Content\\course.xml",
-              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.xml",
-              "RelativeToolTip": "Tria\\Content\\course.xml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2026-02-09T20:12:32.52Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "course.en.xml",
-              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.en.xml",
-              "RelativeDocumentMoniker": "Tria\\Content\\course.en.xml",
-              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.en.xml",
-              "RelativeToolTip": "Tria\\Content\\course.en.xml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2026-02-09T20:12:30.246Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "course.ru.xml",
-              "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.ru.xml",
-              "RelativeDocumentMoniker": "Tria\\Content\\course.ru.xml",
-              "ToolTip": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.ru.xml",
-              "RelativeToolTip": "Tria\\Content\\course.ru.xml",
-              "ViewState": "AgIAADQAAAAAAAAAAAAjwEwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2026-02-09T20:12:27.416Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 14,
               "Title": "LearningService.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Services\\LearningService.cs",
               "RelativeDocumentMoniker": "Tria\\Services\\LearningService.cs",
@@ -196,8 +315,7 @@
               "RelativeToolTip": "Tria\\Services\\LearningService.cs",
               "ViewState": "AgIAAGcAAAAAAAAAAAAhwHsAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-08T21:19:17.399Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-08T21:19:17.399Z"
             }
           ]
         }

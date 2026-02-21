@@ -2,33 +2,136 @@
 @model ModulesVideoModel
 @{
     ViewData["Title"] = Model.Module?.Title ?? "Видео";
+    Layout = null;
 }
 
-<div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px;">
-    <div style="max-width: 900px; margin: 0 auto;">
-        
-        <a href="/" style="color: white; text-decoration: none; font-size: 1.1em; margin-bottom: 20px; display: inline-block;">
-            ← Вернуться на дашборд
-        </a>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] – Видео · Tria</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f3f4f6;
+            color: #111827;
+        }
+        .page { min-height: 100vh; padding: 24px; }
+        .shell { max-width: 900px; margin: 0 auto; }
+
+        .back-link {
+            display: inline-block;
+            font-size: 13px;
+            color: #2563eb;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        .video-box {
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .video-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+        }
+        .video-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .video-subtitle {
+            font-size: 13px;
+            color: #4b5563;
+        }
+
+        .video-content {
+            padding: 18px 20px 20px 20px;
+        }
+
+        .video-frame-wrap {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background-color: #000000;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+        .video-frame-wrap iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+
+        .state-box {
+            margin-top: 4px;
+            padding: 12px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            border: 1px solid;
+        }
+        .state-done {
+            background-color: #ecfdf5;
+            color: #15803d;
+            border-color: #15803d;
+        }
+
+        .btn-primary {
+            padding: 10px 26px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #2563eb;
+            background-color: #2563eb;
+            color: #f9fafb;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .empty-box {
+            background-color: #ffffff;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            padding: 20px;
+            text-align: center;
+            color: #4b5563;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="shell">
+
+        <a href="/" class="back-link">← Вернуться на дашборд</a>
 
         @if (Model.Module != null)
         {
-            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-                
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; color: white;">
-                    <h1 style="margin: 0; font-size: 2em;">🎬 @Model.Module.Title</h1>
+            <section class="video-box">
+                <header class="video-header">
+                    <div class="video-title">Видео: @Model.Module.Title</div>
                     @if (!string.IsNullOrEmpty(Model.Module.VideoDescription))
                     {
-                        <p style="margin: 10px 0 0 0; font-size: 1em; opacity: 0.9;">@Model.Module.VideoDescription</p>
+                        <div class="video-subtitle">@Model.Module.VideoDescription</div>
                     }
-                </div>
+                </header>
 
-                <div style="padding: 30px;">
+                <div class="video-content">
                     @if (!string.IsNullOrEmpty(Model.Module.YoutubeId))
                     {
-                        <div style="position: relative; width: 100%; padding-bottom: 56.25%; margin-bottom: 30px; background: #000; border-radius: 8px; overflow: hidden;">
-                            <iframe 
-                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                        <div class="video-frame-wrap">
+                            <iframe
                                 src="https://www.youtube.com/embed/@Model.Module.YoutubeId"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowfullscreen>
@@ -38,27 +141,29 @@
 
                     @if (Model.IsCompleted)
                     {
-                        <div style="background: #d1fae5; border: 2px solid #10b981; border-radius: 8px; padding: 20px; text-align: center; color: #10b981; font-weight: bold; margin-bottom: 20px;">
-                            ✅ Видеоурок завершён!
+                        <div class="state-box state-done">
+                            Видеоурок отмечен как завершённый.
                         </div>
                     }
                     else
                     {
-                        <form method="post" style="text-align: center;">
-                            <button type="submit" style="background: #667eea; color: white; border: none; padding: 15px 40px; border-radius: 8px; font-size: 1.1em; cursor: pointer; font-weight: bold;">
-                                ✓ Отметить как завершённое
+                        <form method="post" style="text-align:center;">
+                            <button type="submit" class="btn-primary">
+                                Отметить как завершённое
                             </button>
                         </form>
                     }
                 </div>
-            </div>
+            </section>
         }
         else
         {
-            <div style="background: white; border-radius: 10px; padding: 30px; text-align: center; color: #666;">
-                <p style="font-size: 1.1em;">Видео не найдено</p>
+            <div class="empty-box">
+                Видео не найдено.
             </div>
         }
 
     </div>
 </div>
+</body>
+</html>

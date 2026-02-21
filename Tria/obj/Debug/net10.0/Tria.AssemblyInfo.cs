@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tria")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+95ab9ca0209c79f7472f67af0a0d4ae10af72b2e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e228361cd2b9cba2b2cda1ffae7e4ac760e5b2e0")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tria")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tria")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

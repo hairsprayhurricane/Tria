@@ -41,7 +41,7 @@ public class LearningService : ILearningService
         var module = LoadBlocks().SelectMany(b => b.Modules).FirstOrDefault(m => m.Id == moduleId && m.IsActive);
         if (module == null || module.Type != "Quiz") return Task.FromResult<QuizContent?>(null);
 
-        // QuizContent уже построен при парсинге XML и положен в module.Quiz
+        // QuizContent XML module.Quiz
         return Task.FromResult(module.Quiz);
     }
 
