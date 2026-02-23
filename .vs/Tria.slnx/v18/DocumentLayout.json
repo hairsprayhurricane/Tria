@@ -3,6 +3,9 @@
   "WorkspaceRootPath": "C:\\Users\\trued\\source\\repos\\Tria\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Tria/True/SqlTable/dbo.AspNetUsers.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|c:\\users\\trued\\source\\repos\\tria\\tria\\services\\learningservice.cs||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{925B989A-F712-8E90-BFA8-D0C9043F47B3}|Tria\\Tria.csproj|solutionrelative:tria\\services\\learningservice.cs||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
@@ -78,11 +81,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 12,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "dbo.AspNetUsers [\u0414\u0430\u043D\u043D\u044B\u0435]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/Tria/True/SqlTable/dbo.AspNetUsers.sql",
+              "ToolTip": "dbo.AspNetUsers [\u0414\u0430\u043D\u043D\u044B\u0435]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-02-21T14:25:34.115Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "LearningBlock.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Models\\LearningBlock.cs",
               "RelativeDocumentMoniker": "Tria\\Models\\LearningBlock.cs",
@@ -90,12 +103,11 @@
               "RelativeToolTip": "Tria\\Models\\LearningBlock.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-09T20:20:39.594Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:20:39.594Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "Quiz.cshtml.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Quiz.cshtml.cs",
               "RelativeDocumentMoniker": "Tria\\Pages\\Modules\\Quiz.cshtml.cs",
@@ -107,7 +119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "course.en.xml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.en.xml",
               "RelativeDocumentMoniker": "Tria\\Content\\course.en.xml",
@@ -119,7 +131,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "course.ru.xml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.ru.xml",
               "RelativeDocumentMoniker": "Tria\\Content\\course.ru.xml",
@@ -127,12 +139,11 @@
               "RelativeToolTip": "Tria\\Content\\course.ru.xml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003576|",
-              "WhenOpened": "2026-02-09T20:12:27.416Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-09T20:12:27.416Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Login.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Login.cshtml",
@@ -144,7 +155,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "course.xml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Content\\course.xml",
               "RelativeDocumentMoniker": "Tria\\Content\\course.xml",
@@ -156,7 +167,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "Privacy.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Privacy.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Privacy.cshtml",
@@ -168,7 +179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "Register.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Register.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Register.cshtml",
@@ -180,7 +191,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Video.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Video.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Modules\\Video.cshtml",
@@ -192,7 +203,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "Error.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Error.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Error.cshtml",
@@ -204,7 +215,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "BlocksIndex.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Blocks\\BlocksIndex.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Blocks\\BlocksIndex.cshtml",
@@ -216,7 +227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Quiz.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Modules\\Quiz.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Modules\\Quiz.cshtml",
@@ -228,7 +239,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "LearningService.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Services\\LearningService.cs",
               "RelativeDocumentMoniker": "Tria\\Services\\LearningService.cs",
@@ -241,7 +252,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Pages\\Index.cshtml",
               "RelativeDocumentMoniker": "Tria\\Pages\\Index.cshtml",
@@ -253,7 +264,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "Module.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Models\\Module.cs",
               "RelativeDocumentMoniker": "Tria\\Models\\Module.cs",
@@ -265,7 +276,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "QuizModels.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Models\\QuizModels.cs",
               "RelativeDocumentMoniker": "Tria\\Models\\QuizModels.cs",
@@ -277,7 +288,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "ILearningService.cs",
               "DocumentMoniker": "C:\\Users\\trued\\source\\repos\\Tria\\Tria\\Services\\ILearningService.cs",
               "RelativeDocumentMoniker": "Tria\\Services\\ILearningService.cs",

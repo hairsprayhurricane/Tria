@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Tria.Pages
 {
@@ -10,16 +9,13 @@ namespace Tria.Pages
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly ILogger<RegisterModel> _logger;
-        
+
         public RegisterModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
-            ILogger<RegisterModel> logger)
+            SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
         }
 
         [BindProperty]
@@ -27,28 +23,21 @@ namespace Tria.Pages
 
         public class InputModel
         {
-            [Required(ErrorMessage = "Укажите email.")]
-            [EmailAddress(ErrorMessage = "Некорректный формат email.")]
-            [Display(Name = "Email")]
+            [Required(ErrorMessage = "Укажите email")]
+            [EmailAddress(ErrorMessage = "Некорректный email")]
             public string Email { get; set; } = "";
 
-            [Required(ErrorMessage = "Укажите пароль.")]
-            [StringLength(100, ErrorMessage = "Пароль должен быть от {2} до {1} символов.", MinimumLength = 6)]
-            [DataType(DataType.Password)]
-            [Display(Name = "Пароль")]
+            [Required(ErrorMessage = "Укажите пароль")]
+            [StringLength(100, MinimumLength = 6,
+                ErrorMessage = "Пароль минимум 6 символов")]
             public string Password { get; set; } = "";
 
-            [Required(ErrorMessage = "Подтвердите пароль.")]
-            [DataType(DataType.Password)]
-            [Display(Name = "Подтверждение пароля")]
-            [Compare("Password", ErrorMessage = "Пароль и подтверждение не совпадают.")]
+            [Required(ErrorMessage = "Подтвердите пароль")]
+            [Compare("Password", ErrorMessage = "Пароли не совпадают")]
             public string ConfirmPassword { get; set; } = "";
         }
 
-
-        public void OnGet()
-        {
-        }
+        public void OnGet() { }
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -65,9 +54,8 @@ namespace Tria.Pages
 
             if (result.Succeeded)
             {
-                _logger.LogInformation("User created a new account with password.");
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return LocalRedirect(Url.Content("~/"));
+                await _signInManager.SignInAsync(user, false);
+                return RedirectToPage("/Index");
             }
 
             foreach (var error in result.Errors)

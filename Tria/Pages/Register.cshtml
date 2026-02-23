@@ -10,6 +10,8 @@
 <head>
     <meta charset="utf-8" />
     <title>Регистрация – Tria</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -32,155 +34,77 @@
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
-        .window-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 10px;
-            border-bottom: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-        }
-        .window-dots span {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 999px;
-            margin-right: 4px;
-        }
-        .window-title {
-            font-size: 12px;
-            color: #6b7280;
-        }
-        .window-body {
-            padding: 20px 22px 18px 22px;
-        }
-        h1 {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-        .subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-bottom: 18px;
-        }
-        .field {
-            margin-bottom: 14px;
-        }
-        .field-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6b7280;
-            margin-bottom: 4px;
-        }
+        .window-body { padding: 20px; }
+        h1 { font-size: 20px; margin-bottom: 4px; }
+        .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 18px; }
+        .field { margin-bottom: 14px; }
+        .field-label { font-size: 12px; margin-bottom: 4px; display:block; }
         .field-input {
             width: 100%;
-            padding: 8px 9px;
-            font-size: 14px;
+            padding: 8px;
             border-radius: 4px;
             border: 1px solid #d1d5db;
-            outline: none;
-        }
-        .field-input:focus {
-            border-color: #4b5563;
         }
         .validation-summary, .field-error {
             font-size: 12px;
             color: #b91c1c;
             margin-bottom: 8px;
         }
-        .field-error { margin-top: 3px; }
         .btn-primary {
             width: 100%;
-            padding: 8px 0;
-            font-size: 14px;
+            padding: 8px;
             border-radius: 4px;
-            border: 1px solid #111827;
-            background-color: #111827;
-            color: #f9fafb;
+            border: none;
+            background: #111827;
+            color: white;
             cursor: pointer;
         }
-        .btn-primary:hover {
-            background-color: #374151;
-        }
-        .bottom-link {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 13px;
-        }
-        .bottom-link a {
-            color: #111827;
-            text-decoration: none;
-        }
-        .bottom-link a:hover {
-            text-decoration: underline;
-        }
-        .footer-note {
-            margin-top: 12px;
-            font-size: 11px;
-            text-align: center;
-            color: #9ca3af;
-        }
+        .btn-primary:hover { background: #374151; }
     </style>
 </head>
 <body>
-    <div class="page">
-        <div class="window">
-            <div class="window-header">
-                <div class="window-title">Регистрация</div>
-            </div>
+<div class="page">
+    <div class="window">
+        <div class="window-body">
 
-            <div class="window-body">
-                <h1>Создание аккаунта</h1>
-                <p class="subtitle">Учётная запись для обучения кибербезопасности.</p>
+            <h1>Создание аккаунта</h1>
+            <p class="subtitle">Учётная запись для обучения кибербезопасности.</p>
 
-                <form method="post">
-                    @Html.AntiForgeryToken()
+            <form method="post">
+                @Html.AntiForgeryToken()
 
-                    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                <div asp-validation-summary="All" class="validation-summary"></div>
 
-                    <div class="field">
-                        <label asp-for="Input.Email" class="field-label"></label>
-                        <input asp-for="Input.Email"
-                               class="field-input"
-                               autocomplete="email" />
-                        <span asp-validation-for="Input.Email" class="field-error"></span>
-                    </div>
-
-                    <div class="field">
-                        <label asp-for="Input.Password" class="field-label"></label>
-                        <input asp-for="Input.Password"
-                               class="field-input"
-                               autocomplete="new-password"
-                               type="password" />
-                        <span asp-validation-for="Input.Password" class="field-error"></span>
-                    </div>
-
-                    <div class="field">
-                        <label asp-for="Input.ConfirmPassword" class="field-label"></label>
-                        <input asp-for="Input.ConfirmPassword"
-                               class="field-input"
-                               autocomplete="new-password"
-                               type="password" />
-                        <span asp-validation-for="Input.ConfirmPassword" class="field-error"></span>
-                    </div>
-
-                    <button type="submit" class="btn-primary">
-                        Зарегистрироваться
-                    </button>
-                </form>
-
-                <div class="bottom-link">
-                    Уже есть аккаунт?
-                    <a asp-page="./Login">Войти</a>
+                <div class="field">
+                    <label asp-for="Input.Email" class="field-label"></label>
+                    <input asp-for="Input.Email" class="field-input" />
+                    <span asp-validation-for="Input.Email" class="field-error"></span>
                 </div>
 
-                <div class="footer-note">
-                    Tria · учебная платформа по кибербезопасности
+                <div class="field">
+                    <label asp-for="Input.Password" class="field-label"></label>
+                    <input asp-for="Input.Password" type="password" class="field-input" />
+                    <span asp-validation-for="Input.Password" class="field-error"></span>
                 </div>
-            </div>
+
+                <div class="field">
+                    <label asp-for="Input.ConfirmPassword" class="field-label"></label>
+                    <input asp-for="Input.ConfirmPassword" type="password" class="field-input" />
+                    <span asp-validation-for="Input.ConfirmPassword" class="field-error"></span>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Зарегистрироваться
+                </button>
+            </form>
+
         </div>
     </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
 
 </body>
 </html>
