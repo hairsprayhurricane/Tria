@@ -43,19 +43,28 @@
         .lang-btn { display: flex; align-items: center; gap: 4px; padding: 3px 8px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 4px; background: #fff; cursor: pointer; color: #374151; }
         .lang-btn .arrow { font-size: 9px; color: #9ca3af; }
         .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 4px); background: #fff; border: 1px solid #d1d5db; border-radius: 6px; box-shadow: 0 6px 16px rgba(0,0,0,0.10); min-width: 150px; z-index: 100; overflow: hidden; }
-        .lang-switcher:hover .lang-dropdown, .lang-switcher:focus-within .lang-dropdown { display: block; }
+        .lang-dropdown.open { display: block; }
         .lang-option { display: block; text-decoration: none; width: 100%; padding: 7px 12px; font-size: 13px; text-align: left; background: none; border: none; cursor: pointer; color: #111827; }
         .lang-option:hover { background: #f3f4f6; }
         .lang-option.active { background: #eff6ff; color: #1d4ed8; font-weight: 500; }
     </style>
 </head>
+<script>
+function toggleLang(e) {
+    e.stopPropagation();
+    document.querySelector('.lang-dropdown').classList.toggle('open');
+}
+document.addEventListener('click', function() {
+    document.querySelector('.lang-dropdown').classList.remove('open');
+});
+</script>
 <body>
     <div class="page">
         <div class="window">
             <div class="window-header">
                 <div class="window-title">@T["Login_Title"]</div>
                 <div class="lang-switcher">
-                    <button type="button" class="lang-btn">
+                    <button type="button" class="lang-btn" onclick="toggleLang(event)">
                         @(lang == "ru" ? "🇷🇺" : "🇬🇧") <span class="arrow">▼</span>
                     </button>
                     <div class="lang-dropdown">

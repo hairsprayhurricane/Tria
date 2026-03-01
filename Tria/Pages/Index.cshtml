@@ -27,7 +27,7 @@
         .lang-btn:hover { border-color: #9ca3af; }
         .lang-btn .arrow { font-size: 10px; color: #9ca3af; }
         .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 4px); background: #fff; border: 1px solid #d1d5db; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.10); min-width: 160px; z-index: 100; overflow: hidden; }
-        .lang-switcher:hover .lang-dropdown, .lang-switcher:focus-within .lang-dropdown { display: block; }
+        .lang-dropdown.open { display: block; }
         .lang-option { display: block; text-decoration: none; width: 100%; padding: 8px 14px; font-size: 14px; text-align: left; background: none; border: none; cursor: pointer; color: #111827; white-space: nowrap; }
         .lang-option:hover { background: #f3f4f6; }
         .lang-option.active { background: #eff6ff; color: #1d4ed8; font-weight: 500; }
@@ -56,6 +56,15 @@
         .btn-logout:hover { background-color: #991b1b; }
     </style>
 </head>
+<script>
+function toggleLang(e) {
+    e.stopPropagation();
+    document.querySelector('.lang-dropdown').classList.toggle('open');
+}
+document.addEventListener('click', function() {
+    document.querySelector('.lang-dropdown').classList.remove('open');
+});
+</script>
 <body>
     <div class="page">
         <div class="shell">
@@ -66,7 +75,7 @@
                     <div class="top-subtitle">@T["Index_SubHeading"]</div>
                 </div>
                 <div class="lang-switcher">
-                    <button type="button" class="lang-btn">
+                    <button type="button" class="lang-btn" onclick="toggleLang(event)">
                         @(lang == "ru" ? "🇷🇺 Русский" : "🇬🇧 English")
                         <span class="arrow">▼</span>
                     </button>
