@@ -13,63 +13,137 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] – Tria</title>
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark')
+                document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+    </script>
     <style>
+        :root {
+            --bg:           #f3f4f6;
+            --surface:      #ffffff;
+            --surface-2:    #f9fafb;
+            --border:       #d1d5db;
+            --border-2:     #e5e7eb;
+            --text:         #111827;
+            --text-muted:   #6b7280;
+            --text-sub:     #4b5563;
+            --text-light:   #374151;
+            --input-bg:     #ffffff;
+            --shadow:       rgba(0,0,0,0.08);
+        }
+        [data-theme="dark"] {
+            --bg:           #0f1117;
+            --surface:      #1a1d2e;
+            --surface-2:    #151826;
+            --border:       #2a2d3e;
+            --border-2:     #222536;
+            --text:         #f1f5f9;
+            --text-muted:   #94a3b8;
+            --text-sub:     #cbd5e1;
+            --text-light:   #e2e8f0;
+            --input-bg:     #0f1117;
+            --shadow:       rgba(0,0,0,0.4);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: #f3f4f6; color: #111827; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: var(--bg); color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+        }
         .page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .window { width: 100%; max-width: 420px; background-color: #fff; border: 1px solid #d1d5db; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-        .window-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb; }
-        .window-title { font-size: 12px; color: #6b7280; }
+        .window {
+            width: 100%; max-width: 420px;
+            background-color: var(--surface); border: 1px solid var(--border);
+            border-radius: 8px; box-shadow: 0 10px 30px var(--shadow);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .window-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 10px; border-bottom: 1px solid var(--border-2);
+            background-color: var(--surface-2);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .window-title { font-size: 12px; color: var(--text-muted); }
         .window-body { padding: 20px 22px 18px; }
-        h1 { font-size: 20px; margin-bottom: 4px; }
-        .subtitle { font-size: 13px; color: #6b7280; margin-bottom: 18px; }
+        h1 { font-size: 20px; margin-bottom: 4px; color: var(--text); }
+        .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
         .field { margin-bottom: 14px; }
-        .field-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; margin-bottom: 4px; display: block; }
-        .field-input { width: 100%; padding: 8px 9px; font-size: 14px; border-radius: 4px; border: 1px solid #d1d5db; outline: none; }
-        .field-input:focus { border-color: #4b5563; }
+        .field-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px; display: block; }
+        .field-input {
+            width: 100%; padding: 8px 9px; font-size: 14px; border-radius: 4px;
+            border: 1px solid var(--border); outline: none;
+            background: var(--input-bg); color: var(--text);
+            transition: border-color 0.2s, background-color 0.3s, color 0.3s;
+        }
+        .field-input:focus { border-color: var(--text-muted); }
         .validation-summary, .field-error { font-size: 12px; color: #b91c1c; margin-bottom: 8px; }
         .field-error { margin-top: 3px; }
-        .btn-primary { width: 100%; padding: 8px 0; font-size: 14px; border-radius: 4px; border: 1px solid #111827; background-color: #111827; color: #f9fafb; cursor: pointer; }
-        .btn-primary:hover { background-color: #374151; }
-        .link-block { margin-top: 10px; text-align: center; font-size: 13px; }
-        .link-block a { color: #111827; text-decoration: none; }
+        .btn-primary {
+            width: 100%; padding: 8px 0; font-size: 14px; border-radius: 4px;
+            border: 1px solid var(--text); background-color: var(--text); color: var(--bg); cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.85; }
+        .link-block { margin-top: 10px; text-align: center; font-size: 13px; color: var(--text-sub); }
+        .link-block a { color: var(--text); text-decoration: none; }
         .link-block a:hover { text-decoration: underline; }
-        .guest-block { margin-top: 10px; padding: 8px 10px; border-radius: 4px; background-color: #e5f2ff; text-align: center; font-size: 13px; }
-        .guest-button { border: none; background: none; color: #1d4ed8; cursor: pointer; padding: 0; }
+        .guest-block { margin-top: 10px; padding: 8px 10px; border-radius: 4px; background-color: var(--border-2); text-align: center; font-size: 13px; transition: background-color 0.3s; }
+        .guest-button { border: none; background: none; color: #2563eb; cursor: pointer; padding: 0; }
         .guest-button:hover { text-decoration: underline; }
-        .footer-note { margin-top: 12px; font-size: 11px; text-align: center; color: #9ca3af; }
+        .footer-note { margin-top: 12px; font-size: 11px; text-align: center; color: var(--text-muted); }
+
+        /* Controls */
+        .controls { display: flex; align-items: center; gap: 6px; }
+        .theme-btn {
+            width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 4px;
+            background: var(--surface); cursor: pointer; font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            transition: border-color 0.2s, background-color 0.3s;
+        }
+        .theme-btn:hover { border-color: var(--text-muted); }
 
         .lang-switcher { position: relative; display: inline-block; }
-        .lang-btn { display: flex; align-items: center; gap: 4px; padding: 3px 8px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 4px; background: #fff; cursor: pointer; color: #374151; }
-        .lang-btn .arrow { font-size: 9px; color: #9ca3af; }
-        .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 4px); background: #fff; border: 1px solid #d1d5db; border-radius: 6px; box-shadow: 0 6px 16px rgba(0,0,0,0.10); min-width: 150px; z-index: 100; overflow: hidden; }
+        .lang-btn {
+            display: flex; align-items: center; gap: 4px; padding: 3px 8px; font-size: 13px;
+            border: 1px solid var(--border); border-radius: 4px;
+            background: var(--surface); cursor: pointer; color: var(--text-light);
+            transition: border-color 0.2s, background-color 0.3s;
+        }
+        .lang-btn .arrow { font-size: 9px; color: var(--text-muted); }
+        .lang-dropdown {
+            display: none; position: absolute; right: 0; top: calc(100% + 4px);
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 6px; box-shadow: 0 6px 16px var(--shadow);
+            min-width: 150px; z-index: 100; overflow: hidden;
+        }
         .lang-dropdown.open { display: block; }
-        .lang-option { display: block; text-decoration: none; width: 100%; padding: 7px 12px; font-size: 13px; text-align: left; background: none; border: none; cursor: pointer; color: #111827; }
-        .lang-option:hover { background: #f3f4f6; }
-        .lang-option.active { background: #eff6ff; color: #1d4ed8; font-weight: 500; }
+        .lang-option {
+            display: block; text-decoration: none; width: 100%; padding: 7px 12px;
+            font-size: 13px; text-align: left; background: none; border: none;
+            cursor: pointer; color: var(--text); transition: background-color 0.15s;
+        }
+        .lang-option:hover { background: var(--border-2); }
+        .lang-option.active { background: var(--border-2); color: #2563eb; font-weight: 500; }
     </style>
 </head>
-<script>
-function toggleLang(e) {
-    e.stopPropagation();
-    document.querySelector('.lang-dropdown').classList.toggle('open');
-}
-document.addEventListener('click', function() {
-    document.querySelector('.lang-dropdown').classList.remove('open');
-});
-</script>
 <body>
     <div class="page">
         <div class="window">
             <div class="window-header">
                 <div class="window-title">@T["Login_Title"]</div>
-                <div class="lang-switcher">
-                    <button type="button" class="lang-btn" onclick="toggleLang(event)">
-                        @(lang == "ru" ? "🇷🇺" : "🇬🇧") <span class="arrow">▼</span>
-                    </button>
-                    <div class="lang-dropdown">
-                        <a href="/set-language?culture=en&returnUrl=/Login" class="lang-option @(lang == "en" ? "active" : "")">🇬🇧 English</a>
-                        <a href="/set-language?culture=ru&returnUrl=/Login" class="lang-option @(lang == "ru" ? "active" : "")">🇷🇺 Русский</a>
+                <div class="controls">
+                    <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+                    <div class="lang-switcher">
+                        <button type="button" class="lang-btn" onclick="toggleLang(event)">
+                            @(lang == "ru" ? "🇷🇺" : "🇬🇧") <span class="arrow">▼</span>
+                        </button>
+                        <div class="lang-dropdown" id="lang-dropdown">
+                            <a href="/set-language?culture=en&returnUrl=/Login" class="lang-option @(lang == "en" ? "active" : "")">🇬🇧 English</a>
+                            <a href="/set-language?culture=ru&returnUrl=/Login" class="lang-option @(lang == "ru" ? "active" : "")">🇷🇺 Русский</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,5 +180,25 @@ document.addEventListener('click', function() {
             </div>
         </div>
     </div>
+
+    <script>
+        const btn = document.getElementById('theme-btn');
+        btn.textContent = localStorage.getItem('theme') === 'dark' ? '☀️' : '🌙';
+
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            btn.textContent = isDark ? '🌙' : '☀️';
+        }
+
+        function toggleLang(e) {
+            e.stopPropagation();
+            document.getElementById('lang-dropdown').classList.toggle('open');
+        }
+        document.addEventListener('click', function() {
+            document.getElementById('lang-dropdown').classList.remove('open');
+        });
+    </script>
 </body>
 </html>
