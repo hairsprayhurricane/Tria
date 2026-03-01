@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UI Lang="en">
+
+  <Login_Title>Sign In</Login_Title>
+  <Login_Heading>Sign in to Tria</Login_Heading>
+  <Login_Subtitle>Continue your cybersecurity training.</Login_Subtitle>
+  <Login_Email>Email</Login_Email>
+  <Login_Password>Password</Login_Password>
+  <Login_Submit>Sign In</Login_Submit>
+  <Login_NoAccount>Don't have an account?</Login_NoAccount>
+  <Login_Register>Register</Login_Register>
+  <Login_Guest>👥 Continue as Guest (24h)</Login_Guest>
+  <Login_Footer>Minimalist interface inspired by classic Linux windows</Login_Footer>
+
+  <Register_Title>Register</Register_Title>
+  <Register_Heading>Create Account</Register_Heading>
+  <Register_Subtitle>Account for cybersecurity training.</Register_Subtitle>
+  <Register_Email>Email</Register_Email>
+  <Register_Password>Password</Register_Password>
+  <Register_ConfirmPassword>Confirm Password</Register_ConfirmPassword>
+  <Register_Submit>Create Account</Register_Submit>
+  <Register_HaveAccount>Already have an account?</Register_HaveAccount>
+  <Register_Login>Sign In</Register_Login>
+
+  <Index_Title>Dashboard</Index_Title>
+  <Index_Heading>Tria · Dashboard</Index_Heading>
+  <Index_SubHeading>Cybersecurity training, version 1.0</Index_SubHeading>
+  <Index_OverallProgress>Overall course progress:</Index_OverallProgress>
+  <Index_CertAchieved>Certification achieved</Index_CertAchieved>
+  <Index_InProgress>Training in progress</Index_InProgress>
+  <Index_BlockDesc>Practice and theory to build skills.</Index_BlockDesc>
+  <Index_CompletedSuffix>% completed</Index_CompletedSuffix>
+  <Index_Logout>Sign Out</Index_Logout>
+
+  <Blocks_Back>← Back to dashboard</Blocks_Back>
+  <Blocks_Modules>Modules</Blocks_Modules>
+  <Blocks_Done>Completed</Blocks_Done>
+  <Blocks_Pending>Not started</Blocks_Pending>
+  <Blocks_Empty>No modules added yet.</Blocks_Empty>
+  <Blocks_NotFound>Block not found.</Blocks_NotFound>
+
+  <Video_Back>← Back to dashboard</Video_Back>
+  <Video_Prefix>Video:</Video_Prefix>
+  <Video_MarkDone>Mark as completed</Video_MarkDone>
+  <Video_Done>Video lesson marked as completed.</Video_Done>
+  <Video_NotFound>Video not found.</Video_NotFound>
+
+  <Quiz_Back>← Back to dashboard</Quiz_Back>
+  <Quiz_Prefix>Quiz:</Quiz_Prefix>
+  <Quiz_Question>Question</Quiz_Question>
+  <Quiz_Of>of</Quiz_Of>
+  <Quiz_Submit>Submit Quiz</Quiz_Submit>
+  <Quiz_Retake>Retake Quiz</Quiz_Retake>
+  <Quiz_Passed>Quiz passed successfully.</Quiz_Passed>
+  <Quiz_Failed>You need more correct answers.</Quiz_Failed>
+  <Quiz_MinScore>Minimum passing score:</Quiz_MinScore>
+  <Quiz_NotFound>Quiz not found.</Quiz_NotFound>
+
+</UI>

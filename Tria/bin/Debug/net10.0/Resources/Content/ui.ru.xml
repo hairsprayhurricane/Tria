@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UI Lang="ru">
+
+  <Login_Title>Вход</Login_Title>
+  <Login_Heading>Вход в Tria</Login_Heading>
+  <Login_Subtitle>Продолжите обучение и лабораторные по кибербезопасности.</Login_Subtitle>
+  <Login_Email>Email</Login_Email>
+  <Login_Password>Пароль</Login_Password>
+  <Login_Submit>Войти</Login_Submit>
+  <Login_NoAccount>Нет аккаунта?</Login_NoAccount>
+  <Login_Register>Зарегистрируйтесь</Login_Register>
+  <Login_Guest>👥 Вход как гость (24 часа)</Login_Guest>
+  <Login_Footer>Минималистичный интерфейс в духе классических Linux‑окошек</Login_Footer>
+
+  <Register_Title>Регистрация</Register_Title>
+  <Register_Heading>Создание аккаунта</Register_Heading>
+  <Register_Subtitle>Учётная запись для обучения кибербезопасности.</Register_Subtitle>
+  <Register_Email>Email</Register_Email>
+  <Register_Password>Пароль</Register_Password>
+  <Register_ConfirmPassword>Подтвердите пароль</Register_ConfirmPassword>
+  <Register_Submit>Зарегистрироваться</Register_Submit>
+  <Register_HaveAccount>Уже есть аккаунт?</Register_HaveAccount>
+  <Register_Login>Войти</Register_Login>
+
+  <Index_Title>Дашборд</Index_Title>
+  <Index_Heading>Tria · Дашборд</Index_Heading>
+  <Index_SubHeading>Обучение кибербезопасности, версия 1.0</Index_SubHeading>
+  <Index_OverallProgress>Общий прогресс по курсу:</Index_OverallProgress>
+  <Index_CertAchieved>Сертификация достигнута</Index_CertAchieved>
+  <Index_InProgress>В процессе обучения</Index_InProgress>
+  <Index_BlockDesc>Практика и теория для отработки навыков.</Index_BlockDesc>
+  <Index_CompletedSuffix>% завершено</Index_CompletedSuffix>
+  <Index_Logout>Выйти из системы</Index_Logout>
+
+  <Blocks_Back>← Вернуться на дашборд</Blocks_Back>
+  <Blocks_Modules>Модули</Blocks_Modules>
+  <Blocks_Done>Завершено</Blocks_Done>
+  <Blocks_Pending>Не начато</Blocks_Pending>
+  <Blocks_Empty>Модули ещё не добавлены.</Blocks_Empty>
+  <Blocks_NotFound>Блок не найден.</Blocks_NotFound>
+
+  <Video_Back>← Вернуться на дашборд</Video_Back>
+  <Video_Prefix>Видео:</Video_Prefix>
+  <Video_MarkDone>Отметить как завершённое</Video_MarkDone>
+  <Video_Done>Видеоурок отмечен как завершённый.</Video_Done>
+  <Video_NotFound>Видео не найдено.</Video_NotFound>
+
+  <Quiz_Back>← Вернуться на дашборд</Quiz_Back>
+  <Quiz_Prefix>Тест:</Quiz_Prefix>
+  <Quiz_Question>Вопрос</Quiz_Question>
+  <Quiz_Of>из</Quiz_Of>
+  <Quiz_Submit>Отправить тест</Quiz_Submit>
+  <Quiz_Retake>Пройти тест заново</Quiz_Retake>
+  <Quiz_Passed>Тест пройден успешно.</Quiz_Passed>
+  <Quiz_Failed>Необходимо набрать больше правильных ответов.</Quiz_Failed>
+  <Quiz_MinScore>Минимальный порог:</Quiz_MinScore>
+  <Quiz_NotFound>Тест не найден.</Quiz_NotFound>
+
+</UI>

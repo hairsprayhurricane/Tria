@@ -1,163 +1,59 @@
 @page
 @model IndexModel
+@using Tria.Services
+@inject IUiLocalizer T
 @{
-    ViewData["Title"] = "Дашборд";
+    ViewData["Title"] = T["Index_Title"];
     Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
 }
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="@lang">
 <head>
     <meta charset="utf-8" />
-    <title>Дашборд – Tria</title>
+    <title>@ViewData["Title"] – Tria</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background-color: #f3f4f6;
-            color: #111827;
-        }
-        .page {
-            min-height: 100vh;
-            padding: 24px;
-        }
-        .shell {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: #f3f4f6; color: #111827; }
+        .page { min-height: 100vh; padding: 24px; }
+        .shell { max-width: 1200px; margin: 0 auto; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 12px; }
+        .top-title { font-size: 20px; font-weight: 600; color: #111827; }
+        .top-subtitle { font-size: 12px; color: #6b7280; }
 
-        /* Верхняя панель */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        .top-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #111827;
-        }
-        .top-subtitle {
-            font-size: 12px;
-            color: #6b7280;
-        }
+        .lang-switcher { position: relative; display: inline-block; }
+        .lang-btn { display: flex; align-items: center; gap: 6px; padding: 6px 10px; font-size: 14px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; cursor: pointer; color: #374151; white-space: nowrap; }
+        .lang-btn:hover { border-color: #9ca3af; }
+        .lang-btn .arrow { font-size: 10px; color: #9ca3af; }
+        .lang-dropdown { display: none; position: absolute; right: 0; top: calc(100% + 4px); background: #fff; border: 1px solid #d1d5db; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.10); min-width: 160px; z-index: 100; overflow: hidden; }
+        .lang-switcher:hover .lang-dropdown, .lang-switcher:focus-within .lang-dropdown { display: block; }
+        .lang-option { display: block; text-decoration: none; width: 100%; padding: 8px 14px; font-size: 14px; text-align: left; background: none; border: none; cursor: pointer; color: #111827; white-space: nowrap; }
+        .lang-option:hover { background: #f3f4f6; }
+        .lang-option.active { background: #eff6ff; color: #1d4ed8; font-weight: 500; }
 
-        /* Карточка прогресса */
-        .summary-box {
-            background-color: #ffffff;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            padding: 16px 18px;
-            margin-bottom: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .summary-text {
-            font-size: 14px;
-            color: #4b5563;
-        }
-        .summary-badge {
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .summary-badge-ok {
-            background-color: #dcfce7;
-            color: #15803d;
-            border: 1px solid #15803d;
-        }
-        .summary-badge-progress {
-            background-color: #e5e7eb;
-            color: #374151;
-            border: 1px solid #9ca3af;
-        }
+        .summary-box { background-color: #fff; border: 1px solid #d1d5db; border-radius: 8px; padding: 16px 18px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
+        .summary-text { font-size: 14px; color: #4b5563; }
+        .summary-badge { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+        .summary-badge-ok { background-color: #dcfce7; color: #15803d; border: 1px solid #15803d; }
+        .summary-badge-progress { background-color: #e5e7eb; color: #374151; border: 1px solid #9ca3af; }
 
-        /* Сетка блоков */
-        .blocks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 18px;
-        }
-        .block-link {
-            text-decoration: none;
-            color: inherit;
-        }
-        .block-card {
-            background-color: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-            cursor: pointer;
-        }
-        .block-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-        }
-        .block-header {
-            padding: 14px 16px;
-            border-bottom: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-        }
-        .block-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 4px;
-        }
-        .block-badge {
-            font-size: 11px;
-            color: #6b7280;
-        }
-        .block-body {
-            padding: 14px 16px 16px 16px;
-        }
-        .block-desc {
-            font-size: 13px;
-            color: #4b5563;
-            margin-bottom: 10px;
-        }
-        .progress-bar-bg {
-            width: 100%;
-            height: 8px;
-            border-radius: 999px;
-            background-color: #e5e7eb;
-            overflow: hidden;
-            margin-bottom: 6px;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 999px;
-            background-color: #2563eb; /* обычный синий */
-            transition: width 0.4s ease;
-        }
-        .block-progress-text {
-            font-size: 12px;
-            color: #374151;
-            text-align: right;
-        }
+        .blocks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
+        .block-link { text-decoration: none; color: inherit; }
+        .block-card { background-color: #fff; border-radius: 8px; border: 1px solid #d1d5db; box-shadow: 0 8px 20px rgba(0,0,0,0.05); transition: transform 0.18s, box-shadow 0.18s; cursor: pointer; }
+        .block-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+        .block-header { padding: 14px 16px; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb; }
+        .block-title { font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 4px; }
+        .block-badge { font-size: 11px; color: #6b7280; }
+        .block-body { padding: 14px 16px 16px; }
+        .block-desc { font-size: 13px; color: #4b5563; margin-bottom: 10px; }
+        .progress-bar-bg { width: 100%; height: 8px; border-radius: 999px; background-color: #e5e7eb; overflow: hidden; margin-bottom: 6px; }
+        .progress-bar-fill { height: 100%; border-radius: 999px; background-color: #2563eb; transition: width 0.4s; }
+        .block-progress-text { font-size: 12px; color: #374151; text-align: right; }
 
-        /* Низ */
-        .bottom-bar {
-            margin-top: 24px;
-            display: flex;
-            justify-content: flex-end;
-        }
-        .btn-logout {
-            padding: 8px 18px;
-            font-size: 13px;
-            border-radius: 4px;
-            border: 1px solid #b91c1c;
-            background-color: #b91c1c;
-            color: #f9fafb;
-            cursor: pointer;
-        }
-        .btn-logout:hover {
-            background-color: #991b1b;
-        }
+        .bottom-bar { margin-top: 24px; display: flex; justify-content: flex-end; }
+        .btn-logout { padding: 8px 18px; font-size: 13px; border-radius: 4px; border: 1px solid #b91c1c; background-color: #b91c1c; color: #f9fafb; cursor: pointer; }
+        .btn-logout:hover { background-color: #991b1b; }
     </style>
 </head>
 <body>
@@ -166,27 +62,30 @@
 
             <header class="top-bar">
                 <div>
-                    <div class="top-title">Tria · Дашборд</div>
-                    <div class="top-subtitle">Обучение кибербезопасности, версия 1.0</div>
+                    <div class="top-title">@T["Index_Heading"]</div>
+                    <div class="top-subtitle">@T["Index_SubHeading"]</div>
+                </div>
+                <div class="lang-switcher">
+                    <button type="button" class="lang-btn">
+                        @(lang == "ru" ? "🇷🇺 Русский" : "🇬🇧 English")
+                        <span class="arrow">▼</span>
+                    </button>
+                    <div class="lang-dropdown">
+                        <a href="/set-language?culture=en&returnUrl=/" class="lang-option @(lang == "en" ? "active" : "")">🇬🇧 English</a>
+                        <a href="/set-language?culture=ru&returnUrl=/" class="lang-option @(lang == "ru" ? "active" : "")">🇷🇺 Русский</a>
+                    </div>
                 </div>
             </header>
 
             <section class="summary-box">
-                <div class="summary-text">
-                    Общий прогресс по курсу: <b>@Model.OverallProgress%</b>
-                </div>
-
+                <div class="summary-text">@T["Index_OverallProgress"] <b>@Model.OverallProgress%</b></div>
                 @if (Model.OverallProgress >= 80)
                 {
-                    <div class="summary-badge summary-badge-ok">
-                        Сертификация достигнута
-                    </div>
+                    <div class="summary-badge summary-badge-ok">@T["Index_CertAchieved"]</div>
                 }
                 else
                 {
-                    <div class="summary-badge summary-badge-progress">
-                        В процессе обучения
-                    </div>
+                    <div class="summary-badge summary-badge-progress">@T["Index_InProgress"]</div>
                 }
             </section>
 
@@ -200,17 +99,11 @@
                                 <div class="block-badge">@block.Description</div>
                             </div>
                             <div class="block-body">
-                                <p class="block-desc">
-                                    Практика и теория для отработки навыков.
-                                </p>
-
+                                <p class="block-desc">@T["Index_BlockDesc"]</p>
                                 <div class="progress-bar-bg">
-                                    <div class="progress-bar-fill"
-                                         style="width: @Model.BlockProgress[@block.Id]%"></div>
+                                    <div class="progress-bar-fill" style="width: @Model.BlockProgress[@block.Id]%"></div>
                                 </div>
-                                <div class="block-progress-text">
-                                    @Model.BlockProgress[@block.Id]% завершено
-                                </div>
+                                <div class="block-progress-text">@Model.BlockProgress[@block.Id]@T["Index_CompletedSuffix"]</div>
                             </div>
                         </article>
                     </a>
@@ -219,9 +112,7 @@
 
             <footer class="bottom-bar">
                 <form method="post" asp-page-handler="Logout">
-                    <button type="submit" class="btn-logout">
-                        Выйти из системы
-                    </button>
+                    <button type="submit" class="btn-logout">@T["Index_Logout"]</button>
                 </form>
             </footer>
 

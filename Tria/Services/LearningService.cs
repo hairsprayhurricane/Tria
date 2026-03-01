@@ -108,11 +108,11 @@ public class LearningService : ILearningService
         var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         if (lang.Length != 2) lang = "ru";
 
-        var path = Path.Combine(_env.ContentRootPath, "Content", $"course.{lang}.xml");
+        var path = Path.Combine(_env.ContentRootPath, "Resources/Content", $"course.{lang}.xml");
 
         // fallback
         if (!File.Exists(path))
-            path = Path.Combine(_env.ContentRootPath, "Content", "course.ru.xml");
+            path = Path.Combine(_env.ContentRootPath, "Resources/Content", "course.ru.xml");
 
         var doc = XDocument.Load(path);
 

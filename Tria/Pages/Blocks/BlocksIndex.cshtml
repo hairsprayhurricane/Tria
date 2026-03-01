@@ -1,153 +1,53 @@
 @page "/Blocks/{blockId}"
 @model BlocksIndexModel
+@using Tria.Services
+@inject IUiLocalizer T
 @{
-    ViewData["Title"] = Model.Block?.Title ?? "Блок";
+    ViewData["Title"] = Model.Block?.Title ?? "Block";
     Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
 }
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="@lang">
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] – Tria</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background-color: #f3f4f6;
-            color: #111827;
-        }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: #f3f4f6; color: #111827; }
         .page { min-height: 100vh; padding: 24px; }
         .shell { max-width: 900px; margin: 0 auto; }
-
-        .back-link {
-            display: inline-block;
-            font-size: 13px;
-            color: #2563eb;
-            text-decoration: none;
-            margin-bottom: 16px;
-        }
+        .back-link { display: inline-block; font-size: 13px; color: #2563eb; text-decoration: none; margin-bottom: 16px; }
         .back-link:hover { text-decoration: underline; }
-
-        .block-shell {
-            background-color: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            box-shadow: 0 10px 24px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
-        }
-        .block-main-header {
-            padding: 18px 20px;
-            border-bottom: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-        }
-        .block-main-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .block-main-desc {
-            font-size: 13px;
-            color: #4b5563;
-        }
-        .block-main-body {
-            padding: 18px 20px 20px 20px;
-        }
-
-        .progress-wrap {
-            margin-bottom: 14px;
-        }
-        .progress-bar-bg {
-            width: 100%;
-            height: 10px;
-            border-radius: 999px;
-            background-color: #e5e7eb;
-            overflow: hidden;
-            margin-bottom: 6px;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 999px;
-            background-color: #2563eb;
-            transition: width 0.4s ease;
-        }
-        .progress-text {
-            font-size: 13px;
-            color: #374151;
-            text-align: right;
-        }
-
-        .modules-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 10px;
-        }
-
-        .modules-list {
-            display: grid;
-            gap: 10px;
-        }
-        .module-link {
-            text-decoration: none;
-            color: inherit;
-        }
-        .module-row {
-            background-color: #ffffff;
-            border-radius: 6px;
-            border: 1px solid #d1d5db;
-            padding: 12px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background-color 0.15s ease, border-color 0.15s ease;
-        }
-        .module-row:hover {
-            background-color: #f3f4ff;
-            border-color: #9ca3af;
-        }
-        .module-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .module-icon {
-            font-size: 20px;
-        }
-        .module-title {
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .module-status {
-            font-size: 12px;
-        }
-        .status-done {
-            color: #15803d;
-        }
-        .status-pending {
-            color: #b45309;
-        }
-        .module-arrow {
-            font-size: 16px;
-            color: #6b7280;
-        }
-
-        .empty-box {
-            background-color: #ffffff;
-            border-radius: 6px;
-            border: 1px solid #d1d5db;
-            padding: 20px;
-            text-align: center;
-            color: #4b5563;
-            font-size: 14px;
-        }
+        .block-shell { background-color: #fff; border-radius: 8px; border: 1px solid #d1d5db; box-shadow: 0 10px 24px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        .block-main-header { padding: 18px 20px; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb; }
+        .block-main-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .block-main-desc { font-size: 13px; color: #4b5563; }
+        .block-main-body { padding: 18px 20px 20px; }
+        .progress-bar-bg { width: 100%; height: 10px; border-radius: 999px; background-color: #e5e7eb; overflow: hidden; margin-bottom: 6px; }
+        .progress-bar-fill { height: 100%; border-radius: 999px; background-color: #2563eb; transition: width 0.4s; }
+        .progress-text { font-size: 13px; color: #374151; text-align: right; }
+        .modules-title { font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 10px; }
+        .modules-list { display: grid; gap: 10px; }
+        .module-link { text-decoration: none; color: inherit; }
+        .module-row { background-color: #fff; border-radius: 6px; border: 1px solid #d1d5db; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; transition: background-color 0.15s, border-color 0.15s; }
+        .module-row:hover { background-color: #f3f4ff; border-color: #9ca3af; }
+        .module-left { display: flex; align-items: center; gap: 10px; }
+        .module-icon { font-size: 20px; }
+        .module-title { font-size: 14px; font-weight: 500; }
+        .module-status { font-size: 12px; }
+        .status-done { color: #15803d; }
+        .status-pending { color: #b45309; }
+        .module-arrow { font-size: 16px; color: #6b7280; }
+        .empty-box { background-color: #fff; border-radius: 6px; border: 1px solid #d1d5db; padding: 20px; text-align: center; color: #4b5563; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="page">
         <div class="shell">
 
-            <a href="/" class="back-link">← Вернуться на дашборд</a>
+            <a href="/" class="back-link">@T["Blocks_Back"]</a>
 
             @if (Model.Block != null)
             {
@@ -157,21 +57,15 @@
                         <div class="block-main-desc">@Model.Block.Description</div>
                     </header>
                     <div class="block-main-body">
-                        <div class="progress-wrap">
-                            <div class="progress-bar-bg">
-                                <div class="progress-bar-fill"
-                                     style="width: @Model.Progress%"></div>
-                            </div>
-                            <div class="progress-text">
-                                @Model.Progress% завершено
-                            </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: @Model.Progress%"></div>
                         </div>
+                        <div class="progress-text">@Model.Progress@T["Index_CompletedSuffix"]</div>
                     </div>
                 </section>
 
                 <section>
-                    <div class="modules-title">Модули</div>
-
+                    <div class="modules-title">@T["Blocks_Modules"]</div>
                     @if (Model.Modules.Any())
                     {
                         <div class="modules-list">
@@ -184,29 +78,23 @@
                                     <div class="module-row">
                                         <div class="module-left">
                                             <div class="module-icon">
-                                                @if (module.Type == "Video")
-                                                {
-                                                    @:🎬
+                                                @{
+                                                    var icon = module.Type == "Video" ? "▶️"
+                                                             : module.Type == "Quiz"  ? "📝"
+                                                             : "🧪";
                                                 }
-                                                else if (module.Type == "Quiz")
-                                                {
-                                                    @:✏️
-                                                }
-                                                else
-                                                {
-                                                    @:🧪
-                                                }
+                                                @icon
                                             </div>
                                             <div class="module-title">@module.Title</div>
                                         </div>
                                         <div>
                                             @if (Model.CompletedModules.Contains(module.Id))
                                             {
-                                                <span class="module-status status-done">Завершено</span>
+                                                <span class="module-status status-done">@T["Blocks_Done"]</span>
                                             }
                                             else
                                             {
-                                                <span class="module-status status-pending">Не начато</span>
+                                                <span class="module-status status-pending">@T["Blocks_Pending"]</span>
                                             }
                                         </div>
                                         <div class="module-arrow">→</div>
@@ -217,17 +105,13 @@
                     }
                     else
                     {
-                        <div class="empty-box">
-                            Модули ещё не добавлены.
-                        </div>
+                        <div class="empty-box">@T["Blocks_Empty"]</div>
                     }
                 </section>
             }
             else
             {
-                <div class="empty-box">
-                    Блок не найден.
-                </div>
+                <div class="empty-box">@T["Blocks_NotFound"]</div>
             }
 
         </div>

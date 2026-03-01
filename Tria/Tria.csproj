@@ -8,11 +8,8 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Pages\Blocks\" />
-    <Folder Include="Pages\Modules\" />
-    <Folder Include="Services\" />
     <Folder Include="Data\" />
-    <None Include="Content\**\*.xml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="Resources\Content\**\*.xml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
