@@ -1,0 +1,10 @@
+﻿wwwroot/
+└── Resources/
+    └── GameContent/
+        └── communications_Game/          <- blockKey + "_Game"
+            ├── Build/
+            │   ├── communications_Game.loader.js
+            │   ├── communications_Game.data
+            │   ├── communications_Game.framework.js
+            │   └── communications_Game.wasm
+            └── StreamingAssets/

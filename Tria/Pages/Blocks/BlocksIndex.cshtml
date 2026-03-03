@@ -54,6 +54,43 @@
         .status-pending { color: #b45309; }
         .module-arrow { font-size: 16px; color: var(--text-muted); }
         .empty-box { background-color: var(--surface); border-radius: 6px; border: 1px solid var(--border); padding: 20px; text-align: center; color: var(--text-sub); font-size: 14px; }
+
+        /* Кнопка игры */
+        .game-banner {
+            display: flex; align-items: center; justify-content: space-between;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border-radius: 8px; border: 1px solid #4338ca;
+            padding: 16px 20px; margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(99,102,241,0.25);
+        }
+        .game-banner.locked {
+            background: var(--surface-2);
+            border-color: var(--border);
+            box-shadow: none;
+        }
+        .game-banner-text { color: #e0e7ff; }
+        .game-banner.locked .game-banner-text { color: var(--text-muted); }
+        .game-banner-title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .game-banner-sub { font-size: 12px; color: #a5b4fc; }
+        .game-banner.locked .game-banner-sub { color: var(--text-muted); }
+        .btn-game {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 20px; font-size: 14px; font-weight: 500;
+            border-radius: 6px; border: none;
+            background: #4f46e5; color: #fff;
+            text-decoration: none; cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+        .btn-game:hover { background: #4338ca; transform: translateY(-1px); }
+        .btn-game:active { transform: translateY(0); }
+        .btn-game-locked {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 20px; font-size: 14px; font-weight: 500;
+            border-radius: 6px; border: 1px solid var(--border);
+            background: var(--surface); color: var(--text-muted);
+            cursor: not-allowed; white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +117,35 @@
                     </div>
                 </section>
 
+                @* Баннер с кнопкой игры — показывается только если HasGame=true *@
+                @if (Model.HasGame)
+                {
+                    @if (Model.GameUnlocked)
+                    {
+                        <div class="game-banner">
+                            <div class="game-banner-text">
+                                <div class="game-banner-title">🎮 @T["Blocks_GameTitle"]</div>
+                                <div class="game-banner-sub">@T["Blocks_GameSub"]</div>
+                            </div>
+                            <a href="@Model.GameUrl" class="btn-game">
+                                ▶ @T["Blocks_GameBtn"]
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="game-banner locked">
+                            <div class="game-banner-text">
+                                <div class="game-banner-title">🔒 @T["Blocks_GameTitle"]</div>
+                                <div class="game-banner-sub">@T["Blocks_GameLocked"]</div>
+                            </div>
+                            <span class="btn-game-locked">
+                                🔒 @T["Blocks_GameBtn"]
+                            </span>
+                        </div>
+                    }
+                }
+
                 <section>
                     <div class="modules-title">@T["Blocks_Modules"]</div>
                     @if (Model.Modules.Any())
@@ -87,24 +153,23 @@
                         <div class="modules-list">
                             @foreach (var module in Model.Modules)
                             {
-                                var url = module.Type == "Video"
-                                    ? $"/Modules/video/{module.Id}"
-                                    : $"/Modules/quiz/{module.Id}";
+                                var url = module.Type == "Video" ? $"/Modules/video/{module.Id}"
+                                        : module.Type == "Game"  ? $"/Modules/game/{module.Id}"
+                                        :                          $"/Modules/quiz/{module.Id}";
+
+                                var icon = module.Type == "Video" ? "▶️"
+                                         : module.Type == "Quiz"  ? "📝"
+                                         : module.Type == "Game"  ? "🎮"
+                                         : "🧪";
+
                                 <a href="@url" class="module-link">
                                     <div class="module-row">
                                         <div class="module-left">
-                                            <div class="module-icon">
-                                                @{
-                                                    var icon = module.Type == "Video" ? "▶️"
-                                                             : module.Type == "Quiz"  ? "📝"
-                                                             : "🧪";
-                                                }
-                                                @icon
-                                            </div>
+                                            <div class="module-icon">@icon</div>
                                             <div class="module-title">@module.Title</div>
                                         </div>
                                         <div>
-                                            @if (Model.CompletedModules.Contains(module.Id))
+                                            @if (Model.CompletedModules.Contains((int)module.Id))
                                             {
                                                 <span class="module-status status-done">@T["Blocks_Done"]</span>
                                             }

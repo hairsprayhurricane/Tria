@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tria")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0646f570db35188d2f2e9eefef0330d2c9d9b38")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aa8570320b1bd1cdca7bd58f1005519414519740")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tria")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tria")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

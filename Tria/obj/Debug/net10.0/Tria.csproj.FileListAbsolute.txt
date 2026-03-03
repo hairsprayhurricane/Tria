@@ -192,7 +192,6 @@ C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\uaroc7mwiq-{0
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\328u6z9gn9-{0}-kbrnm935zg-kbrnm935zg.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\w3a8iiedwi-{0}-jj8uyg4cgr-jj8uyg4cgr.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\9ohfxn7ko8-{0}-y7v9cxd14o-y7v9cxd14o.gz
-C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\mei78sz5om-{0}-notf2xhcfb-notf2xhcfb.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\o3pkwp3ypa-{0}-h1s4sie4z3-h1s4sie4z3.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\vgm7eve30i-{0}-63fj8s7r0e-63fj8s7r0e.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\m09qwxyp68-{0}-0j3bgjxly4-0j3bgjxly4.gz
@@ -261,8 +260,9 @@ C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\runtimes\win-arm64\nativ
 C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\Tria.sourcelink.json
-C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\course.en.xml
-C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\course.ru.xml
 C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\course.xml
 C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\ui.en.xml
 C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\ui.ru.xml
+C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\mei78sz5om-{0}-me0xjkfxef-me0xjkfxef.gz
+C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\course.en.xml
+C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\course.ru.xml

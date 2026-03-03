@@ -130,6 +130,7 @@ public class LearningService : ILearningService
                 Color = (string?)b.Attribute("Color") ?? "#000000",
                 Order = (int?)b.Attribute("Order") ?? 0,
                 IsActive = (bool?)b.Attribute("IsActive") ?? true,
+                HasGame = (bool?)b.Attribute("HasGame") ?? false,
                 Modules = new List<Module>()
             };
 

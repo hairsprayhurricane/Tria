@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Course>
   <Blocks>
-    <Block Key="communications" Color="#4a9eff" Order="1" IsActive="true">
+    <Block Key="communications" Color="#4a9eff" Order="1" IsActive="true" HasGame="false">
       <Modules>
         <Module Key="comm_video_1" Type="Video" YoutubeId="dQw4w9WgXcQ" Order="1" IsActive="true" />
         <Module Key="comm_quiz_1" Type="Quiz" Order="2" IsActive="true"
@@ -9,7 +9,7 @@
       </Modules>
     </Block>
 
-    <Block Key="devices" Color="#7c3aed" Order="2" IsActive="true">
+    <Block Key="devices" Color="#7c3aed" Order="2" IsActive="true" HasGame="true">
       <Modules>
         <Module Key="dev_video_1" Type="Video" YoutubeId="jNQXAC9IVRw" Order="1" IsActive="true" />
         <Module Key="dev_quiz_1" Type="Quiz" Order="2" IsActive="true"
@@ -17,7 +17,7 @@
       </Modules>
     </Block>
 
-    <Block Key="networks" Color="#06b6d4" Order="3" IsActive="true">
+    <Block Key="networks" Color="#06b6d4" Order="3" IsActive="true" HasGame="false">
       <Modules>
         <Module Key="net_video_1" Type="Video" YoutubeId="9bZkp7q19f0" Order="1" IsActive="true" />
         <Module Key="net_quiz_1" Type="Quiz" Order="2" IsActive="true"
