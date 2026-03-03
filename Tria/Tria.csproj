@@ -8,8 +8,9 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Resources\GameContent\communications_Game\" />
+    <Folder Include="wwwroot\Resources\GameContent\communications_Game\" />
     <None Include="Resources\Content\**\*.xml" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="wwwroot\Resources\GameContent\GameStructure.txt" />
   </ItemGroup>
 
   <ItemGroup>

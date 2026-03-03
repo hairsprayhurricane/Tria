@@ -14,33 +14,18 @@ namespace Tria.Pages.Modules
             _learningService = learningService;
         }
 
-        public dynamic? Module { get; set; }
-        public bool IsCompleted { get; set; }
-
-        // Путь к папке с Unity WebGL-сборками относительно wwwroot.
-        // Файлы игры ожидаются в: wwwroot/Resources/GameContent/{blockKey}_Game/
+        public dynamic? Block { get; set; }
         public string GameBasePath { get; set; } = "";
 
-        public async Task OnGetAsync(int moduleId)
+        public async Task OnGetAsync(int blockId)
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
+            Block = await _learningService.GetBlockByIdAsync(blockId);
 
-            Module = await _learningService.GetModuleByIdAsync(moduleId);
-
-            if (Module != null)
+            if (Block != null)
             {
-                // Ключ блока используется для формирования пути к игре: {blockKey}_Game
-                string blockKey = (string)(Module.Block?.Key ?? Module.BlockKey ?? "");
+                string blockKey = (string)Block.Key;
                 GameBasePath = $"/Resources/GameContent/{blockKey}_Game";
             }
-
-            var db = HttpContext.RequestServices
-                .GetRequiredService<Tria.Data.ApplicationDbContext>();
-
-            var progress = db.UserModuleProgress
-                .FirstOrDefault(p => p.UserId == userId && p.ModuleId == moduleId);
-
-            IsCompleted = progress?.IsCompleted ?? false;
         }
     }
 }

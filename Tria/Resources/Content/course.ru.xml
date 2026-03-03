@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Course Lang="ru">
 	<Blocks>
-		<Block Id="1" Key="communications" Title="📧 Коммуникации" Description="Фишинг, сообщения, звонки" Color="#4a9eff" Order="1" IsActive="true" HasGame="false">
+		<Block Id="1" Key="communications" Title="📧 Коммуникации" Description="Фишинг, сообщения, звонки" Color="#4a9eff" Order="1" IsActive="true" HasGame="true">
 			<Modules>
 				<Module Id="1" Key="comm_video_1" Title="Видео: Фишинг (база)" Type="Video" YoutubeId="kTM5ko9c4Sk" Order="1" IsActive="true" />
 				<Module Id="2" Key="comm_quiz_1" Title="Тест: Коммуникации" Type="Quiz" Order="2" IsActive="true">

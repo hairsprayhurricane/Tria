@@ -61,7 +61,7 @@ namespace Tria.Pages.Blocks
 
                 if (HasGame)
                 {
-                    GameUrl = $"/Modules/game/{Block.Key}_Game";
+                    GameUrl = $"/Modules/game/{Block.Id}";
 
                     // Игра разблокирована только если все модули блока кроме Game пройдены
                     var requiredModuleIds = Modules
