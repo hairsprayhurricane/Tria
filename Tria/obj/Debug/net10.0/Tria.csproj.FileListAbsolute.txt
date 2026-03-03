@@ -266,11 +266,8 @@ C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\ui.ru.
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\mei78sz5om-{0}-me0xjkfxef-me0xjkfxef.gz
 C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\course.en.xml
 C:\Users\trued\source\repos\Tria\Tria\bin\Debug\net10.0\Resources\Content\course.ru.xml
-C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\8fqlbd9shg-{0}-ebssf0188m-ebssf0188m.gz
-C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\743xc2h1d3-{0}-jo6ol0j5nf-jo6ol0j5nf.gz
-C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\8u8ydt1t7g-{0}-grnefa36sg-grnefa36sg.gz
-C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\xgl6pg0crn-{0}-21qxh5gi61-21qxh5gi61.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\9qwwpb59a8-{0}-sae86n3l19-sae86n3l19.gz
-C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\vjalpho1ux-{0}-xjrd54g5r2-xjrd54g5r2.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\y1rprtaw9r-{0}-wkdv1zz360-wkdv1zz360.gz
 C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\51qbbo60du-{0}-0y2vc3w28x-0y2vc3w28x.gz
+C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\743xc2h1d3-{0}-hv5k6l5len-hv5k6l5len.gz
+C:\Users\trued\source\repos\Tria\Tria\obj\Debug\net10.0\compressed\xgl6pg0crn-{0}-cdy5mql7ia-cdy5mql7ia.gz

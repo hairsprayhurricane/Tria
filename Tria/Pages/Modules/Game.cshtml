@@ -101,9 +101,9 @@ var blockKey = (string?)Model.Block?.Key ?? "";
         s.onload = function () {
             var canvas = document.getElementById("unity-canvas");
             createUnityInstance(canvas, {
-                dataUrl:            gp + "/Build/" + bn + ".data",
-                frameworkUrl:       gp + "/Build/" + bn + ".framework.js",
-                codeUrl:            gp + "/Build/" + bn + ".wasm",
+                dataUrl:      gp + "/Build/" + bn + ".data.br",
+                frameworkUrl: gp + "/Build/" + bn + ".framework.js.br",
+                codeUrl:      gp + "/Build/" + bn + ".wasm.br",
                 streamingAssetsUrl: gp + "/StreamingAssets",
                 companyName:        "Tria",
                 productName:        bn,

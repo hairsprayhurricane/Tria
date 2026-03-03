@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Tria.Data;
@@ -74,18 +75,33 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+// Static files with Brotli support for Unity WebGL builds
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".br"]   = "application/octet-stream";
 provider.Mappings[".wasm"] = "application/wasm";
 provider.Mappings[".data"] = "application/octet-stream";
-provider.Mappings[".framework.js"] = "application/javascript";
-provider.Mappings[".unityweb"] = "application/octet-stream";
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    ContentTypeProvider = provider
+    ContentTypeProvider = provider,
+    OnPrepareResponse = ctx =>
+    {
+        var path = ctx.File.Name;
+
+        if (path.EndsWith(".framework.js.br"))
+            ctx.Context.Response.Headers["Content-Type"] = "application/javascript";
+        else if (path.EndsWith(".loader.js"))
+            ctx.Context.Response.Headers["Content-Type"] = "application/javascript";
+        else if (path.EndsWith(".wasm.br"))
+            ctx.Context.Response.Headers["Content-Type"] = "application/wasm";
+        else if (path.EndsWith(".data.br"))
+            ctx.Context.Response.Headers["Content-Type"] = "application/octet-stream";
+
+        if (path.EndsWith(".br"))
+            ctx.Context.Response.Headers["Content-Encoding"] = "br";
+    }
 });
 
-app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();

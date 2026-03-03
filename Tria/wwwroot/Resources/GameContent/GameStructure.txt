@@ -4,7 +4,10 @@
         └── communications_Game/          <- blockKey + "_Game"
             ├── Build/
             │   ├── communications_Game.loader.js
-            │   ├── communications_Game.data
-            │   ├── communications_Game.framework.js
-            │   └── communications_Game.wasm
+            │   ├── communications_Game.data.br
+            │   ├── communications_Game.framework.js.br
+            │   └── communications_Game.wasm.br
             └── StreamingAssets/
+            
+            
+    GAME MUST BE COMPILED WITH BROCCOLI
