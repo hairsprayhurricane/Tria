@@ -1,0 +1,84 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET
+wwwroot/lib/
+wwwroot/dist/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+nuget.config
+
+# User secrets / environment
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+.env
+.env.*
+!.env.example
+
+# Publishing
+**/publish/
+**/PublishProfiles/
+launchSettings.json
+
+# Certificates
+*.pfx
+*.p12
+*.pem
+*.key
+*.crt
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Entity Framework migrations
+# Migrations/
