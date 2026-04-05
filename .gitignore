@@ -83,3 +83,23 @@ TestResults/
 # Entity Framework migrations
 # Migrations/
 /Tria/obj/Debug
+
+# Roslyn analyzers / compiler cache
+*.binlog
+*.rsp
+
+# dotnet tool manifests cache
+.config/
+
+# JetBrains Rider (дополнительно)
+_ReSharper*/
+*.DotSettings.user
+
+# Visual Studio (дополнительно)
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.opendb
