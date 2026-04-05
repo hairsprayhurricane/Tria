@@ -12,8 +12,8 @@ using Tria.Data;
 namespace Tria.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260208212529_SyncModel")]
-    partial class SyncModel
+    [Migration("20260405113407_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,36 @@ namespace Tria.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "role-admin",
+                            ConcurrencyStamp = "a1b2c3d4-0001-0000-0000-000000000001",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "role-teacher",
+                            ConcurrencyStamp = "a1b2c3d4-0001-0000-0000-000000000002",
+                            Name = "Teacher",
+                            NormalizedName = "TEACHER"
+                        },
+                        new
+                        {
+                            Id = "role-student",
+                            ConcurrencyStamp = "a1b2c3d4-0001-0000-0000-000000000003",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
+                        },
+                        new
+                        {
+                            Id = "role-expert",
+                            ConcurrencyStamp = "a1b2c3d4-0001-0000-0000-000000000004",
+                            Name = "Expert",
+                            NormalizedName = "EXPERT"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -223,7 +253,7 @@ namespace Tria.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Tria.Models.LearningBlock", b =>
+            modelBuilder.Entity("Tria.Models.UserLessonProgress", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,81 +261,43 @@ namespace Tria.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("MaterialsCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LearningBlocks");
-                });
-
-            modelBuilder.Entity("Tria.Models.Module", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BlockId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ContentJson")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("MaterialsCompletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Order")
+                    b.Property<int>("ModuleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
+                    b.Property<bool>("TestPassed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VideoDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("YoutubeId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("XpEarned")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BlockId");
+                    b.HasIndex("UserId", "LessonId")
+                        .IsUnique();
 
-                    b.ToTable("Modules");
+                    b.ToTable("UserLessonProgress");
                 });
 
-            modelBuilder.Entity("Tria.Models.UserModuleProgress", b =>
+            modelBuilder.Entity("Tria.Models.UserTestAttempt", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -313,22 +305,28 @@ namespace Tria.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Attempts")
+                    b.Property<string>("AnswersJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AttemptNumber")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ModuleId")
+                    b.Property<int>("LessonId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Score")
+                    b.Property<int>("MaxScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -337,12 +335,9 @@ namespace Tria.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ModuleId");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("UserId", "ModuleId")
-                        .IsUnique();
-
-                    b.ToTable("UserModuleProgress");
+                    b.ToTable("UserTestAttempts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -396,42 +391,22 @@ namespace Tria.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Tria.Models.Module", b =>
+            modelBuilder.Entity("Tria.Models.UserLessonProgress", b =>
                 {
-                    b.HasOne("Tria.Models.LearningBlock", "Block")
-                        .WithMany("Modules")
-                        .HasForeignKey("BlockId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Block");
-                });
-
-            modelBuilder.Entity("Tria.Models.UserModuleProgress", b =>
-                {
-                    b.HasOne("Tria.Models.Module", "Module")
-                        .WithMany("UserProgress")
-                        .HasForeignKey("ModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Module");
                 });
 
-            modelBuilder.Entity("Tria.Models.LearningBlock", b =>
+            modelBuilder.Entity("Tria.Models.UserTestAttempt", b =>
                 {
-                    b.Navigation("Modules");
-                });
-
-            modelBuilder.Entity("Tria.Models.Module", b =>
-                {
-                    b.Navigation("UserProgress");
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Tria.Migrations
 {
     /// <inheritdoc />
@@ -48,24 +50,6 @@ namespace Tria.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LearningBlocks",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LearningBlocks", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,61 +159,68 @@ namespace Tria.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Modules",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BlockId = table.Column<int>(type: "int", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    YoutubeId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VideoDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContentJson = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Modules", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Modules_LearningBlocks_BlockId",
-                        column: x => x.BlockId,
-                        principalTable: "LearningBlocks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserModuleProgress",
+                name: "UserLessonProgress",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LessonId = table.Column<int>(type: "int", nullable: false),
                     ModuleId = table.Column<int>(type: "int", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    Score = table.Column<int>(type: "int", nullable: true),
-                    Attempts = table.Column<int>(type: "int", nullable: false),
-                    CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    MaterialsCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    XpEarned = table.Column<int>(type: "int", nullable: false),
+                    TestPassed = table.Column<bool>(type: "bit", nullable: false),
+                    MaterialsCompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserModuleProgress", x => x.Id);
+                    table.PrimaryKey("PK_UserLessonProgress", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserModuleProgress_AspNetUsers_UserId",
+                        name: "FK_UserLessonProgress_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTestAttempts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LessonId = table.Column<int>(type: "int", nullable: false),
+                    AttemptNumber = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Score = table.Column<int>(type: "int", nullable: false),
+                    MaxScore = table.Column<int>(type: "int", nullable: false),
+                    AnswersJson = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTestAttempts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserModuleProgress_Modules_ModuleId",
-                        column: x => x.ModuleId,
-                        principalTable: "Modules",
+                        name: "FK_UserTestAttempts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "role-admin", "a1b2c3d4-0001-0000-0000-000000000001", "Admin", "ADMIN" },
+                    { "role-expert", "a1b2c3d4-0001-0000-0000-000000000004", "Expert", "EXPERT" },
+                    { "role-student", "a1b2c3d4-0001-0000-0000-000000000003", "Student", "STUDENT" },
+                    { "role-teacher", "a1b2c3d4-0001-0000-0000-000000000002", "Teacher", "TEACHER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -272,20 +263,15 @@ namespace Tria.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Modules_BlockId",
-                table: "Modules",
-                column: "BlockId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserModuleProgress_ModuleId",
-                table: "UserModuleProgress",
-                column: "ModuleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserModuleProgress_UserId_ModuleId",
-                table: "UserModuleProgress",
-                columns: new[] { "UserId", "ModuleId" },
+                name: "IX_UserLessonProgress_UserId_LessonId",
+                table: "UserLessonProgress",
+                columns: new[] { "UserId", "LessonId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTestAttempts_UserId",
+                table: "UserTestAttempts",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -307,19 +293,16 @@ namespace Tria.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "UserModuleProgress");
+                name: "UserLessonProgress");
+
+            migrationBuilder.DropTable(
+                name: "UserTestAttempts");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Modules");
-
-            migrationBuilder.DropTable(
-                name: "LearningBlocks");
         }
     }
 }

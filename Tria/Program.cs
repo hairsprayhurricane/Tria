@@ -8,10 +8,6 @@ using Tria.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration
-    .AddXmlFile("Resources/Content/course.ru.xml", optional: true, reloadOnChange: true)
-    .AddXmlFile("Resources/Content/course.en.xml", optional: true, reloadOnChange: true);
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -29,22 +25,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// Guest cookie scheme (24h)
-builder.Services.AddAuthentication()
-    .AddCookie("Guest", options =>
-    {
-        options.LoginPath = "/Login";
-        options.AccessDeniedPath = "/Login";
-        options.ExpireTimeSpan = TimeSpan.FromHours(24);
-        options.SlidingExpiration = false;
-        options.Cookie.Name = ".Tria.Guest";
-    });
-
 // Localization — cookie-first, reads ui.{lang}.xml from Content/
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var cultures = new[] { "ru", "en" };
-    options.SetDefaultCulture("en");
+    options.SetDefaultCulture("ru");
     options.AddSupportedCultures(cultures);
     options.AddSupportedUICultures(cultures);
     options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
@@ -54,7 +39,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUiLocalizer, XmlUiLocalizer>();
 
+// Learning service is scoped so XML cache lives per-request (avoids stale lang data)
 builder.Services.AddScoped<ILearningService, LearningService>();
+builder.Services.AddScoped<IProgressService, ProgressService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

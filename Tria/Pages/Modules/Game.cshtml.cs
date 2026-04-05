@@ -1,31 +1,33 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Tria.Models;
 using Tria.Services;
 
-namespace Tria.Pages.Modules
+namespace Tria.Pages.Modules;
+
+[Authorize]
+public class ModulesGameModel : PageModel
 {
-    [Authorize(AuthenticationSchemes = "Identity.Application,Guest")]
-    public class ModulesGameModel : PageModel
+    private readonly ILearningService _learning;
+
+    public CourseModule? Module { get; set; }
+    public Course? Course { get; set; }
+    public string GameBasePath { get; set; } = "";
+
+    public ModulesGameModel(ILearningService learning)
     {
-        private readonly ILearningService _learningService;
+        _learning = learning;
+    }
 
-        public ModulesGameModel(ILearningService learningService)
-        {
-            _learningService = learningService;
-        }
+    public IActionResult OnGet(int moduleId)
+    {
+        Module = _learning.GetModuleById(moduleId);
+        if (Module == null || !Module.HasGame || string.IsNullOrEmpty(Module.GameKey))
+            return NotFound();
 
-        public dynamic? Block { get; set; }
-        public string GameBasePath { get; set; } = "";
-
-        public async Task OnGetAsync(int blockId)
-        {
-            Block = await _learningService.GetBlockByIdAsync(blockId);
-
-            if (Block != null)
-            {
-                string blockKey = (string)Block.Key;
-                GameBasePath = $"/Resources/GameContent/{blockKey}_Game";
-            }
-        }
+        Course = _learning.GetCourseById(Module.CourseId);
+        GameBasePath = $"/Resources/GameContent/{Module.GameKey}";
+        return Page();
     }
 }

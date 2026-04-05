@@ -1,20 +1,12 @@
-﻿using Tria.Models;
+using Tria.Models;
 
 namespace Tria.Services;
 
 public interface ILearningService
 {
-    Task<List<LearningBlock>> GetAllBlocksAsync();
-    Task<LearningBlock?> GetBlockByIdAsync(int blockId);
-
-    Task<List<Module>> GetModulesByBlockIdAsync(int blockId);
-    Task<Module?> GetModuleByIdAsync(int moduleId);
-
-    Task<QuizContent?> GetQuizByModuleIdAsync(int moduleId);
-
-    Task CompleteModuleAsync(string userId, int moduleId, int? score = null);
-
-    Task<int> GetOverallProgressPercentAsync(string userId);
-    Task<int> GetBlockProgressPercentAsync(string userId, int blockId);
-    Task<bool> IsCertifiedAsync(string userId);
+    List<Course> GetAllCourses();
+    Course? GetCourseById(int courseId);
+    CourseModule? GetModuleById(int moduleId);
+    Lesson? GetLessonById(int lessonId);
+    List<Lesson> GetLessonsByModuleId(int moduleId);
 }
