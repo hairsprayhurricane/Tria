@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Courses Lang="ru">
-  <Course Id="1" Key="cybersec" Title="Основы кибербезопасности" Description="Базовый курс по кибербезопасности: коммуникации, устройства и сети" IsActive="true">
+  <Course Id="1" Key="cybersec" Title="Основы кибербезопасности" Description="Базовый курс по кибербезопасности: коммуникации, устройства и сети" IsActive="true" Color="#2563eb">
     <Modules>
 
       <Module Id="1" Key="communications" Title="Коммуникации" Description="Фишинг, сообщения, звонки" Difficulty="Easy" Order="1" IsActive="true" HasGame="true" GameKey="communications_Game">

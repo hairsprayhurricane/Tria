@@ -90,7 +90,7 @@
                     var pct = Model.CourseProgress.GetValueOrDefault(course.Id, 0);
                     var lessonCount = course.Modules.Sum(m => m.Lessons.Count);
                     <a href="/Course/@course.Id" style="display:block;text-decoration:none;color:inherit;">
-                        <div class="course-card">
+                        <div class="course-card" style="@(course.Color != null ? $"border-top:4px solid {course.Color};" : "")">
                             <h2>@course.Title</h2>
                             <div class="course-desc">@course.Description</div>
                             <div class="module-count">@course.Modules.Count мод. · @lessonCount ур.</div>

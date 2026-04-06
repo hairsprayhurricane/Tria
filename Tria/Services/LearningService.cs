@@ -64,6 +64,7 @@ public class LearningService : ILearningService
                 Title       = (string?)ce.Attribute("Title") ?? "",
                 Description = (string?)ce.Attribute("Description") ?? "",
                 IsActive    = (bool?)ce.Attribute("IsActive") ?? true,
+                Color       = (string?)ce.Attribute("Color"),
             };
 
             foreach (var me in ce.Element("Modules")?.Elements("Module") ?? Enumerable.Empty<XElement>())

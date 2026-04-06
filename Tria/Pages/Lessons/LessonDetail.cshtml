@@ -7,6 +7,10 @@
     ViewData["Title"] = Model.Lesson?.Title ?? "Урок";
     Layout = null;
     var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var matDone   = Model.Progress?.MaterialsCompleted == true;
+    var testPassed = Model.LatestAttempt?.Status == TestStatus.Passed;
+    var testFailed = Model.LatestAttempt?.Status == TestStatus.Failed;
+    var testChecking = Model.LatestAttempt?.Status == TestStatus.Checking;
 }
 <!DOCTYPE html>
 <html lang="@lang">
@@ -16,14 +20,14 @@
     <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
     <title>@ViewData["Title"] – Tria</title>
     <style>
-        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --text-sub:#4b5563; --progress-bg:#e5e7eb; --shadow:rgba(0,0,0,0.06); --accent:#2563eb; --accent-h:#1d4ed8; }
-        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --text-sub:#cbd5e1; --progress-bg:#2a2d3e; --shadow:rgba(0,0,0,0.4); }
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --text-sub:#4b5563; --shadow:rgba(0,0,0,0.06); --accent:#2563eb; --accent-h:#1d4ed8; }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --text-sub:#cbd5e1; --shadow:rgba(0,0,0,0.4); }
         * { box-sizing:border-box; margin:0; padding:0; }
         body { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); transition:background-color 0.3s,color 0.3s; }
         a { color:var(--accent); text-decoration:none; }
         a:hover { text-decoration:underline; }
         .page { min-height:100vh; padding:24px; }
-        .shell { max-width:900px; margin:0 auto; }
+        .shell { max-width:700px; margin:0 auto; }
         .top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:12px; flex-wrap:wrap; }
         .breadcrumbs { display:flex; gap:8px; align-items:center; font-size:14px; color:var(--text-muted); flex-wrap:wrap; }
         .breadcrumbs a { color:var(--text-muted); }
@@ -33,24 +37,22 @@
         .theme-btn:hover { border-color:var(--text-muted); }
         .lesson-header { margin-bottom:28px; }
         .lesson-header h1 { font-size:22px; font-weight:700; margin-bottom:6px; }
-        .section { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:18px; }
-        .section-title { font-size:16px; font-weight:600; margin-bottom:16px; color:var(--text); }
-        .material-item { margin-bottom:20px; }
-        .material-item:last-child { margin-bottom:0; }
-        .material-label { font-size:13px; font-weight:500; color:var(--text-muted); margin-bottom:8px; }
-        .video-wrap { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#000; }
-        .video-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; border-radius:8px; }
-        .pdf-link { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; background:var(--surface-2); border:1px solid var(--border-2); border-radius:8px; font-size:14px; font-weight:500; color:var(--accent); transition:border-color 0.2s; }
-        .pdf-link:hover { border-color:var(--accent); text-decoration:none; }
-        .material-img { max-width:100%; border-radius:8px; border:1px solid var(--border-2); }
-        .btn-primary { padding:10px 20px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; transition:background 0.2s; }
-        .btn-primary:hover { background:var(--accent-h); }
-        .btn-secondary { display:inline-block; padding:10px 20px; background:var(--surface-2); color:var(--text); border:1px solid var(--border); border-radius:8px; font-size:14px; font-weight:600; text-decoration:none; transition:border-color 0.2s; }
-        .btn-secondary:hover { border-color:var(--accent); text-decoration:none; color:var(--text); }
-        .success-msg { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#065f46; background:#d1fae5; padding:10px 16px; border-radius:8px; }
-        [data-theme="dark"] .success-msg { background:#064e3b; color:#6ee7b7; }
-        .test-status { font-size:14px; font-weight:500; padding:4px 0; }
-        .test-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+        .lesson-header p { font-size:14px; color:var(--text-muted); }
+
+        .nav-cards { display:flex; flex-direction:column; gap:14px; }
+        .nav-card { display:flex; align-items:center; gap:16px; padding:18px 20px; background:var(--surface); border:1px solid var(--border); border-radius:12px; text-decoration:none; color:var(--text); transition:border-color 0.2s, box-shadow 0.2s; cursor:pointer; }
+        .nav-card:hover { border-color:var(--accent); box-shadow:0 2px 8px var(--shadow); text-decoration:none; color:var(--text); }
+        .nav-card-icon { font-size:28px; flex-shrink:0; width:44px; text-align:center; }
+        .nav-card-body { flex:1; }
+        .nav-card-title { font-size:16px; font-weight:600; margin-bottom:3px; }
+        .nav-card-desc { font-size:13px; color:var(--text-muted); }
+        .nav-card-badge { font-size:12px; font-weight:500; padding:3px 10px; border-radius:20px; flex-shrink:0; }
+        .badge-done { background:#d1fae5; color:#065f46; }
+        [data-theme="dark"] .badge-done { background:#064e3b; color:#6ee7b7; }
+        .badge-failed { background:#fee2e2; color:#991b1b; }
+        [data-theme="dark"] .badge-failed { background:#450a0a; color:#fca5a5; }
+        .badge-checking { background:var(--surface-2); color:var(--text-muted); border:1px solid var(--border-2); }
+        .nav-card-arrow { font-size:16px; color:var(--text-muted); flex-shrink:0; }
     </style>
 </head>
 <body>
@@ -84,87 +86,67 @@
         {
             <div class="lesson-header">
                 <h1>@Model.Lesson.Title</h1>
+                <p>Выберите раздел урока</p>
             </div>
 
-            @* TODO: Sequential lesson unlock system — уроки будут блокироваться до завершения предыдущих. Будет реализовано в следующем обновлении. *@
+            <div class="nav-cards">
 
-            @* ── Materials ── *@
-            @if (Model.Lesson.Materials.Any())
-            {
-                <div class="section">
-                    <div class="section-title">📚 Материалы урока</div>
-                    @foreach (var mat in Model.Lesson.Materials)
-                    {
-                        <div class="material-item">
-                            <div class="material-label">@mat.Title</div>
-                            @if (mat.Type == "Video" && mat.YoutubeId != null)
-                            {
-                                <div class="video-wrap">
-                                    <iframe src="https://www.youtube.com/embed/@mat.YoutubeId"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                            allowfullscreen></iframe>
-                                </div>
-                            }
-                            else if (mat.Type == "PDF" && mat.FilePath != null)
-                            {
-                                <a href="@mat.FilePath" target="_blank" class="pdf-link">
-                                    📄 Открыть PDF
-                                </a>
-                            }
-                            else if (mat.Type == "Image" && mat.FilePath != null)
-                            {
-                                <img src="@mat.FilePath" alt="@mat.Title" class="material-img" />
-                            }
+                @* Материалы *@
+                @if (Model.Lesson.Materials.Any())
+                {
+                    <a href="/Lesson/@Model.Lesson.Id/Materials" class="nav-card">
+                        <div class="nav-card-icon">📚</div>
+                        <div class="nav-card-body">
+                            <div class="nav-card-title">Материалы</div>
+                            <div class="nav-card-desc">Видео, PDF и изображения по теме урока</div>
                         </div>
-                    }
-                </div>
-            }
+                        @if (matDone)
+                        {
+                            <span class="nav-card-badge badge-done">✓ Пройдено</span>
+                        }
+                        <span class="nav-card-arrow">›</span>
+                    </a>
+                }
 
-            @* ── Materials completion ── *@
-            <div class="section">
-                <div class="section-title">Завершение материалов</div>
-                @if (Model.Progress?.MaterialsCompleted == true)
+                @* Тест *@
+                @if (Model.Lesson.Test != null)
                 {
-                    <div class="success-msg">✅ Материалы пройдены (+@Model.Lesson.XpReward XP)</div>
+                    <a href="/Lesson/@Model.Lesson.Id/Test" class="nav-card">
+                        <div class="nav-card-icon">📝</div>
+                        <div class="nav-card-body">
+                            <div class="nav-card-title">Тест</div>
+                            <div class="nav-card-desc">Проверьте свои знания</div>
+                        </div>
+                        @if (testPassed)
+                        {
+                            <span class="nav-card-badge badge-done">✓ @Model.LatestAttempt!.ScorePercent%</span>
+                        }
+                        else if (testFailed)
+                        {
+                            <span class="nav-card-badge badge-failed">✗ @Model.LatestAttempt!.ScorePercent%</span>
+                        }
+                        else if (testChecking)
+                        {
+                            <span class="nav-card-badge badge-checking">⏳ На проверке</span>
+                        }
+                        <span class="nav-card-arrow">›</span>
+                    </a>
                 }
-                else
+
+                @* Игра *@
+                @if (Model.Module?.HasGame == true)
                 {
-                    <form method="post" action="/Lesson/@Model.Lesson.Id?handler=CompleteMaterials">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn-primary">Материалы пройдены (+@Model.Lesson.XpReward XP)</button>
-                    </form>
+                    <a href="/Module/@Model.Module.Id/Game" class="nav-card">
+                        <div class="nav-card-icon">🎮</div>
+                        <div class="nav-card-body">
+                            <div class="nav-card-title">Игра</div>
+                            <div class="nav-card-desc">Интерактивная игра по материалам модуля</div>
+                        </div>
+                        <span class="nav-card-arrow">›</span>
+                    </a>
                 }
+
             </div>
-
-            @* ── Test section ── *@
-            @if (Model.Lesson.Test != null)
-            {
-                <div class="section">
-                    <div class="section-title">📝 Тест</div>
-                    @if (Model.LatestAttempt == null)
-                    {
-                        <a href="/Lesson/@Model.Lesson.Id/Test" class="btn-primary" style="display:inline-block;text-decoration:none;color:#fff;">Начать тест</a>
-                    }
-                    else if (Model.LatestAttempt.Status == TestStatus.Checking)
-                    {
-                        <div class="test-status">⏳ Тест на проверке...</div>
-                    }
-                    else if (Model.LatestAttempt.Status == TestStatus.Passed)
-                    {
-                        <div class="test-row">
-                            <div class="test-status">✅ Тест сдан: @Model.LatestAttempt.ScorePercent%</div>
-                            <a href="/Lesson/@Model.Lesson.Id/Test" class="btn-secondary">Посмотреть результаты</a>
-                        </div>
-                    }
-                    else if (Model.LatestAttempt.Status == TestStatus.Failed)
-                    {
-                        <div class="test-row">
-                            <div class="test-status">❌ Тест не сдан: @Model.LatestAttempt.ScorePercent%</div>
-                            <a href="/Lesson/@Model.Lesson.Id/Test?retake=1" class="btn-secondary">Пересдать</a>
-                        </div>
-                    }
-                </div>
-            }
         }
 
     </div>

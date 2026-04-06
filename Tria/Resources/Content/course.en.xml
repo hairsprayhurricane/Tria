@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Courses Lang="en">
-  <Course Id="1" Key="cybersec" Title="Cybersecurity Fundamentals" Description="A foundational course on cybersecurity: communications, devices, and networks" IsActive="true">
+  <Course Id="1" Key="cybersec" Title="Cybersecurity Fundamentals" Description="A foundational course on cybersecurity: communications, devices, and networks" IsActive="true" Color="#2563eb">
     <Modules>
 
       <Module Id="1" Key="communications" Title="Communications" Description="Phishing, messages, calls" Difficulty="Easy" Order="1" IsActive="true" HasGame="true" GameKey="communications_Game">
