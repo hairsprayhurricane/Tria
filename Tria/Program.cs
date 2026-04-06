@@ -113,4 +113,11 @@ app.MapGet("/set-language", (HttpContext ctx, string culture, string returnUrl =
 });
 
 app.MapRazorPages();
+
+app.MapPost("/Logout", async (HttpContext ctx, SignInManager<IdentityUser> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.LocalRedirect("/Login");
+});
+
 app.Run();
