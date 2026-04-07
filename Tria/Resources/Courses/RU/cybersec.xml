@@ -5,6 +5,9 @@
   Зарезервировано для будущего:
   "role:admin"  — только пользователи с ролью admin
   "plan:pro"    — только пользователи с подпиской pro
+
+  PDF-документы хранятся в:
+  wwwroot/CourseContent/Documents/RU/cybersec/
 -->
 <Course Id="1" Key="cybersec" Title="Основы кибербезопасности"
         Description="Базовый курс по кибербезопасности: коммуникации, устройства и сети"
@@ -16,6 +19,8 @@
         <Lesson Id="1" Key="phishing" Title="Фишинг" Difficulty="Easy" Order="1" IsActive="true">
           <Materials>
             <Material Type="Video" YoutubeId="kTM5ko9c4Sk" Title="Фишинг: основы" />
+            <Material Type="Video" YoutubeId="XBkzBrXlle0" Title="Как распознать фишинговое письмо" />
+            <Material Type="PDF" FilePath="/CourseContent/Documents/RU/cybersec/pamyatka_studenta.pdf" Title="Памятка студента: производственная практика" />
           </Materials>
           <Test PassScore="50">
             <Question Type="MultipleChoice">
@@ -46,6 +51,8 @@
         <Lesson Id="2" Key="updates" Title="Обновления и защита" Difficulty="Medium" Order="1" IsActive="true">
           <Materials>
             <Material Type="Video" YoutubeId="FdmsevEh6gQ" Title="Обновления и защита устройств" />
+            <Material Type="Video" YoutubeId="aEmXeHCKByI" Title="Почему пароли так важны" />
+            <Material Type="PDF" FilePath="/CourseContent/Documents/RU/cybersec/pamyatka_studenta.pdf" Title="Памятка студента: производственная практика" />
           </Materials>
           <Test PassScore="50">
             <Question Type="MultipleChoice">
@@ -76,6 +83,8 @@
         <Lesson Id="3" Key="public_wifi" Title="Публичный Wi-Fi" Difficulty="Hard" Order="1" IsActive="true">
           <Materials>
             <Material Type="Video" YoutubeId="pIamTzHVdnw" Title="Публичный Wi-Fi: опасности" />
+            <Material Type="Video" YoutubeId="P6jAjHaqjPo" Title="Как работает VPN" />
+            <Material Type="PDF" FilePath="/CourseContent/Documents/RU/cybersec/pamyatka_studenta.pdf" Title="Памятка студента: производственная практика" />
           </Materials>
           <Test PassScore="50">
             <Question Type="MultipleChoice">
