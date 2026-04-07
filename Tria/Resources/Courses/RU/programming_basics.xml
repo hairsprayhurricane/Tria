@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Course Id="3" Key="programming_basics" Title="Основы программирования"
+        Description="Введение в алгоритмы, переменные и логику кода на простых примерах"
+        IsActive="true" Color="#059669" Access="public">
+  <Modules>
+
+    <Module Id="6" Key="algorithms" Title="Алгоритмы" Description="Что такое алгоритм и как думает программа" Difficulty="Easy" Order="1" IsActive="true" HasGame="false">
+      <Lessons>
+        <Lesson Id="7" Key="what_is_algorithm" Title="Что такое алгоритм" Difficulty="Easy" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="6hfOvs8pY1k" Title="Алгоритмы для начинающих" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Что такое алгоритм?</Text>
+              <Options>
+                <Option>Язык программирования</Option>
+                <Option>Пошаговая инструкция для решения задачи</Option>
+                <Option>Тип базы данных</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+            <Question Type="MultipleChoice">
+              <Text>Какое свойство НЕ относится к алгоритму?</Text>
+              <Options>
+                <Option>Конечность</Option>
+                <Option>Случайность</Option>
+                <Option>Определённость</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+    <Module Id="7" Key="variables" Title="Переменные и типы данных" Description="Как программы хранят и обрабатывают информацию" Difficulty="Easy" Order="2" IsActive="true" HasGame="false">
+      <Lessons>
+        <Lesson Id="8" Key="variables_intro" Title="Переменные" Difficulty="Easy" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="TEZxV-Q8eGk" Title="Переменные: что это и зачем" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Что хранит переменная?</Text>
+              <Options>
+                <Option>Только числа</Option>
+                <Option>Любое значение: число, текст, логическое значение и др.</Option>
+                <Option>Только текст</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+        <Lesson Id="9" Key="conditions" Title="Условия и ветвление" Difficulty="Medium" Order="2" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="Zp5MZx3TAqE" Title="Условия if/else простым языком" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Что делает конструкция if/else?</Text>
+              <Options>
+                <Option>Повторяет код несколько раз</Option>
+                <Option>Выбирает ветку выполнения в зависимости от условия</Option>
+                <Option>Объявляет переменную</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+            <Question Type="MultipleChoice">
+              <Text>Что вернёт выражение 5 > 3?</Text>
+              <Options>
+                <Option>5</Option>
+                <Option>3</Option>
+                <Option>true</Option>
+              </Options>
+              <CorrectOptionIndex>2</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+    <Module Id="8" Key="loops" Title="Циклы" Description="Повторение действий и обход коллекций" Difficulty="Medium" Order="3" IsActive="true" HasGame="false">
+      <Lessons>
+        <Lesson Id="10" Key="loops_intro" Title="Циклы for и while" Difficulty="Medium" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="wxds6MAtUcc" Title="Циклы в программировании" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Когда используют цикл while?</Text>
+              <Options>
+                <Option>Когда заранее известно точное число повторений</Option>
+                <Option>Когда повторяют действие, пока условие истинно</Option>
+                <Option>Только для работы со строками</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+  </Modules>
+</Course>

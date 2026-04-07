@@ -10,6 +10,11 @@ public class Course
     public string Description { get; set; } = "";
     public bool IsActive { get; set; } = true;
     public string? Color { get; set; }
+    /// <summary>
+    /// "public" — all authenticated users.
+    /// Reserved: "role:admin", "plan:pro", etc.
+    /// </summary>
+    public string Access { get; set; } = "public";
     public List<CourseModule> Modules { get; set; } = new();
 }
 

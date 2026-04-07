@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Access: кто может видеть курс.
+  "public"      — все авторизованные пользователи (текущий режим)
+  Зарезервировано для будущего:
+  "role:admin"  — только пользователи с ролью admin
+  "plan:pro"    — только пользователи с подпиской pro
+-->
+<Course Id="1" Key="cybersec" Title="Основы кибербезопасности"
+        Description="Базовый курс по кибербезопасности: коммуникации, устройства и сети"
+        IsActive="true" Color="#2563eb" Access="public">
+  <Modules>
+
+    <Module Id="1" Key="communications" Title="Коммуникации" Description="Фишинг, сообщения, звонки" Difficulty="Easy" Order="1" IsActive="true" HasGame="true" GameKey="communications_Game">
+      <Lessons>
+        <Lesson Id="1" Key="phishing" Title="Фишинг" Difficulty="Easy" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="kTM5ko9c4Sk" Title="Фишинг: основы" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Что такое фишинг?</Text>
+              <Options>
+                <Option>Попытка украсть данные через поддельные письма/сайты</Option>
+                <Option>Вид антивируса</Option>
+                <Option>Настройка Wi-Fi</Option>
+              </Options>
+              <CorrectOptionIndex>0</CorrectOptionIndex>
+            </Question>
+            <Question Type="MultipleChoice">
+              <Text>Что делать при подозрительном письме?</Text>
+              <Options>
+                <Option>Срочно открыть вложение</Option>
+                <Option>Не переходить по ссылкам и проверить отправителя</Option>
+                <Option>Отправить пароль в ответ</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+    <Module Id="2" Key="devices" Title="Устройства" Description="Защита ПК и смартфона" Difficulty="Medium" Order="2" IsActive="true" HasGame="true" GameKey="devices_Game">
+      <Lessons>
+        <Lesson Id="2" Key="updates" Title="Обновления и защита" Difficulty="Medium" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="FdmsevEh6gQ" Title="Обновления и защита устройств" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Зачем обновлять ОС?</Text>
+              <Options>
+                <Option>Чтобы закрывать уязвимости</Option>
+                <Option>Чтобы увеличить яркость</Option>
+                <Option>Чтобы ускорить зарядку</Option>
+              </Options>
+              <CorrectOptionIndex>0</CorrectOptionIndex>
+            </Question>
+            <Question Type="MultipleChoice">
+              <Text>Что лучше для паролей?</Text>
+              <Options>
+                <Option>Один и тот же пароль везде</Option>
+                <Option>Менеджер паролей и разные пароли</Option>
+                <Option>Пароль 123456</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+    <Module Id="3" Key="networks" Title="Сети" Description="Wi-Fi, VPN и безопасный интернет" Difficulty="Hard" Order="3" IsActive="true" HasGame="false">
+      <Lessons>
+        <Lesson Id="3" Key="public_wifi" Title="Публичный Wi-Fi" Difficulty="Hard" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="pIamTzHVdnw" Title="Публичный Wi-Fi: опасности" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Публичный Wi-Fi всегда безопасен?</Text>
+              <Options>
+                <Option>Да</Option>
+                <Option>Нет, трафик могут перехватить</Option>
+                <Option>Безопасен только ночью</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+            <Question Type="MultipleChoice">
+              <Text>Для чего нужен VPN?</Text>
+              <Options>
+                <Option>Защищать трафик в недоверенных сетях</Option>
+                <Option>Удалять вирусы</Option>
+                <Option>Ускорять зарядку</Option>
+              </Options>
+              <CorrectOptionIndex>0</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+  </Modules>
+</Course>

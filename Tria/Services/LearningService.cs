@@ -39,94 +39,107 @@ public class LearningService : ILearningService
                ?? new List<Lesson>();
     }
 
-    // ── XML parsing ──────────────────────────────────────────────────────────
+    // ── XML loading ───────────────────────────────────────────────────────────
 
     private List<Course> Load()
     {
-        var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-        if (lang.Length != 2) lang = "ru";
+        var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
+        if (lang.Length != 2) lang = "RU";
 
         if (_cache.TryGetValue(lang, out var cached)) return cached;
 
-        var path = Path.Combine(_env.ContentRootPath, "Resources/Content", $"course.{lang}.xml");
-        if (!File.Exists(path))
-            path = Path.Combine(_env.ContentRootPath, "Resources/Content", "course.ru.xml");
+        // Resources/Courses/{LANG}/ — fall back to RU if language folder missing
+        var dir = Path.Combine(_env.ContentRootPath, "Resources", "Courses", lang);
+        if (!Directory.Exists(dir))
+            dir = Path.Combine(_env.ContentRootPath, "Resources", "Courses", "RU");
 
-        var doc = XDocument.Load(path);
         var courses = new List<Course>();
 
-        foreach (var ce in doc.Root?.Elements("Course") ?? Enumerable.Empty<XElement>())
+        foreach (var file in Directory.EnumerateFiles(dir, "*.xml"))
         {
-            var course = new Course
-            {
-                Id          = (int?)ce.Attribute("Id") ?? 0,
-                Key         = (string?)ce.Attribute("Key") ?? "",
-                Title       = (string?)ce.Attribute("Title") ?? "",
-                Description = (string?)ce.Attribute("Description") ?? "",
-                IsActive    = (bool?)ce.Attribute("IsActive") ?? true,
-                Color       = (string?)ce.Attribute("Color"),
-            };
-
-            foreach (var me in ce.Element("Modules")?.Elements("Module") ?? Enumerable.Empty<XElement>())
-            {
-                var module = new CourseModule
-                {
-                    Id          = (int?)me.Attribute("Id") ?? 0,
-                    Key         = (string?)me.Attribute("Key") ?? "",
-                    CourseId    = course.Id,
-                    Title       = (string?)me.Attribute("Title") ?? "",
-                    Description = (string?)me.Attribute("Description") ?? "",
-                    Difficulty  = ParseDifficulty((string?)me.Attribute("Difficulty")),
-                    Order       = (int?)me.Attribute("Order") ?? 0,
-                    IsActive    = (bool?)me.Attribute("IsActive") ?? true,
-                    HasGame     = (bool?)me.Attribute("HasGame") ?? false,
-                    GameKey     = (string?)me.Attribute("GameKey"),
-                };
-
-                foreach (var le in me.Element("Lessons")?.Elements("Lesson") ?? Enumerable.Empty<XElement>())
-                {
-                    var lesson = new Lesson
-                    {
-                        Id         = (int?)le.Attribute("Id") ?? 0,
-                        Key        = (string?)le.Attribute("Key") ?? "",
-                        ModuleId   = module.Id,
-                        Title      = (string?)le.Attribute("Title") ?? "",
-                        Difficulty = ParseDifficulty((string?)le.Attribute("Difficulty")),
-                        Order      = (int?)le.Attribute("Order") ?? 0,
-                        IsActive   = (bool?)le.Attribute("IsActive") ?? true,
-                    };
-
-                    foreach (var mat in le.Element("Materials")?.Elements("Material") ?? Enumerable.Empty<XElement>())
-                    {
-                        lesson.Materials.Add(new LessonMaterial
-                        {
-                            Type      = (string?)mat.Attribute("Type") ?? "",
-                            Title     = (string?)mat.Attribute("Title") ?? "",
-                            YoutubeId = (string?)mat.Attribute("YoutubeId"),
-                            FilePath  = (string?)mat.Attribute("FilePath"),
-                        });
-                    }
-
-                    lesson.Test = ParseTest(le.Element("Test"));
-
-                    if (lesson.IsActive)
-                        module.Lessons.Add(lesson);
-                }
-
-                module.Lessons = module.Lessons.OrderBy(l => l.Order).ToList();
-
-                if (module.IsActive)
-                    course.Modules.Add(module);
-            }
-
-            course.Modules = course.Modules.OrderBy(m => m.Order).ToList();
-
-            if (course.IsActive)
+            var course = ParseCourseFile(file);
+            if (course != null && course.IsActive)
                 courses.Add(course);
         }
 
+        // Stable sort by Id so order is consistent regardless of filesystem order
+        courses = courses.OrderBy(c => c.Id).ToList();
+
         _cache[lang] = courses;
         return courses;
+    }
+
+    private Course? ParseCourseFile(string path)
+    {
+        var doc = XDocument.Load(path);
+        var ce = doc.Root;
+        if (ce == null || ce.Name != "Course") return null;
+
+        var course = new Course
+        {
+            Id          = (int?)ce.Attribute("Id") ?? 0,
+            Key         = (string?)ce.Attribute("Key") ?? "",
+            Title       = (string?)ce.Attribute("Title") ?? "",
+            Description = (string?)ce.Attribute("Description") ?? "",
+            IsActive    = (bool?)ce.Attribute("IsActive") ?? true,
+            Color       = (string?)ce.Attribute("Color"),
+            Access      = (string?)ce.Attribute("Access") ?? "public",
+        };
+
+        foreach (var me in ce.Element("Modules")?.Elements("Module") ?? Enumerable.Empty<XElement>())
+        {
+            var module = new CourseModule
+            {
+                Id          = (int?)me.Attribute("Id") ?? 0,
+                Key         = (string?)me.Attribute("Key") ?? "",
+                CourseId    = course.Id,
+                Title       = (string?)me.Attribute("Title") ?? "",
+                Description = (string?)me.Attribute("Description") ?? "",
+                Difficulty  = ParseDifficulty((string?)me.Attribute("Difficulty")),
+                Order       = (int?)me.Attribute("Order") ?? 0,
+                IsActive    = (bool?)me.Attribute("IsActive") ?? true,
+                HasGame     = (bool?)me.Attribute("HasGame") ?? false,
+                GameKey     = (string?)me.Attribute("GameKey"),
+            };
+
+            foreach (var le in me.Element("Lessons")?.Elements("Lesson") ?? Enumerable.Empty<XElement>())
+            {
+                var lesson = new Lesson
+                {
+                    Id         = (int?)le.Attribute("Id") ?? 0,
+                    Key        = (string?)le.Attribute("Key") ?? "",
+                    ModuleId   = module.Id,
+                    Title      = (string?)le.Attribute("Title") ?? "",
+                    Difficulty = ParseDifficulty((string?)le.Attribute("Difficulty")),
+                    Order      = (int?)le.Attribute("Order") ?? 0,
+                    IsActive   = (bool?)le.Attribute("IsActive") ?? true,
+                };
+
+                foreach (var mat in le.Element("Materials")?.Elements("Material") ?? Enumerable.Empty<XElement>())
+                {
+                    lesson.Materials.Add(new LessonMaterial
+                    {
+                        Type      = (string?)mat.Attribute("Type") ?? "",
+                        Title     = (string?)mat.Attribute("Title") ?? "",
+                        YoutubeId = (string?)mat.Attribute("YoutubeId"),
+                        FilePath  = (string?)mat.Attribute("FilePath"),
+                    });
+                }
+
+                lesson.Test = ParseTest(le.Element("Test"));
+
+                if (lesson.IsActive)
+                    module.Lessons.Add(lesson);
+            }
+
+            module.Lessons = module.Lessons.OrderBy(l => l.Order).ToList();
+
+            if (module.IsActive)
+                course.Modules.Add(module);
+        }
+
+        course.Modules = course.Modules.OrderBy(m => m.Order).ToList();
+        return course;
     }
 
     private static LessonTest? ParseTest(XElement? testEl)
@@ -142,8 +155,8 @@ public class LearningService : ILearningService
         {
             var q = new TestQuestion
             {
-                Type = (string?)qe.Attribute("Type") ?? "MultipleChoice",
-                Text = (string?)qe.Element("Text") ?? "",
+                Type               = (string?)qe.Attribute("Type") ?? "MultipleChoice",
+                Text               = (string?)qe.Element("Text") ?? "",
                 CorrectOptionIndex = (int?)qe.Element("CorrectOptionIndex") ?? 0,
             };
 

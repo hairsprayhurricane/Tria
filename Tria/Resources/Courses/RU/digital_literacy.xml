@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Course Id="2" Key="digital_literacy" Title="Цифровая грамотность"
+        Description="Как безопасно работать в интернете, защищать данные и распознавать манипуляции"
+        IsActive="true" Color="#7c3aed" Access="public">
+  <Modules>
+
+    <Module Id="4" Key="passwords" Title="Пароли и аккаунты" Description="Создание надёжных паролей и двухфакторная аутентификация" Difficulty="Easy" Order="1" IsActive="true" HasGame="false">
+      <Lessons>
+        <Lesson Id="4" Key="strong_passwords" Title="Надёжные пароли" Difficulty="Easy" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="aEmXeHCKByI" Title="Как создать надёжный пароль" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Какой пароль считается надёжным?</Text>
+              <Options>
+                <Option>qwerty123</Option>
+                <Option>Случайная комбинация букв, цифр и символов длиной 12+</Option>
+                <Option>Дата рождения</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+            <Question Type="MultipleChoice">
+              <Text>Что такое двухфакторная аутентификация?</Text>
+              <Options>
+                <Option>Два разных пароля</Option>
+                <Option>Подтверждение входа вторым способом (SMS, приложение)</Option>
+                <Option>Вход с двух устройств одновременно</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+        <Lesson Id="5" Key="password_managers" Title="Менеджеры паролей" Difficulty="Easy" Order="2" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="Q0GeMTFTFpM" Title="Зачем нужен менеджер паролей" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Для чего используется менеджер паролей?</Text>
+              <Options>
+                <Option>Хранить все пароли в одном безопасном месте</Option>
+                <Option>Взламывать чужие аккаунты</Option>
+                <Option>Генерировать логины</Option>
+              </Options>
+              <CorrectOptionIndex>0</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+    <Module Id="5" Key="fake_news" Title="Фейки и манипуляции" Description="Как распознать дезинформацию и проверять источники" Difficulty="Medium" Order="2" IsActive="true" HasGame="false">
+      <Lessons>
+        <Lesson Id="6" Key="misinformation" Title="Распознавание фейков" Difficulty="Medium" Order="1" IsActive="true">
+          <Materials>
+            <Material Type="Video" YoutubeId="cSKGa_7XJkg" Title="Как распознать фейковые новости" />
+          </Materials>
+          <Test PassScore="50">
+            <Question Type="MultipleChoice">
+              <Text>Как проверить достоверность новости?</Text>
+              <Options>
+                <Option>Поверить, если её репостнули много раз</Option>
+                <Option>Найти несколько независимых источников</Option>
+                <Option>Доверять только заголовку</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+            <Question Type="MultipleChoice">
+              <Text>Что такое кликбейт?</Text>
+              <Options>
+                <Option>Вид вируса</Option>
+                <Option>Провокационный заголовок, привлекающий клики без содержательного материала</Option>
+                <Option>Тип двухфакторной аутентификации</Option>
+              </Options>
+              <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+          </Test>
+        </Lesson>
+      </Lessons>
+    </Module>
+
+  </Modules>
+</Course>
