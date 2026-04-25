@@ -1,0 +1,707 @@
+@page "/Teacher/CourseEditor"
+@model Tria.Pages.Teacher.CourseEditorModel
+@{
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var modeLabel = Model.IsNewCourse ? "Новый курс" : "Редактирование курса";
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>@modeLabel – Tria</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#fff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --accent:#2563eb; --accent-h:#1d4ed8; --success:#16a34a; --danger:#dc2626; --warn:#d97706; --sidebar-bg:#0f172a; --sidebar-text:#e2e8f0; --sidebar-muted:#94a3b8; --sidebar-active:#2563eb; --sidebar-hover:rgba(255,255,255,0.06); --diff-easy:#16a34a; --diff-medium:#d97706; --diff-hard:#dc2626; }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --sidebar-bg:#080d18; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        a { color: var(--accent); text-decoration: none; }
+        input, textarea, select { font-family: inherit; font-size: 14px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; width: 100%; }
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        textarea { resize: vertical; }
+        button { font-family: inherit; cursor: pointer; }
+        label { font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 5px; }
+
+        /* Sidebar */
+        .sidebar { width: 240px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; flex-shrink: 0; min-height: 100vh; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-brand .logo { font-size: 20px; font-weight: 800; color: #fff; }
+        .sidebar-brand .badge { display: inline-block; margin-left: 8px; background: var(--sidebar-active); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: middle; }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .nav-section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--sidebar-muted); padding: 8px 8px 6px; margin-top: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--sidebar-muted); font-size: 14px; font-weight: 500; transition: background 0.15s, color 0.15s; text-decoration: none; margin-bottom: 2px; }
+        .nav-item:hover { background: var(--sidebar-hover); color: var(--sidebar-text); text-decoration: none; }
+        .nav-item.active { background: rgba(37,99,235,0.20); color: #93c5fd; }
+        .nav-item .icon { width: 18px; height: 18px; flex-shrink: 0; }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .user-chip { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--sidebar-active); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .user-info { min-width: 0; }
+        .user-email { font-size: 12px; color: var(--sidebar-text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-role-lbl { font-size: 11px; color: var(--sidebar-muted); }
+
+        /* Main */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+        .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 100; }
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+        .breadcrumb a { color: var(--text-muted); }
+        .breadcrumb a:hover { color: var(--text); }
+        .breadcrumb .sep { color: var(--text-muted); }
+        .breadcrumb .current { font-weight: 700; color: var(--text); }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
+        .theme-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .btn-save { display: inline-flex; align-items: center; gap: 7px; padding: 9px 22px; background: var(--accent); color: #fff; border: none; border-radius: 9px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+        .btn-save:hover { background: var(--accent-h); }
+
+        .editor-body { flex: 1; overflow-y: auto; padding: 24px 28px 60px; }
+
+        /* Alerts */
+        .alert { display: flex; align-items: center; gap: 10px; padding: 13px 18px; border-radius: 10px; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+        .alert-success { background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.25); color: var(--success); }
+        .alert-error   { background: rgba(220,38,38,0.07); border: 1px solid rgba(220,38,38,0.25); color: var(--danger); }
+
+        /* Sections */
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 16px; overflow: hidden; }
+        .section-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .section-title { font-size: 15px; font-weight: 700; flex: 1; }
+        .section-body { padding: 20px; }
+        .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .field-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        .field { margin-bottom: 14px; }
+        .field:last-child { margin-bottom: 0; }
+        .field-row { display: flex; align-items: center; gap: 10px; }
+        .hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Color dot preview */
+        .color-wrap { display: flex; align-items: center; gap: 10px; }
+        .color-wrap input[type=color] { width: 44px; height: 38px; padding: 2px; border-radius: 8px; cursor: pointer; flex-shrink: 0; }
+        .color-wrap input[type=text] { flex: 1; }
+
+        /* Toggle */
+        .toggle-wrap { display: flex; align-items: center; gap: 10px; }
+        .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 11px; transition: background 0.2s; cursor: pointer; }
+        .toggle-slider:before { content: ""; position: absolute; height: 16px; width: 16px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+        .toggle input:checked + .toggle-slider { background: var(--accent); }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+        .toggle-label { font-size: 13px; font-weight: 600; color: var(--text); }
+
+        /* Difficulty pills */
+        .diff-pills { display: flex; gap: 6px; }
+        .diff-pill { padding: 5px 14px; border-radius: 99px; font-size: 12px; font-weight: 700; border: 1.5px solid transparent; cursor: pointer; transition: all 0.15s; background: var(--surface-2); color: var(--text-muted); border-color: var(--border); }
+        .diff-pill.active-easy   { background: rgba(22,163,74,0.12);  color: var(--diff-easy);   border-color: rgba(22,163,74,0.4);  }
+        .diff-pill.active-medium { background: rgba(217,119,6,0.12);  color: var(--diff-medium); border-color: rgba(217,119,6,0.4);  }
+        .diff-pill.active-hard   { background: rgba(220,38,38,0.12);  color: var(--diff-hard);   border-color: rgba(220,38,38,0.4);  }
+
+        /* Module cards */
+        .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        .module-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.1s; }
+        .module-header:hover { background: var(--surface-2); }
+        .module-drag { color: var(--text-muted); font-size: 14px; }
+        .module-color-bar { width: 4px; height: 28px; border-radius: 2px; background: var(--accent); flex-shrink: 0; }
+        .module-name-display { font-size: 14px; font-weight: 700; flex: 1; color: var(--text); }
+        .module-diff-chip { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+        .chip-easy   { background: rgba(22,163,74,0.12);  color: var(--diff-easy);   }
+        .chip-medium { background: rgba(217,119,6,0.12);  color: var(--diff-medium); }
+        .chip-hard   { background: rgba(220,38,38,0.12);  color: var(--diff-hard);   }
+        .module-chevron { font-size: 12px; color: var(--text-muted); transition: transform 0.2s; }
+        .module-card.open .module-chevron { transform: rotate(180deg); }
+        .btn-icon { width: 28px; height: 28px; border-radius: 6px; border: none; background: none; color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-size: 15px; transition: background 0.12s, color 0.12s; flex-shrink: 0; }
+        .btn-icon:hover { background: rgba(220,38,38,0.1); color: var(--danger); }
+        .module-body { padding: 18px; border-top: 1px solid var(--border-2); display: none; }
+        .module-card.open .module-body { display: block; }
+
+        /* Lessons */
+        .lessons-section { margin-top: 18px; border-top: 1px solid var(--border-2); padding-top: 16px; }
+        .lessons-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 10px; }
+        .lesson-card { background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+        .lesson-header { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; user-select: none; }
+        .lesson-header:hover { background: rgba(37,99,235,0.04); }
+        .lesson-num { width: 20px; height: 20px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-muted); flex-shrink: 0; }
+        .lesson-name-display { font-size: 13px; font-weight: 600; flex: 1; color: var(--text); }
+        .lesson-chevron { font-size: 11px; color: var(--text-muted); transition: transform 0.2s; }
+        .lesson-card.open .lesson-chevron { transform: rotate(180deg); }
+        .lesson-body { padding: 14px; border-top: 1px solid var(--border-2); display: none; }
+        .lesson-card.open .lesson-body { display: block; }
+
+        /* Materials */
+        .mat-section { margin-top: 16px; border-top: 1px solid var(--border-2); padding-top: 14px; }
+        .sub-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 10px; }
+        .mat-row { display: grid; grid-template-columns: 110px 1fr 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border-2); border-radius: 9px; }
+        .mat-row select, .mat-row input { margin: 0; }
+
+        /* Test section */
+        .test-section { margin-top: 16px; border-top: 1px solid var(--border-2); padding-top: 14px; }
+        .test-toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .test-body { background: var(--surface); border: 1px solid var(--border-2); border-radius: 10px; padding: 14px; }
+        .pass-score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .pass-score-row input[type=range] { width: auto; flex: 1; accent-color: var(--accent); padding: 0; border: none; box-shadow: none; background: transparent; }
+        .pass-score-val { font-size: 14px; font-weight: 800; color: var(--accent); min-width: 36px; }
+
+        /* Question cards */
+        .q-card { background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 9px; padding: 12px 14px; margin-bottom: 10px; }
+        .q-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .q-num { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+        .q-type-select { width: auto; flex-shrink: 0; font-size: 12px; padding: 5px 8px; }
+        .q-options { margin-top: 10px; }
+        .q-option-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .q-radio { accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
+        .q-option-row input[type=text] { flex: 1; }
+
+        /* Add buttons */
+        .btn-add { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border: 1.5px dashed var(--border); border-radius: 9px; background: none; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: border-color 0.15s, color 0.15s, background 0.15s; width: 100%; justify-content: center; margin-top: 8px; }
+        .btn-add:hover { border-color: var(--accent); color: var(--accent); background: rgba(37,99,235,0.04); }
+        .btn-add-sm { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border: 1px dashed var(--border); border-radius: 7px; background: none; color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+        .btn-add-sm:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-del-sm { background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; line-height: 1; padding: 0 4px; transition: color 0.12s; }
+        .btn-del-sm:hover { color: var(--danger); }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="logo">Tria</span><span class="badge">Учитель</span>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Курсы</div>
+        <a href="/Teacher" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Мои курсы
+        </a>
+        <a href="/Teacher/CourseEditor" class="nav-item active">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Создать курс
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar">П</div>
+            <div class="user-info">
+                <div class="user-email">@User.Identity!.Name</div>
+                <div class="user-role-lbl">Преподаватель</div>
+            </div>
+        </div>
+        <form method="post" action="/Logout" style="margin-top:8px;padding:0 10px;">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background:none;border:none;color:var(--sidebar-muted);font-size:13px;cursor:pointer;padding:4px 0;">Выйти</button>
+        </form>
+    </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+    <div class="topbar">
+        <div class="breadcrumb">
+            <a href="/Teacher">Курсы</a>
+            <span class="sep">›</span>
+            <span class="current" id="breadcrumb-title">@modeLabel</span>
+        </div>
+        <div class="topbar-right">
+            <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+            @if (!Model.IsNewCourse)
+            {
+                <form method="post" asp-page-handler="Delete" style="display:inline;"
+                      onsubmit="return confirm('Удалить этот курс? Это действие нельзя отменить.');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="courseKey" value="@Request.Query["courseKey"]" />
+                    <button type="submit" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:transparent;color:#dc2626;border:1px solid rgba(220,38,38,0.35);border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                        Удалить курс
+                    </button>
+                </form>
+            }
+            <button type="button" class="btn-save" onclick="submitForm()">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Сохранить курс
+            </button>
+        </div>
+    </div>
+
+    <div class="editor-body">
+
+        @if (!string.IsNullOrEmpty(Model.ResultMessage))
+        {
+            <div class="alert @(Model.ResultSuccess ? "alert-success" : "alert-error")">
+                @(Model.ResultSuccess ? "✓" : "✕") @Model.ResultMessage
+            </div>
+        }
+
+        <!-- Course Info -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Основная информация</div>
+            </div>
+            <div class="section-body">
+                <div class="field">
+                    <label>Название курса *</label>
+                    <input type="text" id="c-title" placeholder="Введите название курса" oninput="onTitleChange(this.value)" />
+                </div>
+                <div class="field-grid">
+                    <div class="field">
+                        <label>Ключ (имя файла)</label>
+                        <input type="text" id="c-key" placeholder="course_key" />
+                        <div class="hint">Только латиница, цифры и _. Уникальный идентификатор файла.</div>
+                    </div>
+                    <div class="field">
+                        <label>Цвет курса</label>
+                        <div class="color-wrap">
+                            <input type="color" id="c-color-picker" value="#6366f1" oninput="document.getElementById('c-color-text').value=this.value" />
+                            <input type="text" id="c-color-text" placeholder="#6366f1" oninput="syncColor(this.value)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Описание</label>
+                    <textarea id="c-desc" rows="2" placeholder="Краткое описание курса"></textarea>
+                </div>
+                <div class="toggle-wrap">
+                    <label class="toggle">
+                        <input type="checkbox" id="c-active" checked />
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">Курс активен (виден студентам)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modules -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Модули курса</div>
+                <span style="font-size:12px;color:var(--text-muted);" id="module-count-label">0 модулей</span>
+            </div>
+            <div class="section-body" style="padding-bottom:10px;">
+                <div id="modules-container"></div>
+                <button type="button" class="btn-add" onclick="addModule()">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Добавить модуль
+                </button>
+            </div>
+        </div>
+
+    </div><!-- /editor-body -->
+</div><!-- /main -->
+
+<!-- Hidden form for submission -->
+<form id="save-form" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="course-json-input" name="courseJson" />
+</form>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────────────────
+var INITIAL = @Html.Raw(Model.InitialJson);
+var IS_NEW  = @Html.Raw(Model.IsNewCourse ? "true" : "false");
+var uidSeq  = 0;
+function uid() { return 'm' + (++uidSeq); }
+
+// ─── Theme ────────────────────────────────────────────────────────────────────
+var themeBtn = document.getElementById("theme-btn");
+themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+function toggleTheme() {
+    var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+    localStorage.setItem("theme", isDark ? "light" : "dark");
+    themeBtn.textContent = isDark ? "🌙" : "☀️";
+}
+
+// ─── Course-level helpers ─────────────────────────────────────────────────────
+function onTitleChange(v) {
+    document.getElementById("breadcrumb-title").textContent = v || "Новый курс";
+}
+function syncColor(hex) {
+    if (/^#[0-9a-fA-F]{6}$/.test(hex))
+        document.getElementById("c-color-picker").value = hex;
+}
+function slugify(s) {
+    var map = {'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'j','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'};
+    return s.toLowerCase().replace(/./g, function(c) { return map[c] !== undefined ? map[c] : c; })
+        .replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '').substring(0, 40);
+}
+
+// ─── Difficulty pills ─────────────────────────────────────────────────────────
+function diffPillsHtml(elId, val) {
+    val = val || 'Easy';
+    var diffs = ['Easy','Medium','Hard'];
+    var labels = {'Easy':'Лёгкий','Medium':'Средний','Hard':'Сложный'};
+    return '<div class="diff-pills">' + diffs.map(function(d) {
+        var active = (d === val) ? ' active-' + d.toLowerCase() : '';
+        return '<button type="button" class="diff-pill' + active + '" onclick="pickDiff(\'' + elId + '\',\'' + d + '\')">' + labels[d] + '</button>';
+    }).join('') + '</div><input type="hidden" id="' + elId + '" value="' + val + '" />';
+}
+function pickDiff(elId, val) {
+    document.getElementById(elId).value = val;
+    var container = document.getElementById(elId).previousElementSibling;
+    container.querySelectorAll('.diff-pill').forEach(function(p) {
+        p.className = 'diff-pill';
+        if (p.textContent === ({Easy:'Лёгкий',Medium:'Средний',Hard:'Сложный'})[val]) {
+            p.classList.add('active-' + val.toLowerCase());
+        }
+    });
+    // Update chip in header if module
+    var mc = document.getElementById(elId).closest('.module-card, .lesson-card');
+    if (mc) {
+        var chip = mc.querySelector('.module-diff-chip, .lesson-diff-chip');
+        if (chip) {
+            chip.className = 'module-diff-chip chip-' + val.toLowerCase();
+            chip.textContent = {Easy:'Лёгкий',Medium:'Средний',Hard:'Сложный'}[val];
+        }
+    }
+}
+
+// ─── Module management ────────────────────────────────────────────────────────
+function addModule(data) {
+    data = data || {};
+    var id = uid();
+    var hasGame = data.hasGame || false;
+    var diff = data.difficulty || 'Easy';
+    var diffLabels = {Easy:'Лёгкий',Medium:'Средний',Hard:'Сложный'};
+    var html = '<div class="module-card" id="' + id + '">' +
+        '<div class="module-header" onclick="toggleCard(\'' + id + '\')">' +
+            '<div class="module-color-bar"></div>' +
+            '<span class="module-name-display">' + (esc(data.title) || 'Новый модуль') + '</span>' +
+            '<span class="module-diff-chip chip-' + diff.toLowerCase() + '">' + diffLabels[diff] + '</span>' +
+            '<span class="module-chevron">▼</span>' +
+            '<button class="btn-icon" title="Удалить модуль" onclick="removeCard(\'' + id + '\',event)">✕</button>' +
+        '</div>' +
+        '<div class="module-body">' +
+            '<div class="field-grid">' +
+                '<div class="field"><label>Название модуля *</label>' +
+                '<input type="text" class="m-title" value="' + esc(data.title||'') + '" placeholder="Название модуля"' +
+                ' oninput="updateLabel(\'' + id + '\', this.value, \'.module-name-display\')" /></div>' +
+                '<div class="field"><label>Сложность</label>' + diffPillsHtml(id+'-diff', diff) + '</div>' +
+            '</div>' +
+            '<div class="field"><label>Описание</label>' +
+            '<textarea class="m-desc" rows="2" placeholder="Описание модуля">' + esc(data.description||'') + '</textarea></div>' +
+            '<div class="field">' +
+                '<div class="toggle-wrap">' +
+                    '<label class="toggle"><input type="checkbox" class="m-active" ' + (data.isActive !== false ? 'checked' : '') + ' /><span class="toggle-slider"></span></label>' +
+                    '<span class="toggle-label">Модуль активен</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="field">' +
+                '<div class="toggle-wrap" style="margin-bottom:8px;">' +
+                    '<label class="toggle"><input type="checkbox" class="m-hasgame" ' + (hasGame ? 'checked' : '') + ' onchange="toggleGameKey(\'' + id + '\')" /><span class="toggle-slider"></span></label>' +
+                    '<span class="toggle-label">Есть игра</span>' +
+                '</div>' +
+                '<div id="' + id + '-gamekey" style="' + (hasGame ? '' : 'display:none') + '">' +
+                    '<input type="text" class="m-gamekey" value="' + esc(data.gameKey||'') + '" placeholder="Ключ игры (GameKey)" /></div>' +
+            '</div>' +
+            '<input type="hidden" class="m-id" value="' + (data.id||0) + '" />' +
+            '<div class="lessons-section">' +
+                '<div class="lessons-title">Уроки</div>' +
+                '<div class="lessons-container" id="' + id + '-lessons"></div>' +
+                '<button type="button" class="btn-add" onclick="addLesson(\'' + id + '-lessons\')">' +
+                    '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Добавить урок' +
+                '</button>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+    document.getElementById('modules-container').insertAdjacentHTML('beforeend', html);
+    document.getElementById(id).classList.add('open');
+    // Load lessons
+    if (data.lessons && data.lessons.length) {
+        var cont = document.getElementById(id + '-lessons');
+        data.lessons.forEach(function(l) { addLesson(id + '-lessons', l); });
+    }
+    updateModuleCount();
+}
+
+function updateModuleCount() {
+    var n = document.querySelectorAll('#modules-container > .module-card').length;
+    document.getElementById('module-count-label').textContent = n + ' ' + plural(n, 'модуль','модуля','модулей');
+}
+function plural(n, a, b, c) { return n%10===1&&n%100!==11?a:n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?b:c; }
+function toggleGameKey(id) {
+    var cb = document.querySelector('#' + id + ' .m-hasgame');
+    var gk = document.getElementById(id + '-gamekey');
+    if (gk) gk.style.display = cb.checked ? '' : 'none';
+}
+
+// ─── Lesson management ────────────────────────────────────────────────────────
+function addLesson(containerId, data) {
+    data = data || {};
+    var id = uid();
+    var diff = data.difficulty || 'Easy';
+    var hasTest = data.test != null;
+    var diffLabels = {Easy:'Лёгкий',Medium:'Средний',Hard:'Сложный'};
+    var n = document.getElementById(containerId).querySelectorAll('.lesson-card').length + 1;
+    var html = '<div class="lesson-card" id="' + id + '">' +
+        '<div class="lesson-header" onclick="toggleCard(\'' + id + '\')">' +
+            '<div class="lesson-num">' + n + '</div>' +
+            '<span class="lesson-name-display">' + (esc(data.title) || 'Урок ' + n) + '</span>' +
+            '<span class="lesson-diff-chip module-diff-chip chip-' + diff.toLowerCase() + '">' + diffLabels[diff] + '</span>' +
+            '<span class="lesson-chevron">▼</span>' +
+            '<button class="btn-icon" title="Удалить урок" onclick="removeCard(\'' + id + '\',event)">✕</button>' +
+        '</div>' +
+        '<div class="lesson-body">' +
+            '<div class="field-grid">' +
+                '<div class="field"><label>Название урока *</label>' +
+                '<input type="text" class="l-title" value="' + esc(data.title||'') + '" placeholder="Название урока"' +
+                ' oninput="updateLabel(\'' + id + '\', this.value, \'.lesson-name-display\')" /></div>' +
+                '<div class="field"><label>Сложность</label>' + diffPillsHtml(id+'-diff', diff) + '</div>' +
+            '</div>' +
+            '<div class="field"><div class="toggle-wrap">' +
+                '<label class="toggle"><input type="checkbox" class="l-active" ' + (data.isActive !== false ? 'checked' : '') + ' /><span class="toggle-slider"></span></label>' +
+                '<span class="toggle-label">Урок активен</span>' +
+            '</div></div>' +
+            '<input type="hidden" class="l-id" value="' + (data.id||0) + '" />' +
+            // Materials
+            '<div class="mat-section">' +
+                '<div class="sub-title">Материалы</div>' +
+                '<div class="mats-container" id="' + id + '-mats"></div>' +
+                '<button type="button" class="btn-add-sm" onclick="addMaterial(\'' + id + '-mats\')">+ Добавить материал</button>' +
+            '</div>' +
+            // Test
+            '<div class="test-section">' +
+                '<div class="test-toggle-row">' +
+                    '<div class="sub-title" style="margin:0;">Тест</div>' +
+                    '<div class="toggle-wrap">' +
+                        '<label class="toggle"><input type="checkbox" class="t-enabled" ' + (hasTest ? 'checked' : '') + ' onchange="toggleTestBody(\'' + id + '\')" /><span class="toggle-slider"></span></label>' +
+                        '<span class="toggle-label" style="font-size:12px;">Включить тест</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="' + id + '-testbody" style="' + (hasTest ? '' : 'display:none') + '">' +
+                    '<div class="test-body">' +
+                        '<div class="pass-score-row">' +
+                            '<label style="margin:0;white-space:nowrap;">Проходной балл</label>' +
+                            '<input type="range" class="t-passscore" min="10" max="100" step="5" value="' + (data.test ? data.test.passScore : 80) + '" oninput="document.getElementById(\'' + id + '-pslabel\').textContent=this.value+\'%\'" />' +
+                            '<span class="pass-score-val" id="' + id + '-pslabel">' + (data.test ? data.test.passScore : 80) + '%</span>' +
+                        '</div>' +
+                        '<div class="questions-container" id="' + id + '-qs"></div>' +
+                        '<button type="button" class="btn-add-sm" onclick="addQuestion(\'' + id + '-qs\')">+ Добавить вопрос</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+    document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
+    document.getElementById(id).classList.add('open');
+    // Load materials
+    if (data.materials && data.materials.length)
+        data.materials.forEach(function(m) { addMaterial(id + '-mats', m); });
+    // Load questions
+    if (data.test && data.test.questions && data.test.questions.length)
+        data.test.questions.forEach(function(q) { addQuestion(id + '-qs', q); });
+}
+
+function toggleTestBody(lessonId) {
+    var cb = document.querySelector('#' + lessonId + ' .t-enabled');
+    document.getElementById(lessonId + '-testbody').style.display = cb.checked ? '' : 'none';
+}
+
+// ─── Material management ──────────────────────────────────────────────────────
+function addMaterial(containerId, data) {
+    data = data || {};
+    var id = uid();
+    var type = data.type || 'Video';
+    var html = '<div class="mat-row" id="' + id + '">' +
+        '<select class="mat-type" onchange="onMatTypeChange(\'' + id + '\')">' +
+            ['Video','PDF','Image'].map(function(t) {
+                return '<option value="' + t + '"' + (t===type?' selected':'') + '>' + t + '</option>';
+            }).join('') +
+        '</select>' +
+        '<input type="text" class="mat-title" value="' + esc(data.title||'') + '" placeholder="Название материала" />' +
+        '<div class="mat-url-wrap" id="' + id + '-url">' + matUrlHtml(id, type, data) + '</div>' +
+        '<button class="btn-del-sm" onclick="removeCard(\'' + id + '\',event)" title="Удалить">✕</button>' +
+    '</div>';
+    document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
+}
+function matUrlHtml(id, type, data) {
+    if (type === 'Video')
+        return '<input type="text" class="mat-youtube" value="' + esc((data&&data.youtubeId)||'') + '" placeholder="YouTube ID (напр. dQw4w9WgXcQ)" />';
+    return '<input type="text" class="mat-filepath" value="' + esc((data&&data.filePath)||'') + '" placeholder="Путь к файлу (/files/doc.pdf)" />';
+}
+function onMatTypeChange(rowId) {
+    var row = document.getElementById(rowId);
+    var type = row.querySelector('.mat-type').value;
+    row.querySelector('.mat-url-wrap').innerHTML = matUrlHtml(rowId, type, {});
+}
+
+// ─── Question management ──────────────────────────────────────────────────────
+function addQuestion(containerId, data) {
+    data = data || {};
+    var id = uid();
+    var type = data.type || 'MultipleChoice';
+    var n = document.getElementById(containerId).querySelectorAll('.q-card').length + 1;
+    var opts = data.options && data.options.length ? data.options : ['',''];
+    var correct = data.correctOptionIndex || 0;
+    var html = '<div class="q-card" id="' + id + '">' +
+        '<div class="q-header">' +
+            '<span class="q-num">Вопрос ' + n + '</span>' +
+            '<select class="q-type-select" onchange="onQTypeChange(\'' + id + '\')">' +
+                '<option value="MultipleChoice"' + (type==='MultipleChoice'?' selected':'') + '>Выбор ответа</option>' +
+                '<option value="ShortAnswer"' + (type==='ShortAnswer'?' selected':'') + '>Краткий ответ</option>' +
+            '</select>' +
+            '<button class="btn-del-sm" onclick="removeCard(\'' + id + '\',event)" title="Удалить">✕</button>' +
+        '</div>' +
+        '<div class="field"><input type="text" class="q-text" value="' + esc(data.text||'') + '" placeholder="Текст вопроса" /></div>' +
+        '<div class="q-options" id="' + id + '-opts"' + (type==='ShortAnswer'?' style="display:none"':'') + '>' +
+            opts.map(function(o, i) { return optHtml(id, i, o, i===correct); }).join('') +
+            '<button type="button" class="btn-add-sm" style="margin-top:6px;" onclick="addOption(\'' + id + '-opts\')">+ Вариант</button>' +
+        '</div>' +
+    '</div>';
+    document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
+}
+function optHtml(qId, idx, val, checked) {
+    return '<div class="q-option-row" id="' + qId + '-opt' + idx + '">' +
+        '<input type="radio" class="q-radio" name="correct-' + qId + '" value="' + idx + '"' + (checked?' checked':'') + ' />' +
+        '<input type="text" class="q-option" value="' + esc(val) + '" placeholder="Вариант ответа" />' +
+        '<button class="btn-del-sm" onclick="removeOption(this, event)" title="Удалить">✕</button>' +
+    '</div>';
+}
+function addOption(optsContainerId) {
+    var container = document.getElementById(optsContainerId);
+    var qId = optsContainerId.replace('-opts','');
+    var idx = container.querySelectorAll('.q-option-row').length;
+    var addBtn = container.querySelector('.btn-add-sm');
+    addBtn.insertAdjacentHTML('beforebegin', optHtml(qId, idx, '', false));
+}
+function removeOption(btn, e) {
+    e.stopPropagation();
+    btn.closest('.q-option-row').remove();
+}
+function onQTypeChange(qId) {
+    var type = document.querySelector('#' + qId + ' .q-type-select').value;
+    document.getElementById(qId + '-opts').style.display = type === 'ShortAnswer' ? 'none' : '';
+}
+
+// ─── Generic helpers ──────────────────────────────────────────────────────────
+function toggleCard(id) {
+    document.getElementById(id).classList.toggle('open');
+}
+function removeCard(id, e) {
+    e.stopPropagation();
+    if (!confirm('Удалить?')) return;
+    document.getElementById(id).remove();
+    updateModuleCount();
+}
+function updateLabel(cardId, val, selector) {
+    var el = document.querySelector('#' + cardId + ' ' + selector);
+    if (el) el.textContent = val || selector.includes('module') ? (val || 'Новый модуль') : (val || 'Новый урок');
+}
+function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── Collect & Submit ─────────────────────────────────────────────────────────
+function collectData() {
+    var data = {
+        id: 0,
+        key: document.getElementById('c-key').value.trim(),
+        originalKey: IS_NEW ? '' : (INITIAL ? INITIAL.originalKey || INITIAL.key || '' : ''),
+        title: document.getElementById('c-title').value.trim(),
+        description: document.getElementById('c-desc').value.trim(),
+        color: document.getElementById('c-color-text').value.trim() || document.getElementById('c-color-picker').value,
+        isActive: document.getElementById('c-active').checked,
+        modules: []
+    };
+    if (INITIAL && INITIAL.id) data.id = INITIAL.id;
+
+    document.querySelectorAll('#modules-container > .module-card').forEach(function(mEl) {
+        var module = {
+            id: parseInt(mEl.querySelector('.m-id').value) || 0,
+            key: '',
+            title: mEl.querySelector('.m-title').value.trim(),
+            description: mEl.querySelector('.m-desc').value.trim(),
+            difficulty: mEl.querySelector('[id$="-diff"]') ? mEl.querySelector('[id$="-diff"]').value : 'Easy',
+            isActive: mEl.querySelector('.m-active').checked,
+            hasGame: mEl.querySelector('.m-hasgame').checked,
+            gameKey: mEl.querySelector('.m-gamekey') ? mEl.querySelector('.m-gamekey').value.trim() : '',
+            lessons: []
+        };
+
+        mEl.querySelectorAll('.lesson-card').forEach(function(lEl) {
+            var lesson = {
+                id: parseInt(lEl.querySelector('.l-id').value) || 0,
+                key: '',
+                title: lEl.querySelector('.l-title').value.trim(),
+                difficulty: lEl.querySelector('[id$="-diff"]') ? lEl.querySelector('[id$="-diff"]').value : 'Easy',
+                isActive: lEl.querySelector('.l-active').checked,
+                materials: [],
+                test: null
+            };
+
+            lEl.querySelectorAll('.mat-row').forEach(function(matEl) {
+                var yt = matEl.querySelector('.mat-youtube');
+                var fp = matEl.querySelector('.mat-filepath');
+                lesson.materials.push({
+                    type: matEl.querySelector('.mat-type').value,
+                    title: matEl.querySelector('.mat-title').value.trim(),
+                    youtubeId: yt ? yt.value.trim() : '',
+                    filePath: fp ? fp.value.trim() : ''
+                });
+            });
+
+            var testEnabled = lEl.querySelector('.t-enabled').checked;
+            if (testEnabled) {
+                var questions = [];
+                lEl.querySelectorAll('.q-card').forEach(function(qEl) {
+                    var qType = qEl.querySelector('.q-type-select').value;
+                    var opts = [];
+                    var correct = 0;
+                    qEl.querySelectorAll('.q-option-row').forEach(function(optRow, idx) {
+                        opts.push(optRow.querySelector('.q-option').value.trim());
+                        if (optRow.querySelector('.q-radio').checked) correct = idx;
+                    });
+                    questions.push({
+                        type: qType,
+                        text: qEl.querySelector('.q-text').value.trim(),
+                        options: opts,
+                        correctOptionIndex: correct
+                    });
+                });
+                lesson.test = {
+                    passScore: parseInt(lEl.querySelector('.t-passscore').value) || 80,
+                    questions: questions
+                };
+            }
+
+            module.lessons.push(lesson);
+        });
+
+        data.modules.push(module);
+    });
+
+    return data;
+}
+
+function submitForm() {
+    var data = collectData();
+    document.getElementById('course-json-input').value = JSON.stringify(data);
+    document.getElementById('save-form').submit();
+}
+
+// ─── Initialize from existing data ───────────────────────────────────────────
+(function init() {
+    if (!INITIAL) return;
+    document.getElementById('c-title').value = INITIAL.title || '';
+    document.getElementById('c-key').value = INITIAL.key || '';
+    document.getElementById('c-desc').value = INITIAL.description || '';
+    var color = INITIAL.color || '#6366f1';
+    document.getElementById('c-color-picker').value = color;
+    document.getElementById('c-color-text').value = color;
+    document.getElementById('c-active').checked = INITIAL.isActive !== false;
+    if (INITIAL.title) document.getElementById('breadcrumb-title').textContent = INITIAL.title;
+    if (INITIAL.modules) INITIAL.modules.forEach(function(m) { addModule(m); });
+    updateModuleCount();
+})();
+
+// Auto-generate key from title when creating new
+if (IS_NEW) {
+    document.getElementById('c-title').addEventListener('input', function() {
+        var keyInput = document.getElementById('c-key');
+        if (!keyInput._userEdited) keyInput.value = slugify(this.value);
+    });
+    document.getElementById('c-key').addEventListener('input', function() {
+        this._userEdited = true;
+    });
+}
+</script>
+</body>
+</html>

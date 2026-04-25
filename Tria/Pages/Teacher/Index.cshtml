@@ -1,0 +1,208 @@
+@page "/Teacher"
+@model Tria.Pages.Teacher.IndexModel
+@{
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>Панель преподавателя – Tria</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --accent:#2563eb; --accent-h:#1d4ed8; --sidebar-bg:#0f172a; --sidebar-text:#e2e8f0; --sidebar-muted:#94a3b8; --sidebar-active:#2563eb; --sidebar-hover:rgba(255,255,255,0.06); }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --sidebar-bg:#080d18; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        a { color: var(--accent); text-decoration: none; }
+
+        .sidebar { width: 240px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; flex-shrink: 0; min-height: 100vh; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-brand .logo { font-size: 20px; font-weight: 800; color: #fff; }
+        .sidebar-brand .badge { display: inline-block; margin-left: 8px; background: var(--sidebar-active); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: middle; }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .nav-section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--sidebar-muted); padding: 8px 8px 6px; margin-top: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--sidebar-muted); font-size: 14px; font-weight: 500; transition: background 0.15s, color 0.15s; text-decoration: none; margin-bottom: 2px; }
+        .nav-item:hover { background: var(--sidebar-hover); color: var(--sidebar-text); text-decoration: none; }
+        .nav-item.active { background: rgba(37,99,235,0.20); color: #93c5fd; }
+        .nav-item .icon { width: 18px; height: 18px; flex-shrink: 0; }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .user-chip { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--sidebar-active); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .user-info { min-width: 0; }
+        .user-email { font-size: 12px; color: var(--sidebar-text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-role-lbl { font-size: 11px; color: var(--sidebar-muted); }
+
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+        .page-title { font-size: 16px; font-weight: 700; }
+        .theme-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .content { padding: 28px 32px; flex: 1; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--border); margin-bottom: 28px; }
+        .tab-btn { padding: 10px 20px; font-size: 14px; font-weight: 600; color: var(--text-muted); background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+        .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* Create tab */
+        .create-area { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0; gap: 16px; text-align: center; }
+        .create-icon { width: 72px; height: 72px; border-radius: 50%; background: rgba(37,99,235,0.1); border: 2px solid rgba(37,99,235,0.2); display: flex; align-items: center; justify-content: center; }
+        .create-title { font-size: 20px; font-weight: 700; }
+        .create-sub { font-size: 14px; color: var(--text-muted); max-width: 360px; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+        .btn-primary:hover { background: var(--accent-h); color: #fff; text-decoration: none; }
+
+        /* Edit tab – course grid */
+        .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .course-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: box-shadow 0.2s, border-color 0.2s; }
+        .course-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: var(--accent); }
+        .course-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .course-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+        .course-name { font-size: 15px; font-weight: 700; flex: 1; margin: 0 10px; }
+        .course-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+        .course-meta { display: flex; gap: 12px; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+        .btn-edit { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; background: rgba(37,99,235,0.08); color: var(--accent); border: 1px solid rgba(37,99,235,0.2); border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; transition: background 0.15s; }
+        .btn-edit:hover { background: rgba(37,99,235,0.15); text-decoration: none; }
+        .btn-delete { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; background: transparent; color: #dc2626; border: 1px solid rgba(220,38,38,0.25); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .btn-delete:hover { background: rgba(220,38,38,0.07); }
+        .card-actions { display: flex; gap: 8px; }
+        .alert { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+        .alert-success { background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.25); color: #16a34a; }
+        .empty-state { text-align: center; padding: 60px; color: var(--text-muted); font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="logo">Tria</span><span class="badge">Учитель</span>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Курсы</div>
+        <a href="/Teacher" class="nav-item active">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Мои курсы
+        </a>
+        <a href="/Teacher/CourseEditor" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Создать курс
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar">П</div>
+            <div class="user-info">
+                <div class="user-email">@User.Identity!.Name</div>
+                <div class="user-role-lbl">Преподаватель</div>
+            </div>
+        </div>
+        <form method="post" action="/Logout" style="margin-top:8px;padding:0 10px;">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background:none;border:none;color:var(--sidebar-muted);font-size:13px;cursor:pointer;padding:4px 0;">Выйти</button>
+        </form>
+    </div>
+</aside>
+
+<div class="main">
+    <div class="topbar">
+        <span class="page-title">Панель преподавателя</span>
+        <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+    </div>
+    <div class="content">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('create', this)">Создать курс</button>
+            <button class="tab-btn" onclick="switchTab('edit', this)">Редактировать существующий</button>
+        </div>
+
+        <!-- Tab 1: Create -->
+        <div class="tab-pane active" id="tab-create">
+            <div class="create-area">
+                <div class="create-icon">
+                    <svg width="32" height="32" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <div class="create-title">Создать новый курс</div>
+                <div class="create-sub">Откроется редактор, в котором вы сможете настроить структуру курса: модули, уроки, материалы и тесты.</div>
+                <a href="/Teacher/CourseEditor" class="btn-primary">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Открыть редактор
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab 2: Edit -->
+        <div class="tab-pane" id="tab-edit">
+            @if (Model.Deleted)
+            {
+                <div class="alert alert-success">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Курс успешно удалён.
+                </div>
+            }
+            @if (!Model.Courses.Any())
+            {
+                <div class="empty-state">Курсы не найдены. Создайте первый курс.</div>
+            }
+            else
+            {
+                <div class="courses-grid">
+                    @foreach (var course in Model.Courses)
+                    {
+                        <div class="course-card" style="@(course.Color != null ? $"border-top: 4px solid {course.Color};" : "")">
+                            <div class="course-card-top">
+                                <div class="course-dot" style="background:@(course.Color ?? "var(--border)")"></div>
+                                <div class="course-name">@course.Title</div>
+                            </div>
+                            <div class="course-desc">@course.Description</div>
+                            <div class="course-meta">
+                                <span>@course.Modules.Count мод.</span>
+                                <span>@course.Modules.Sum(m => m.Lessons.Count) ур.</span>
+                            </div>
+                            <div class="card-actions">
+                                <a href="/Teacher/CourseEditor?courseKey=@course.Key" class="btn-edit">
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                                    Редактировать
+                                </a>
+                                <form method="post" asp-page-handler="DeleteCourse" style="display:inline;" onsubmit="return confirm('Удалить курс «@course.Title»? Это действие нельзя отменить.');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="courseKey" value="@course.Key" />
+                                    <button type="submit" class="btn-delete">
+                                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                                        Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    var themeBtn = document.getElementById("theme-btn");
+    themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+    }
+
+    function switchTab(name, btn) {
+        document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+        document.querySelectorAll(".tab-pane").forEach(function(p) { p.classList.remove("active"); });
+        btn.classList.add("active");
+        document.getElementById("tab-" + name).classList.add("active");
+    }
+
+    // Restore tab from URL hash or deleted param
+    if (location.hash === "#edit" || @(Model.Deleted ? "true" : "false"))
+        switchTab("edit", document.querySelectorAll(".tab-btn")[1]);
+</script>
+</body>
+</html>

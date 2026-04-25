@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Course Id="11" Key="test" Title="Test" Description="" IsActive="true" Color="#6366f1" Access="public">
+  <Modules>
+    <Module Id="12" Key="module_12" CourseId="11" Title="name" Description="" Difficulty="Easy" Order="1" IsActive="true" HasGame="false">
+      <Lessons>
+        <Lesson Id="13" Key="lesson_13" ModuleId="12" Title="" Difficulty="Easy" Order="1" IsActive="true">
+          <Materials />
+        </Lesson>
+        <Lesson Id="14" Key="lesson_14" ModuleId="12" Title="" Difficulty="Easy" Order="2" IsActive="true">
+          <Materials />
+        </Lesson>
+      </Lessons>
+    </Module>
+    <Module Id="15" Key="module_15" CourseId="11" Title="" Description="" Difficulty="Easy" Order="2" IsActive="true" HasGame="false">
+      <Lessons />
+    </Module>
+  </Modules>
+</Course>
