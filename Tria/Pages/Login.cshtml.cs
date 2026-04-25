@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
@@ -8,10 +8,12 @@ namespace Tria.Pages
     public class LoginModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager)
+        public LoginModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -32,8 +34,6 @@ namespace Tria.Pages
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
-
             if (!ModelState.IsValid)
                 return Page();
 
@@ -41,11 +41,17 @@ namespace Tria.Pages
                 Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
+            {
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+                    return LocalRedirect("/Admin");
+
+                returnUrl ??= Url.Content("~/");
                 return LocalRedirect(returnUrl);
+            }
 
             ModelState.AddModelError(string.Empty, "Неверный email или пароль.");
             return Page();
         }
-
     }
 }

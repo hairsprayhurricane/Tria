@@ -1,0 +1,233 @@
+@page "/Admin"
+@model Tria.Pages.Admin.IndexModel
+@{
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>Администрирование – Tria</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --text-sub:#4b5563; --shadow:rgba(0,0,0,0.06); --accent:#2563eb; --accent-h:#1d4ed8; --danger:#dc2626; --danger-h:#b91c1c; --sidebar-bg:#1c1010; --sidebar-text:#f1e8e8; --sidebar-muted:#b89898; --sidebar-active:#dc2626; --sidebar-hover:rgba(255,255,255,0.06); }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --text-sub:#cbd5e1; --shadow:rgba(0,0,0,0.4); --sidebar-bg:#110808; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; transition: background-color 0.2s, color 0.2s; }
+        a { color: var(--accent); text-decoration: none; }
+
+        /* Sidebar */
+        .sidebar { width: 240px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 0; flex-shrink: 0; min-height: 100vh; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-brand .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .sidebar-brand .badge { display: inline-block; margin-left: 8px; background: var(--sidebar-active); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: middle; }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .nav-section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--sidebar-muted); padding: 8px 8px 6px; margin-top: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--sidebar-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; text-decoration: none; margin-bottom: 2px; }
+        .nav-item:hover { background: var(--sidebar-hover); color: var(--sidebar-text); text-decoration: none; }
+        .nav-item.active { background: rgba(220,38,38,0.20); color: #fca5a5; }
+        .nav-item .icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.8; }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .user-chip { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--sidebar-active); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .user-info { min-width: 0; }
+        .user-email { font-size: 12px; color: var(--sidebar-text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-role { font-size: 11px; color: var(--sidebar-muted); }
+
+        /* Main content */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 10; }
+        .page-title { font-size: 16px; font-weight: 700; color: var(--text); }
+        .topbar-actions { display: flex; gap: 10px; align-items: center; }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, opacity 0.15s; text-decoration: none; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-h); color: #fff; text-decoration: none; }
+        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--surface-2); }
+        .btn-danger { background: var(--danger); color: #fff; padding: 5px 10px; font-size: 12px; }
+        .btn-danger:hover { background: var(--danger-h); }
+        .theme-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+
+        .content { padding: 28px 32px; flex: 1; }
+
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
+        .stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 8px; }
+        .stat-value { font-size: 32px; font-weight: 800; color: var(--text); line-height: 1; }
+        .stat-value.accent { color: var(--accent); }
+
+        /* Table */
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .table-header h2 { font-size: 15px; font-weight: 700; }
+        .search-wrap { position: relative; }
+        .search-wrap input { padding: 7px 12px 7px 34px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 13px; width: 220px; outline: none; transition: border-color 0.15s; }
+        .search-wrap input:focus { border-color: var(--accent); }
+        .search-wrap .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+        .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--surface-2); }
+        th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+        td { padding: 13px 16px; font-size: 13px; border-bottom: 1px solid var(--border-2); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tbody tr { transition: background 0.1s; }
+        tbody tr:hover { background: var(--surface-2); }
+        .role-badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+        .role-admin { background: rgba(239,68,68,0.12); color: #ef4444; }
+        .role-student { background: rgba(37,99,235,0.12); color: var(--accent); }
+        .role-teacher { background: rgba(16,185,129,0.12); color: #10b981; }
+        .role-expert { background: rgba(245,158,11,0.12); color: #f59e0b; }
+        .role-default { background: var(--surface-2); color: var(--text-muted); }
+        .actions-cell { display: flex; gap: 6px; align-items: center; }
+        .btn-view { background: var(--surface-2); color: var(--accent); border: 1px solid var(--border); border-radius: 7px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+        .btn-view:hover { background: rgba(37,99,235,0.1); text-decoration: none; }
+        .empty-row td { text-align: center; color: var(--text-muted); padding: 40px; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="logo">Tria</span><span class="badge">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Главное</div>
+        <a href="/Admin" class="nav-item active">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Обзор
+        </a>
+        <a href="/Admin/AssignCourse" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Назначить курс
+        </a>
+        <a href="/Admin/CreateUser" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Добавить пользователя
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+                <div class="user-email">@User.Identity!.Name</div>
+                <div class="user-role">Администратор</div>
+            </div>
+        </div>
+        <form method="post" action="/Logout" style="margin-top:8px;padding:0 10px;">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background:none;border:none;color:var(--sidebar-muted);font-size:13px;cursor:pointer;padding:4px 0;">Выйти</button>
+        </form>
+    </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+    <div class="topbar">
+        <span class="page-title">Панель администратора</span>
+        <div class="topbar-actions">
+<button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Пользователи</div>
+                <div class="stat-value accent">@Model.Users.Count</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Курсы в системе</div>
+                <div class="stat-value">@Model.TotalCourses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Назначений всего</div>
+                <div class="stat-value">@Model.TotalAssignments</div>
+            </div>
+        </div>
+
+        <!-- Users table -->
+        <div class="table-header">
+            <h2>Пользователи</h2>
+            <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search" placeholder="Поиск по email..." oninput="filterTable()" autocomplete="off" />
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Курсы</th>
+                        <th>Уроков пройдено</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Users.Any())
+                    {
+                        <tr class="empty-row"><td colspan="5">Пользователи не найдены</td></tr>
+                    }
+                    else
+                    {
+                        @foreach (var user in Model.Users)
+                        {
+                            var roleClass = user.Role.ToLower() switch
+                            {
+                                "admin"   => "role-admin",
+                                "student" => "role-student",
+                                "teacher" => "role-teacher",
+                                "expert"  => "role-expert",
+                                _         => "role-default"
+                            };
+                            <tr data-email="@user.Email.ToLower()">
+                                <td style="font-weight:500;">@user.Email</td>
+                                <td><span class="role-badge @roleClass">@user.Role</span></td>
+                                <td>@user.AssignedCourses</td>
+                                <td>@user.CompletedLessons</td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <a href="/Admin/UserDetail?userId=@user.Id" class="btn-view">Подробнее</a>
+                                        @if (user.Role != "Admin")
+                                        {
+                                            <form method="post" asp-page-handler="DeleteUser" style="display:inline;">
+                                                <input type="hidden" name="userId" value="@user.Id" />
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить пользователя @user.Email?')">Удалить</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var themeBtn = document.getElementById("theme-btn");
+    themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+    }
+    function filterTable() {
+        var q = document.getElementById("search").value.toLowerCase();
+        document.querySelectorAll("#users-table tbody tr").forEach(function(row) {
+            row.style.display = (row.dataset.email || "").includes(q) ? "" : "none";
+        });
+    }
+</script>
+</body>
+</html>
