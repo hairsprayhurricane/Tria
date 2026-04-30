@@ -11,6 +11,7 @@ public class ProgressModel : PageModel
 {
     private readonly ILearningService _learning;
     private readonly IProgressService _progress;
+    private readonly INotificationService _notifications;
 
     public List<Course> Courses { get; set; } = new();
     public Dictionary<int, int> CourseProgress { get; set; } = new();
@@ -18,11 +19,13 @@ public class ProgressModel : PageModel
     public Dictionary<int, UserLessonProgress?> LessonProgressMap { get; set; } = new();
     public Dictionary<int, UserTestAttempt?> LatestAttempts { get; set; } = new();
     public int TotalXp { get; set; }
+    public int UnreadNotificationCount { get; set; }
 
-    public ProgressModel(ILearningService learning, IProgressService progress)
+    public ProgressModel(ILearningService learning, IProgressService progress, INotificationService notifications)
     {
-        _learning = learning;
-        _progress = progress;
+        _learning      = learning;
+        _progress      = progress;
+        _notifications = notifications;
     }
 
     public async Task OnGetAsync()
@@ -30,6 +33,7 @@ public class ProgressModel : PageModel
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         Courses = _learning.GetAllCourses();
         TotalXp = await _progress.GetTotalXpAsync(userId);
+        UnreadNotificationCount = await _notifications.GetUnreadCountAsync(userId);
 
         foreach (var course in Courses)
         {

@@ -27,10 +27,22 @@ public class LearningService : ILearningService
             .FirstOrDefault(m => m.IsActive && m.Id == moduleId);
 
     public Lesson? GetLessonById(int lessonId)
-        => Load()
+    {
+        var lesson = Load()
             .SelectMany(c => c.Modules)
             .SelectMany(m => m.Lessons)
             .FirstOrDefault(l => l.IsActive && l.Id == lessonId);
+
+        // Fallback to RU — нужен для фонового сервиса, где нет HTTP-контекста
+        // и CurrentUICulture возвращает системный язык (EN), а не язык пользователя
+        if (lesson == null)
+            lesson = LoadForLang("RU")
+                .SelectMany(c => c.Modules)
+                .SelectMany(m => m.Lessons)
+                .FirstOrDefault(l => l.IsActive && l.Id == lessonId);
+
+        return lesson;
+    }
 
     public List<Lesson> GetLessonsByModuleId(int moduleId)
     {
@@ -45,7 +57,11 @@ public class LearningService : ILearningService
     {
         var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToUpper();
         if (lang.Length != 2) lang = "RU";
+        return LoadForLang(lang);
+    }
 
+    private List<Course> LoadForLang(string lang)
+    {
         if (_cache.TryGetValue(lang, out var cached)) return cached;
 
         // Resources/Courses/{LANG}/ — fall back to RU if language folder missing
@@ -62,7 +78,6 @@ public class LearningService : ILearningService
                 courses.Add(course);
         }
 
-        // Stable sort by Id so order is consistent regardless of filesystem order
         courses = courses.OrderBy(c => c.Id).ToList();
 
         _cache[lang] = courses;

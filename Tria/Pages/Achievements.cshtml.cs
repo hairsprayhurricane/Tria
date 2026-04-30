@@ -13,20 +13,24 @@ public class AchievementsModel : PageModel
 {
     private readonly ILearningService _learning;
     private readonly IProgressService _progress;
+    private readonly INotificationService _notifications;
 
     public List<Achievement> Achievements { get; set; } = new();
     public int TotalXp { get; set; }
+    public int UnreadNotificationCount { get; set; }
 
-    public AchievementsModel(ILearningService learning, IProgressService progress)
+    public AchievementsModel(ILearningService learning, IProgressService progress, INotificationService notifications)
     {
-        _learning = learning;
-        _progress = progress;
+        _learning      = learning;
+        _progress      = progress;
+        _notifications = notifications;
     }
 
     public async Task OnGetAsync()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         TotalXp = await _progress.GetTotalXpAsync(userId);
+        UnreadNotificationCount = await _notifications.GetUnreadCountAsync(userId);
 
         var allProgress = await _progress.GetAllProgressAsync(userId);
         var courses = _learning.GetAllCourses();

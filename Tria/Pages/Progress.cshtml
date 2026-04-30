@@ -30,6 +30,9 @@
         .breadcrumbs a:hover { color:var(--text); }
         .theme-btn { width:34px; height:34px; border:1px solid var(--border); border-radius:6px; background:var(--surface); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:border-color 0.2s,background-color 0.3s; }
         .theme-btn:hover { border-color:var(--text-muted); }
+        .notif-btn { position:relative; width:34px; height:34px; border:1px solid var(--border); border-radius:6px; background:var(--surface); font-size:16px; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:border-color 0.2s,background-color 0.3s; flex-shrink:0; }
+        .notif-btn:hover { border-color:var(--text-muted); text-decoration:none; }
+        .notif-badge { position:absolute; top:-5px; right:-5px; background:#ef4444; color:#fff; font-size:10px; font-weight:700; border-radius:99px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px; line-height:1; }
         .page-header { margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
         .page-header h1 { font-size:22px; font-weight:700; }
         .xp-chip { font-size:14px; background:var(--surface); border:1px solid var(--border); border-radius:99px; padding:6px 16px; font-weight:600; color:var(--accent); }
@@ -66,7 +69,13 @@
                 <span>/</span>
                 <span style="color:var(--text);font-weight:500;">Прогресс</span>
             </div>
-            <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <a href="/Notifications" class="notif-btn" id="notif-btn" title="Уведомления">
+                    🔔
+                    <span id="notif-badge" class="notif-badge" style="@(Model.UnreadNotificationCount == 0 ? "display:none" : "")">@(Model.UnreadNotificationCount > 9 ? "9+" : Model.UnreadNotificationCount.ToString())</span>
+                </a>
+                <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+            </div>
         </div>
 
         <div class="page-header">
@@ -161,6 +170,22 @@
         body.style.display = hidden ? "" : "none";
         icon.style.transform = hidden ? "" : "rotate(-90deg)";
     }
+
+    async function refreshNotifBadge() {
+        try {
+            const r = await fetch('/api/notifications/unread-count');
+            if (!r.ok) return;
+            const { count } = await r.json();
+            const badge = document.getElementById('notif-badge');
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : String(count);
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        } catch {}
+    }
+    setInterval(refreshNotifBadge, 5000);
 </script>
 </body>
 </html>

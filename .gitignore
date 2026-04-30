@@ -104,3 +104,4 @@ _ReSharper*/
 *.VC.db
 *.VC.opendb
 Tria/.claude/settings.local.json
+Tria/Services/SentinelLogger.cs

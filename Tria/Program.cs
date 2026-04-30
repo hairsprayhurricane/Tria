@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -52,6 +53,10 @@ builder.Services.AddScoped<IUiLocalizer, XmlUiLocalizer>();
 // Learning service is scoped so XML cache lives per-request (avoids stale lang data)
 builder.Services.AddScoped<ILearningService, LearningService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+var sentinelLogPath = Path.Combine(builder.Environment.ContentRootPath, "SentinelLog.txt");
+builder.Services.AddSingleton(new SentinelLogger(sentinelLogPath));
 
 // Ollama AI grading
 builder.Services.Configure<OllamaOptions>(builder.Configuration.GetSection(OllamaOptions.Section));
@@ -65,7 +70,8 @@ builder.Services.AddSingleton<IOllamaGradingService>(sp =>
     };
     return new OllamaGradingService(http,
         sp.GetRequiredService<IOptions<OllamaOptions>>(),
-        sp.GetRequiredService<ILogger<OllamaGradingService>>());
+        sp.GetRequiredService<ILogger<OllamaGradingService>>(),
+        sp.GetRequiredService<SentinelLogger>());
 });
 builder.Services.AddHostedService<AiGradingBackgroundService>();
 
@@ -74,6 +80,9 @@ builder.Services.AddRazorPages();
 var app = builder.Build();
 
 app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
+app.Services.GetRequiredService<SentinelLogger>()
+   .Log("==================== НОВЫЙ ЗАПУСК ====================");
 
 using (var scope = app.Services.CreateScope())
 {
@@ -149,6 +158,14 @@ app.MapGet("/set-language", (HttpContext ctx, string culture, string returnUrl =
 });
 
 app.MapRazorPages();
+
+app.MapGet("/api/notifications/unread-count", async (HttpContext ctx, INotificationService notif) =>
+{
+    var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId == null) return Results.Unauthorized();
+    var count = await notif.GetUnreadCountAsync(userId);
+    return Results.Ok(new { count });
+}).RequireAuthorization();
 
 app.MapPost("/Logout", async (HttpContext ctx, SignInManager<IdentityUser> signInManager) =>
 {

@@ -14,16 +14,19 @@ public class DashboardModel : PageModel
     private readonly ILearningService _learning;
     private readonly IProgressService _progress;
     private readonly ApplicationDbContext _db;
+    private readonly INotificationService _notifications;
 
     public List<Course> Courses { get; set; } = new();
     public Dictionary<int, int> CourseProgress { get; set; } = new();
     public int TotalXp { get; set; }
+    public int UnreadNotificationCount { get; set; }
 
-    public DashboardModel(ILearningService learning, IProgressService progress, ApplicationDbContext db)
+    public DashboardModel(ILearningService learning, IProgressService progress, ApplicationDbContext db, INotificationService notifications)
     {
-        _learning = learning;
-        _progress = progress;
-        _db = db;
+        _learning      = learning;
+        _progress      = progress;
+        _db            = db;
+        _notifications = notifications;
     }
 
     public async Task OnGetAsync()
@@ -51,5 +54,6 @@ public class DashboardModel : PageModel
         }
 
         TotalXp = await _progress.GetTotalXpAsync(userId);
+        UnreadNotificationCount = await _notifications.GetUnreadCountAsync(userId);
     }
 }
