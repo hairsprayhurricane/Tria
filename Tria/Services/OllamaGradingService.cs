@@ -29,7 +29,7 @@ public class OllamaGradingService : IOllamaGradingService
         {
             model = _opts.Model,
             stream = false,
-            options = new { num_predict = 120 },
+            options = new { num_predict = 350 },
             messages = new[]
             {
                 new { role = "system", content = _opts.SystemPrompt },
@@ -60,11 +60,13 @@ public class OllamaGradingService : IOllamaGradingService
                 .GetProperty("content")
                 .GetString() ?? "";
 
-            // Strip potential markdown code fences the model may wrap around JSON
+            // Strip markdown code fences the model may wrap around JSON
             var start = content.IndexOf('{');
             var end   = content.LastIndexOf('}');
             if (start >= 0 && end > start)
                 content = content[start..(end + 1)];
+            else if (start >= 0)
+                content = content[start..] + "\"}"; // JSON обрезан лимитом токенов — закрываем вручную
 
             using var result = JsonDocument.Parse(content);
             var isCorrect = result.RootElement.GetProperty("isCorrect").GetBoolean();
