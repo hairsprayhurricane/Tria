@@ -29,6 +29,9 @@
               </Options>
               <CorrectOptionIndex>1</CorrectOptionIndex>
             </Question>
+            <Question Type="ShortAnswer">
+              <Text>Придумайте и опишите словами алгоритм для любого бытового действия (например, приготовление чая или утренние сборы). Запишите его пошагово.</Text>
+            </Question>
           </Test>
         </Lesson>
       </Lessons>
@@ -49,6 +52,9 @@
                 <Option>Только текст</Option>
               </Options>
               <CorrectOptionIndex>1</CorrectOptionIndex>
+            </Question>
+            <Question Type="ShortAnswer">
+              <Text>Объясните своими словами, что такое переменная в программировании, и приведите пример её использования в реальной задаче.</Text>
             </Question>
           </Test>
         </Lesson>
@@ -74,6 +80,9 @@
                 <Option>true</Option>
               </Options>
               <CorrectOptionIndex>2</CorrectOptionIndex>
+            </Question>
+            <Question Type="ShortAnswer">
+              <Text>Опишите жизненную ситуацию, которую можно выразить через конструкцию if/else, и объясните логику принятия решения в этой ситуации.</Text>
             </Question>
           </Test>
         </Lesson>
