@@ -59,6 +59,8 @@
         [data-theme="dark"] .ans-correct { color:#6ee7b7; }
         [data-theme="dark"] .ans-wrong   { color:#fca5a5; }
         .ans-row { display:flex; flex-direction:column; gap:5px; font-size:14px; }
+        .ans-checking { color:var(--text-muted); font-style:italic; font-size:13px; }
+        .ai-comment { margin-top:6px; padding:8px 12px; background:var(--surface-2); border-left:3px solid var(--accent); border-radius:0 6px 6px 0; font-size:13px; color:var(--text-sub); line-height:1.5; }
         .pass-badge { display:inline-block; padding:4px 12px; border-radius:99px; font-size:13px; font-weight:600; }
         .pass-badge-passed { background:#d1fae5; color:#065f46; }
         .pass-badge-failed { background:#fee2e2; color:#991b1b; }
@@ -108,9 +110,25 @@
 
             <div class="section">
                 <div class="result-summary">
-                    <div class="result-score">@Model.LatestAttempt.ScorePercent%</div>
+                    @if (Model.LatestAttempt.Status == TestStatus.Checking)
+                    {
+                        <div class="result-score" style="color:var(--text-muted)">?%</div>
+                    }
+                    else
+                    {
+                        <div class="result-score">@Model.LatestAttempt.ScorePercent%</div>
+                    }
                     <div>
-                        <div class="result-label">@Model.LatestAttempt.Score из @Model.LatestAttempt.MaxScore баллов</div>
+                        <div class="result-label">
+                            @if (Model.LatestAttempt.Status == TestStatus.Checking)
+                            {
+                                <span>Ответы на проверке</span>
+                            }
+                            else
+                            {
+                                <span>@Model.LatestAttempt.Score из @Model.LatestAttempt.MaxScore баллов</span>
+                            }
+                        </div>
                         @if (Model.LatestAttempt.Status == TestStatus.Passed)
                         {
                             <span class="pass-badge pass-badge-passed">✅ Тест сдан</span>
@@ -161,7 +179,18 @@
                         {
                             <div class="ans-row">
                                 <div>Ваш ответ: <span style="color:var(--text-sub)">@(ans?.TextAnswer ?? "—")</span></div>
-                                <div class="sa-note">Вопрос с развёрнутым ответом — оценка определяется автоматически.</div>
+                                @if (ans?.AiCheckedAt == null)
+                                {
+                                    <div class="ans-checking">⏳ * Ваш ответ проверяется — результат появится автоматически *</div>
+                                }
+                                else
+                                {
+                                    <div class="@(ans.IsCorrect ? "ans-correct" : "ans-wrong")">@(ans.IsCorrect ? "✓ Верно" : "✗ Неверно")</div>
+                                    @if (!string.IsNullOrEmpty(ans.AiComment))
+                                    {
+                                        <div class="ai-comment">💬 @ans.AiComment</div>
+                                    }
+                                }
                             </div>
                         }
                     </div>
@@ -209,8 +238,7 @@
                         else
                         {
                             <textarea name="q_@(i)_text" class="textarea-ans" placeholder="Введите ваш ответ..."></textarea>
-                            @* TODO: ShortAnswer questions will be graded by AI in a future update. Currently auto-marked as incorrect. *@
-                            <div class="sa-note">⚠️ Этот вопрос будет проверен ИИ и пока считается неверным.</div>
+                            <div class="sa-note">Этот вопрос будет автоматически проверен ИИ после отправки.</div>
                         }
                     </div>
                 }

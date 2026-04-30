@@ -78,6 +78,6 @@ public class TakeTestModel : PageModel
 
         await _progress.SubmitTestAsync(userId, lessonId, answers, Lesson.Test);
 
-        return RedirectToPage("/Lessons/LessonDetail", new { lessonId });
+        return Redirect($"/Lesson/{lessonId}/Test");
     }
 }

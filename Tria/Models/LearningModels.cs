@@ -82,7 +82,4 @@ public class TestQuestion
     // MultipleChoice only
     public List<string> Options { get; set; } = new();
     public int CorrectOptionIndex { get; set; }
-
-    // TODO: ShortAnswer questions will be graded by an AI model in a future update.
-    // Currently they are auto-marked as incorrect (0 points).
 }

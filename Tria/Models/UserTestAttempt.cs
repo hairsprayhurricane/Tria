@@ -46,13 +46,10 @@ public class UserAnswer
     /// <summary>Text entered for ShortAnswer.</summary>
     public string? TextAnswer { get; set; }
 
-    /// <summary>
-    /// True if the answer is correct.
-    /// For ShortAnswer: always false until AI grades it.
-    /// TODO: Set by AI grader in a future update.
-    /// </summary>
     public bool IsCorrect { get; set; }
-
-    /// <summary>Points awarded. For ShortAnswer: always 0 until AI grades.</summary>
     public int PointsEarned { get; set; }
+
+    // AI grading (ShortAnswer only)
+    public string? AiComment { get; set; }
+    public DateTime? AiCheckedAt { get; set; }
 }

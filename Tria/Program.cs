@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Tria.Data;
+using Tria.Options;
 using Tria.Services;
 using Tria.Models;
 
@@ -51,6 +52,23 @@ builder.Services.AddScoped<IUiLocalizer, XmlUiLocalizer>();
 // Learning service is scoped so XML cache lives per-request (avoids stale lang data)
 builder.Services.AddScoped<ILearningService, LearningService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
+
+// Ollama AI grading
+builder.Services.Configure<OllamaOptions>(builder.Configuration.GetSection(OllamaOptions.Section));
+builder.Services.AddSingleton<IOllamaGradingService>(sp =>
+{
+    var opts = sp.GetRequiredService<IOptions<OllamaOptions>>().Value;
+    var http = new HttpClient
+    {
+        BaseAddress = new Uri(opts.BaseUrl),
+        Timeout     = TimeSpan.FromMinutes(5)
+    };
+    return new OllamaGradingService(http,
+        sp.GetRequiredService<IOptions<OllamaOptions>>(),
+        sp.GetRequiredService<ILogger<OllamaGradingService>>());
+});
+builder.Services.AddHostedService<AiGradingBackgroundService>();
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

@@ -86,9 +86,8 @@ public class ProgressService : IProgressService
                 a.PointsEarned = a.IsCorrect ? 1 : 0;
                 score         += a.PointsEarned;
             }
-            else // ShortAnswer
+            else // ShortAnswer — graded asynchronously by AiGradingBackgroundService
             {
-                // TODO: grade via AI model in a future update; default to incorrect.
                 a.IsCorrect    = false;
                 a.PointsEarned = 0;
                 hasShortAnswer = true;
