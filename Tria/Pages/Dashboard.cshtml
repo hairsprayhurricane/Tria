@@ -38,6 +38,9 @@
         .notif-btn { position:relative; width:34px; height:34px; border:1px solid var(--border); border-radius:6px; background:var(--surface); font-size:16px; display:flex; align-items:center; justify-content:center; text-decoration:none; transition:border-color 0.2s,background-color 0.3s; flex-shrink:0; }
         .notif-btn:hover { border-color:var(--text-muted); text-decoration:none; }
         .notif-badge { position:absolute; top:-5px; right:-5px; background:#ef4444; color:#fff; font-size:10px; font-weight:700; border-radius:99px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px; line-height:1; }
+        .msg-btn { position:relative; width:34px; height:34px; border:1px solid var(--border); border-radius:6px; background:var(--surface); display:flex; align-items:center; justify-content:center; text-decoration:none; transition:border-color 0.2s,background-color 0.3s; flex-shrink:0; color:var(--text-muted); }
+        .msg-btn:hover { border-color:var(--text-muted); text-decoration:none; color:var(--text); }
+        .msg-badge { position:absolute; top:-5px; right:-5px; background:#ef4444; color:#fff; font-size:10px; font-weight:700; border-radius:99px; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px; line-height:1; }
         .welcome { margin-bottom: 28px; }
         .welcome h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
         .welcome p  { font-size: 14px; color: var(--text-muted); }
@@ -68,6 +71,10 @@
             </div>
             <div class="right-bar">
                 <span class="xp-chip">⚡ @Model.TotalXp XP</span>
+                <a href="/Messenger" class="msg-btn" id="msg-btn" title="Мессенджер">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span id="msg-badge" class="msg-badge" style="display:none"></span>
+                </a>
                 <a href="/Notifications" class="notif-btn" id="notif-btn" title="Уведомления">
                     🔔
                     <span id="notif-badge" class="notif-badge" style="@(Model.UnreadNotificationCount == 0 ? "display:none" : "")">@(Model.UnreadNotificationCount > 9 ? "9+" : Model.UnreadNotificationCount.ToString())</span>
@@ -141,7 +148,23 @@
             }
         } catch {}
     }
+    async function refreshMsgBadge() {
+        try {
+            const r = await fetch('/api/messenger/unread-count');
+            if (!r.ok) return;
+            const { count } = await r.json();
+            const badge = document.getElementById('msg-badge');
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : String(count);
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        } catch {}
+    }
     setInterval(refreshNotifBadge, 5000);
+    setInterval(refreshMsgBadge, 5000);
+    refreshMsgBadge();
 </script>
 </body>
 </html>

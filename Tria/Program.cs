@@ -54,6 +54,7 @@ builder.Services.AddScoped<IUiLocalizer, XmlUiLocalizer>();
 builder.Services.AddScoped<ILearningService, LearningService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IMessengerService, MessengerService>();
 
 var sentinelLogPath = Path.Combine(builder.Environment.ContentRootPath, "SentinelLog.txt");
 builder.Services.AddSingleton(new SentinelLogger(sentinelLogPath));
@@ -72,6 +73,19 @@ builder.Services.AddSingleton<IOllamaGradingService>(sp =>
         sp.GetRequiredService<IOptions<OllamaOptions>>(),
         sp.GetRequiredService<ILogger<OllamaGradingService>>(),
         sp.GetRequiredService<SentinelLogger>());
+});
+
+builder.Services.AddSingleton<IOllamaChatService>(sp =>
+{
+    var opts = sp.GetRequiredService<IOptions<OllamaOptions>>().Value;
+    var http = new HttpClient
+    {
+        BaseAddress = new Uri(opts.BaseUrl),
+        Timeout     = TimeSpan.FromMinutes(5)
+    };
+    return new OllamaChatService(http,
+        sp.GetRequiredService<IOptions<OllamaOptions>>(),
+        sp.GetRequiredService<ILogger<OllamaChatService>>());
 });
 builder.Services.AddHostedService<AiGradingBackgroundService>();
 
@@ -173,4 +187,201 @@ app.MapPost("/Logout", async (HttpContext ctx, SignInManager<IdentityUser> signI
     return Results.LocalRedirect("/Login");
 });
 
+// ── Messenger API ─────────────────────────────────────────────────────────────
+
+app.MapGet("/api/messenger/unread-count", async (HttpContext ctx, IMessengerService messenger) =>
+{
+    var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId == null) return Results.Unauthorized();
+    var count = await messenger.GetUnreadCountAsync(userId);
+    return Results.Ok(new { count });
+}).RequireAuthorization();
+
+app.MapGet("/api/messenger/conversations", async (
+    HttpContext ctx,
+    IMessengerService messenger,
+    UserManager<IdentityUser> userManager,
+    ApplicationDbContext db) =>
+{
+    var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId == null) return Results.Unauthorized();
+
+    var isTeacher = ctx.User.IsInRole("Teacher");
+    List<string> contactIds;
+
+    if (isTeacher)
+    {
+        contactIds = await db.TeacherStudentAssignments
+            .Where(a => a.TeacherId == userId)
+            .Select(a => a.StudentId)
+            .ToListAsync();
+    }
+    else
+    {
+        contactIds = await db.TeacherStudentAssignments
+            .Where(a => a.StudentId == userId)
+            .Select(a => a.TeacherId)
+            .ToListAsync();
+    }
+
+    var result = new List<object>();
+
+    foreach (var cid in contactIds)
+    {
+        var contact = await userManager.FindByIdAsync(cid);
+        if (contact == null) continue;
+
+        var lastMsg = await db.ChatMessages
+            .Where(m =>
+                (m.SenderId == userId && m.ReceiverId == cid) ||
+                (m.SenderId == cid && m.ReceiverId == userId))
+            .OrderByDescending(m => m.SentAt)
+            .FirstOrDefaultAsync();
+
+        var unread = await db.ChatMessages
+            .CountAsync(m => m.SenderId == cid && m.ReceiverId == userId && !m.IsRead);
+
+        result.Add(new
+        {
+            contactId = cid,
+            contactEmail = contact.Email ?? contact.UserName ?? "—",
+            lastMessage = lastMsg?.Content,
+            lastMessageAt = lastMsg?.SentAt,
+            unreadCount = unread,
+            isAi = false
+        });
+    }
+
+    // AI conversation always present
+    var aiLastMsg = await db.ChatMessages
+        .Where(m =>
+            (m.SenderId == userId && m.ReceiverId == null) ||
+            (m.ReceiverId == userId && m.IsFromAi))
+        .OrderByDescending(m => m.SentAt)
+        .FirstOrDefaultAsync();
+
+    var aiUnread = await db.ChatMessages
+        .CountAsync(m => m.ReceiverId == userId && m.IsFromAi && !m.IsRead);
+
+    result.Add(new
+    {
+        contactId = "ai",
+        contactEmail = "Сентинел (ИИ)",
+        lastMessage = aiLastMsg?.Content,
+        lastMessageAt = aiLastMsg?.SentAt,
+        unreadCount = aiUnread,
+        isAi = true
+    });
+
+    result = result.OrderByDescending(c =>
+    {
+        var t = c.GetType().GetProperty("lastMessageAt")?.GetValue(c);
+        return t as DateTime? ?? DateTime.MinValue;
+    }).ToList();
+
+    return Results.Ok(result);
+}).RequireAuthorization(p => p.RequireRole("Teacher", "Student"));
+
+app.MapGet("/api/messenger/messages/{contactId}", async (
+    HttpContext ctx,
+    string contactId,
+    IMessengerService messenger,
+    ApplicationDbContext db) =>
+{
+    var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId == null) return Results.Unauthorized();
+
+    if (contactId == "ai")
+    {
+        var msgs = await messenger.GetAiConversationAsync(userId, 60);
+        return Results.Ok(msgs.Select(m => new
+        {
+            id = m.Id,
+            content = m.Content,
+            sentAt = m.SentAt,
+            isFromMe = m.SenderId == userId,
+            isFromAi = m.IsFromAi
+        }));
+    }
+
+    // Validate the contact is actually linked to this user
+    var isTeacher = ctx.User.IsInRole("Teacher");
+    bool linked = isTeacher
+        ? await db.TeacherStudentAssignments.AnyAsync(a => a.TeacherId == userId && a.StudentId == contactId)
+        : await db.TeacherStudentAssignments.AnyAsync(a => a.StudentId == userId && a.TeacherId == contactId);
+    if (!linked) return Results.Forbid();
+
+    var messages = await messenger.GetConversationAsync(userId, contactId, 60);
+    return Results.Ok(messages.Select(m => new
+    {
+        id = m.Id,
+        content = m.Content,
+        sentAt = m.SentAt,
+        isFromMe = m.SenderId == userId,
+        isFromAi = false
+    }));
+}).RequireAuthorization(p => p.RequireRole("Teacher", "Student"));
+
+app.MapPost("/api/messenger/messages/{receiverId}", async (
+    HttpContext ctx,
+    string receiverId,
+    IMessengerService messenger,
+    ApplicationDbContext db) =>
+{
+    var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId == null) return Results.Unauthorized();
+
+    var body = await ctx.Request.ReadFromJsonAsync<SendMessageBody>();
+    if (body == null || string.IsNullOrWhiteSpace(body.Content)) return Results.BadRequest();
+
+    var isTeacher = ctx.User.IsInRole("Teacher");
+    bool linked = isTeacher
+        ? await db.TeacherStudentAssignments.AnyAsync(a => a.TeacherId == userId && a.StudentId == receiverId)
+        : await db.TeacherStudentAssignments.AnyAsync(a => a.StudentId == userId && a.TeacherId == receiverId);
+    if (!linked) return Results.Forbid();
+
+    await messenger.SaveMessageAsync(userId, receiverId, body.Content.Trim());
+    return Results.Ok(new { ok = true });
+}).RequireAuthorization(p => p.RequireRole("Teacher", "Student"));
+
+app.MapPost("/api/messenger/ai", async (
+    HttpContext ctx,
+    IMessengerService messenger,
+    IOllamaChatService chatSvc,
+    UserManager<IdentityUser> userManager) =>
+{
+    var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId == null) return Results.Unauthorized();
+
+    var body = await ctx.Request.ReadFromJsonAsync<SendMessageBody>();
+    if (body == null || string.IsNullOrWhiteSpace(body.Content)) return Results.BadRequest();
+
+    var user = await userManager.FindByIdAsync(userId);
+    var roles = await userManager.GetRolesAsync(user!);
+    var userRole = roles.FirstOrDefault() ?? "Student";
+    var userEmail = user?.Email ?? "";
+
+    var history = await messenger.GetAiConversationAsync(userId, 10);
+    var historyList = history
+        .Select(m => (Role: m.IsFromAi ? "assistant" : "user", Content: m.Content))
+        .ToList();
+
+    string reply;
+    try
+    {
+        reply = await chatSvc.ChatAsync(userEmail, userRole, historyList, body.Content.Trim());
+    }
+    catch (Exception ex)
+    {
+        var logger = ctx.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ollama chat failed");
+        return Results.Problem("Не удалось получить ответ от ИИ. Убедитесь, что Ollama запущена.");
+    }
+
+    await messenger.SaveAiExchangeAsync(userId, body.Content.Trim(), reply);
+    return Results.Ok(new { reply });
+}).RequireAuthorization(p => p.RequireRole("Teacher", "Student"));
+
 app.Run();
+
+record SendMessageBody(string Content);

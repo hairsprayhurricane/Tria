@@ -1,0 +1,198 @@
+@page "/Admin/AssignTeacher"
+@model Tria.Pages.Admin.AssignTeacherModel
+@{
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>Назначить учеников – Tria</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --text-sub:#4b5563; --shadow:rgba(0,0,0,0.06); --accent:#2563eb; --accent-h:#1d4ed8; --danger:#dc2626; --danger-h:#b91c1c; --sidebar-bg:#1c1010; --sidebar-text:#f1e8e8; --sidebar-muted:#b89898; --sidebar-active:#dc2626; --sidebar-hover:rgba(255,255,255,0.06); }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --text-sub:#cbd5e1; --shadow:rgba(0,0,0,0.4); --sidebar-bg:#110808; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); display:flex; min-height:100vh; transition:background-color 0.2s,color 0.2s; }
+        a { color:var(--accent); text-decoration:none; }
+        .sidebar { width:240px; background:var(--sidebar-bg); color:var(--sidebar-text); display:flex; flex-direction:column; flex-shrink:0; min-height:100vh; position:sticky; top:0; height:100vh; overflow-y:auto; }
+        .sidebar-brand { padding:24px 20px 20px; border-bottom:1px solid rgba(255,255,255,0.08); }
+        .sidebar-brand .logo { font-size:20px; font-weight:800; color:#fff; }
+        .sidebar-brand .badge { display:inline-block; margin-left:8px; background:var(--sidebar-active); color:#fff; font-size:10px; font-weight:700; padding:2px 7px; border-radius:99px; text-transform:uppercase; letter-spacing:0.5px; vertical-align:middle; }
+        .sidebar-nav { padding:16px 12px; flex:1; }
+        .nav-section-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--sidebar-muted); padding:8px 8px 6px; margin-top:8px; }
+        .nav-item { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; color:var(--sidebar-muted); font-size:14px; font-weight:500; cursor:pointer; transition:background 0.15s,color 0.15s; text-decoration:none; margin-bottom:2px; }
+        .nav-item:hover { background:var(--sidebar-hover); color:var(--sidebar-text); text-decoration:none; }
+        .nav-item.active { background:rgba(220,38,38,0.20); color:#fca5a5; }
+        .nav-item .icon { width:18px; height:18px; flex-shrink:0; opacity:0.8; }
+        .sidebar-footer { padding:16px 12px; border-top:1px solid rgba(255,255,255,0.08); }
+        .user-chip { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; }
+        .user-avatar { width:32px; height:32px; border-radius:50%; background:var(--sidebar-active); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff; flex-shrink:0; }
+        .user-info { min-width:0; }
+        .user-email { font-size:12px; color:var(--sidebar-text); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .user-role { font-size:11px; color:var(--sidebar-muted); }
+        .main { flex:1; display:flex; flex-direction:column; min-width:0; }
+        .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 32px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:16px; position:sticky; top:0; z-index:10; }
+        .page-title { font-size:16px; font-weight:700; }
+        .theme-btn { width:34px; height:34px; border:1px solid var(--border); border-radius:6px; background:var(--surface); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; }
+        .content { padding:28px 32px; flex:1; }
+        .alert { display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:10px; font-size:14px; font-weight:500; margin-bottom:20px; }
+        .alert-success { background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.25); color:#16a34a; }
+        .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:24px; }
+        .card-title { font-size:15px; font-weight:700; margin-bottom:16px; }
+        .form-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
+        .form-group { display:flex; flex-direction:column; gap:6px; flex:1; min-width:180px; }
+        label { font-size:13px; font-weight:600; color:var(--text-muted); }
+        select { padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface); color:var(--text); font-size:13px; outline:none; transition:border-color 0.15s; }
+        select:focus { border-color:var(--accent); }
+        .btn { display:inline-flex; align-items:center; gap:6px; padding:9px 18px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:background 0.15s; text-decoration:none; }
+        .btn-primary { background:var(--accent); color:#fff; }
+        .btn-primary:hover { background:var(--accent-h); color:#fff; }
+        .btn-danger-sm { background:transparent; color:var(--danger); border:1px solid rgba(220,38,38,0.3); border-radius:7px; padding:5px 11px; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.15s; }
+        .btn-danger-sm:hover { background:rgba(220,38,38,0.08); }
+        table { width:100%; border-collapse:collapse; }
+        thead { background:var(--surface-2); }
+        th { padding:10px 16px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); border-bottom:1px solid var(--border); }
+        td { padding:12px 16px; font-size:13px; border-bottom:1px solid var(--border-2); vertical-align:middle; }
+        tr:last-child td { border-bottom:none; }
+        tbody tr:hover { background:var(--surface-2); }
+        .table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+        .empty-row td { text-align:center; color:var(--text-muted); padding:40px; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="logo">Tria</span><span class="badge">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Главное</div>
+        <a href="/Admin" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Обзор
+        </a>
+        <a href="/Admin/AssignCourse" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Назначить курс
+        </a>
+        <a href="/Admin/AssignTeacher" class="nav-item active">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Назначить учеников
+        </a>
+        <a href="/Admin/CreateUser" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Добавить пользователя
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+                <div class="user-email">@User.Identity!.Name</div>
+                <div class="user-role">Администратор</div>
+            </div>
+        </div>
+        <form method="post" action="/Logout" style="margin-top:8px;padding:0 10px;">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background:none;border:none;color:var(--sidebar-muted);font-size:13px;cursor:pointer;padding:4px 0;">Выйти</button>
+        </form>
+    </div>
+</aside>
+
+<div class="main">
+    <div class="topbar">
+        <span class="page-title">Назначить учеников преподавателям</span>
+        <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+    </div>
+    <div class="content">
+
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="alert alert-success">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                @Model.SuccessMessage
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-title">Новое назначение</div>
+            <form method="post" asp-page-handler="Assign">
+                @Html.AntiForgeryToken()
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Преподаватель</label>
+                        <select name="teacherId" required>
+                            <option value="">— выберите —</option>
+                            @foreach (var t in Model.Teachers)
+                            {
+                                <option value="@t.Id">@t.Email</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ученик</label>
+                        <select name="studentId" required>
+                            <option value="">— выберите —</option>
+                            @foreach (var s in Model.Students)
+                            {
+                                <option value="@s.Id">@s.Email</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Назначить</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Преподаватель</th>
+                        <th>Ученик</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Assignments.Any())
+                    {
+                        <tr class="empty-row"><td colspan="3">Назначений ещё нет</td></tr>
+                    }
+                    else
+                    {
+                        @foreach (var a in Model.Assignments)
+                        {
+                            <tr>
+                                <td style="font-weight:500;">@a.TeacherEmail</td>
+                                <td>@a.StudentEmail</td>
+                                <td>
+                                    <form method="post" asp-page-handler="Remove" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="assignmentId" value="@a.Id" />
+                                        <button type="submit" class="btn-danger-sm" onclick="return confirm('Удалить это назначение?')">Удалить</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var themeBtn = document.getElementById("theme-btn");
+    themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+    }
+</script>
+</body>
+</html>
