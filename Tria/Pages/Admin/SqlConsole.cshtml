@@ -1,0 +1,282 @@
+@page "/Admin/SqlConsole"
+@model Tria.Pages.Admin.SqlConsoleModel
+@{
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>SQL Консоль – Tria Admin</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --text-sub:#4b5563; --shadow:rgba(0,0,0,0.06); --accent:#2563eb; --accent-h:#1d4ed8; --danger:#dc2626; --danger-h:#b91c1c; --success:#16a34a; --sidebar-bg:#1c1010; --sidebar-text:#f1e8e8; --sidebar-muted:#b89898; --sidebar-active:#dc2626; --sidebar-hover:rgba(255,255,255,0.06); --editor-bg:#1e1e2e; --editor-text:#cdd6f4; --editor-border:#313244; }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --text-sub:#cbd5e1; --shadow:rgba(0,0,0,0.4); --sidebar-bg:#110808; --editor-bg:#13131f; --editor-border:#2a2d3e; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; transition: background-color 0.2s, color 0.2s; }
+        a { color: var(--accent); text-decoration: none; }
+
+        /* Sidebar */
+        .sidebar { width: 240px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 0; flex-shrink: 0; min-height: 100vh; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-brand .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .sidebar-brand .badge { display: inline-block; margin-left: 8px; background: var(--sidebar-active); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: middle; }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .nav-section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--sidebar-muted); padding: 8px 8px 6px; margin-top: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--sidebar-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; text-decoration: none; margin-bottom: 2px; }
+        .nav-item:hover { background: var(--sidebar-hover); color: var(--sidebar-text); text-decoration: none; }
+        .nav-item.active { background: rgba(220,38,38,0.20); color: #fca5a5; }
+        .nav-item .icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.8; }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .user-chip { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--sidebar-active); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .user-info { min-width: 0; }
+        .user-email { font-size: 12px; color: var(--sidebar-text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-role { font-size: 11px; color: var(--sidebar-muted); }
+
+        /* Main */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 10; }
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+        .breadcrumb a { color: var(--text-muted); }
+        .breadcrumb a:hover { color: var(--text); }
+        .breadcrumb .sep { color: var(--text-muted); }
+        .breadcrumb .current { font-weight: 600; color: var(--text); }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
+        .theme-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+
+        .content { padding: 24px 32px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+        /* Editor panel */
+        .editor-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .editor-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface-2); gap: 12px; }
+        .editor-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); }
+        .toolbar-right { display: flex; align-items: center; gap: 8px; }
+        .kbd { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; color: var(--text-muted); background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: monospace; }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s, opacity 0.15s; text-decoration: none; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-h); color: #fff; }
+        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--surface-2); }
+
+        .editor-wrap { position: relative; }
+        .sql-editor { width: 100%; min-height: 180px; max-height: 400px; padding: 16px 18px; font-family: "JetBrains Mono","Fira Code","Cascadia Code",Consolas,monospace; font-size: 14px; line-height: 1.6; background: var(--editor-bg); color: var(--editor-text); border: none; outline: none; resize: vertical; tab-size: 2; }
+        .sql-editor::placeholder { color: #585b70; }
+
+        /* Result panel */
+        .result-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .result-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+        .result-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); }
+        .result-info { font-size: 12px; color: var(--success); font-weight: 600; margin-left: auto; }
+        .result-error { font-size: 12px; color: var(--danger); font-weight: 600; margin-left: auto; }
+
+        .table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--surface-2); position: sticky; top: 0; z-index: 1; }
+        th { padding: 9px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+        td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--border-2); font-family: "JetBrains Mono","Fira Code",Consolas,monospace; white-space: nowrap; max-width: 400px; overflow: hidden; text-overflow: ellipsis; }
+        tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: var(--surface-2); }
+        td.null-val { color: var(--text-muted); font-style: italic; }
+
+        .empty-state { padding: 48px; text-align: center; color: var(--text-muted); }
+        .empty-state .empty-icon { font-size: 32px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+
+        .error-block { padding: 16px 18px; font-family: "JetBrains Mono","Fira Code",Consolas,monospace; font-size: 13px; color: var(--danger); background: rgba(220,38,38,0.04); line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="logo">Tria</span><span class="badge">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Главное</div>
+        <a href="/Admin" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Обзор
+        </a>
+        <a href="/Admin/AssignCourse" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Назначить курс
+        </a>
+        <a href="/Admin/AssignTeacher" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Назначить учеников
+        </a>
+        <a href="/Admin/CreateUser" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Добавить пользователя
+        </a>
+        <div class="nav-section-title">Инструменты</div>
+        <a href="/Admin/SqlConsole" class="nav-item active">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            SQL Консоль
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+                <div class="user-email">@User.Identity!.Name</div>
+                <div class="user-role">Администратор</div>
+            </div>
+        </div>
+        <form method="post" action="/Logout" style="margin-top:8px;padding:0 10px;">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background:none;border:none;color:var(--sidebar-muted);font-size:13px;cursor:pointer;padding:4px 0;">Выйти</button>
+        </form>
+    </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+    <div class="topbar">
+        <div class="breadcrumb">
+            <a href="/Admin">Администрирование</a>
+            <span class="sep">›</span>
+            <span class="current">SQL Консоль</span>
+        </div>
+        <div class="topbar-right">
+            <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Editor -->
+        <form method="post" id="sql-form">
+            @Html.AntiForgeryToken()
+            <div class="editor-panel">
+                <div class="editor-toolbar">
+                    <span class="editor-label">SQL</span>
+                    <div class="toolbar-right">
+                        <span class="kbd">Ctrl + Enter</span>
+                        <button type="button" class="btn btn-ghost" onclick="clearEditor()">Очистить</button>
+                        <button type="submit" class="btn btn-primary" id="run-btn">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            Выполнить
+                        </button>
+                    </div>
+                </div>
+                <div class="editor-wrap">
+                    <textarea
+                        class="sql-editor"
+                        id="sql-editor"
+                        name="Query"
+                        placeholder="SELECT * FROM &quot;AspNetUsers&quot; LIMIT 10;"
+                        spellcheck="false"
+                        autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="off"
+                    >@Model.Query</textarea>
+                </div>
+            </div>
+        </form>
+
+        <!-- Results -->
+        <div class="result-panel">
+            <div class="result-bar">
+                <span class="result-label">Результат</span>
+                @if (!string.IsNullOrEmpty(Model.InfoMessage))
+                {
+                    <span class="result-info">✓ @Model.InfoMessage</span>
+                }
+                else if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <span class="result-error">✗ Ошибка (@Model.ElapsedMs мс)</span>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="error-block">@Model.ErrorMessage</div>
+            }
+            else if (Model.HasResult)
+            {
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                @foreach (var col in Model.Columns)
+                                {
+                                    <th>@col</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Rows)
+                            {
+                                <tr>
+                                    @for (int i = 0; i < row.Count; i++)
+                                    {
+                                        if (row[i] is null)
+                                        {
+                                            <td class="null-val">NULL</td>
+                                        }
+                                        else
+                                        {
+                                            <td title="@row[i]">@row[i]</td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else if (Model.Query != null && string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">✓</div>
+                    <p>Запрос выполнен, данных для отображения нет.</p>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">⌨</div>
+                    <p>Введите SQL запрос и нажмите «Выполнить»</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    var themeBtn = document.getElementById("theme-btn");
+    themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+    }
+
+    function clearEditor() {
+        document.getElementById("sql-editor").value = "";
+        document.getElementById("sql-editor").focus();
+    }
+
+    document.getElementById("sql-editor").addEventListener("keydown", function(e) {
+        if (e.ctrlKey && e.key === "Enter") {
+            e.preventDefault();
+            document.getElementById("sql-form").submit();
+        }
+        // Tab inserts spaces instead of leaving the field
+        if (e.key === "Tab") {
+            e.preventDefault();
+            var el = this;
+            var start = el.selectionStart;
+            var end = el.selectionEnd;
+            el.value = el.value.substring(0, start) + "  " + el.value.substring(end);
+            el.selectionStart = el.selectionEnd = start + 2;
+        }
+    });
+</script>
+</body>
+</html>
