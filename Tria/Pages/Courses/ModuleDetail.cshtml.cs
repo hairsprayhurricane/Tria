@@ -7,7 +7,7 @@ using Tria.Services;
 
 namespace Tria.Pages.Courses;
 
-[Authorize]
+[Authorize(Roles = "Admin,Student")]
 public class ModuleDetailModel : PageModel
 {
     private readonly ILearningService _learning;

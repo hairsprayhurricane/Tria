@@ -54,8 +54,9 @@ namespace Tria.Pages
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "Student");
                 await _signInManager.SignInAsync(user, false);
-                return RedirectToPage("/Index");
+                return RedirectToPage("/Dashboard");
             }
 
             foreach (var error in result.Errors)

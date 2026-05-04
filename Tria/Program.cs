@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using System.Security.Claims;
@@ -89,6 +91,7 @@ builder.Services.AddSingleton<IOllamaChatService>(sp =>
 });
 builder.Services.AddHostedService<AiGradingBackgroundService>();
 
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, RoleBasedAuthHandler>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
@@ -102,6 +105,11 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    foreach (var role in new[] { "Admin", "Teacher", "Student" })
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
 
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     const string adminEmail = "admin@tria.com";

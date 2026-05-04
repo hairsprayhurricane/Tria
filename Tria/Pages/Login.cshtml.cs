@@ -49,6 +49,9 @@ namespace Tria.Pages
                 if (user != null && await _userManager.IsInRoleAsync(user, "Teacher"))
                     return LocalRedirect("/Teacher");
 
+                if (user != null && await _userManager.IsInRoleAsync(user, "Student"))
+                    return LocalRedirect("/Dashboard");
+
                 returnUrl ??= Url.Content("~/");
                 return LocalRedirect(returnUrl);
             }

@@ -7,7 +7,7 @@ using Tria.Services;
 
 namespace Tria.Pages;
 
-[Authorize]
+[Authorize(Roles = "Student")]
 public class NotificationsModel : PageModel
 {
     private readonly INotificationService _notifications;

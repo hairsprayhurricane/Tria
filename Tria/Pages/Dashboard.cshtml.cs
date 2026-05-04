@@ -8,7 +8,7 @@ using Tria.Services;
 
 namespace Tria.Pages;
 
-[Authorize]
+[Authorize(Roles = "Student")]
 public class DashboardModel : PageModel
 {
     private readonly ILearningService _learning;
@@ -34,18 +34,11 @@ public class DashboardModel : PageModel
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var allCourses = _learning.GetAllCourses();
 
-        if (User.IsInRole("Admin"))
-        {
-            Courses = allCourses;
-        }
-        else
-        {
-            var assignedIds = await _db.UserCourseAssignments
-                .Where(a => a.UserId == userId)
-                .Select(a => a.CourseId)
-                .ToListAsync();
-            Courses = allCourses.Where(c => assignedIds.Contains(c.Id)).ToList();
-        }
+        var assignedIds = await _db.UserCourseAssignments
+            .Where(a => a.UserId == userId)
+            .Select(a => a.CourseId)
+            .ToListAsync();
+        Courses = allCourses.Where(c => assignedIds.Contains(c.Id)).ToList();
 
         foreach (var course in Courses)
         {

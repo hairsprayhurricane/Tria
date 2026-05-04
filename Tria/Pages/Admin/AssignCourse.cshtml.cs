@@ -18,10 +18,11 @@ public class AssignCourseModel : PageModel
 
     public List<UserOption> Users { get; set; } = new();
     public List<CourseOption> Courses { get; set; } = new();
-    // userId → list of already-assigned courseIds (for client-side highlighting)
     public Dictionary<string, List<int>> UserAssignments { get; set; } = new();
 
     public string? SuccessMessage { get; set; }
+    public bool SuccessIsWarn { get; set; }
+    public string? LastUserId { get; set; }
 
     public class UserOption
     {
@@ -49,32 +50,63 @@ public class AssignCourseModel : PageModel
         await LoadDataAsync();
     }
 
-    public async Task<IActionResult> OnPostAsync(string userId, int courseId)
+    public async Task<IActionResult> OnPostAsync(string userId, List<int> courseIds)
     {
-        await LoadDataAsync();
+        LastUserId = userId;
 
-        if (string.IsNullOrEmpty(userId) || courseId == 0)
-            return Page();
-
-        var already = await _db.UserCourseAssignments
-            .AnyAsync(a => a.UserId == userId && a.CourseId == courseId);
-
-        if (!already)
+        if (!string.IsNullOrEmpty(userId) && courseIds != null && courseIds.Any())
         {
-            _db.UserCourseAssignments.Add(new UserCourseAssignment
-            {
-                UserId = userId,
-                CourseId = courseId,
-                AssignedAt = DateTime.UtcNow,
-            });
-            await _db.SaveChangesAsync();
-        }
+            var existingIds = (await _db.UserCourseAssignments
+                .Where(a => a.UserId == userId)
+                .Select(a => a.CourseId)
+                .ToListAsync()).ToHashSet();
 
-        var user = Users.FirstOrDefault(u => u.Id == userId);
-        var course = Courses.FirstOrDefault(c => c.Id == courseId);
-        SuccessMessage = already
-            ? $"Курс «{course?.Title}» уже назначен пользователю {user?.Email}."
-            : $"Курс «{course?.Title}» успешно назначен пользователю {user?.Email}.";
+            var toAdd = courseIds.Where(id => !existingIds.Contains(id)).ToList();
+
+            foreach (var courseId in toAdd)
+            {
+                _db.UserCourseAssignments.Add(new UserCourseAssignment
+                {
+                    UserId = userId,
+                    CourseId = courseId,
+                    AssignedAt = DateTime.UtcNow,
+                });
+            }
+
+            if (toAdd.Any())
+                await _db.SaveChangesAsync();
+
+            // Load AFTER save so UserAssignments reflects the new state
+            await LoadDataAsync();
+
+            var user = Users.FirstOrDefault(u => u.Id == userId);
+            var skipped = courseIds.Count - toAdd.Count;
+
+            if (toAdd.Count == 0)
+            {
+                SuccessIsWarn = true;
+                SuccessMessage = skipped == 1
+                    ? "Этот курс уже был назначен."
+                    : $"Все {skipped} выбранных курсов уже были назначены.";
+            }
+            else
+            {
+                SuccessIsWarn = false;
+                var addedTitles = Courses
+                    .Where(c => toAdd.Contains(c.Id))
+                    .Select(c => c.Title)
+                    .ToList();
+
+                SuccessMessage = toAdd.Count == 1
+                    ? $"Курс «{addedTitles[0]}» назначен → {user?.Email}"
+                    : $"Назначено {toAdd.Count} курсов → {user?.Email}" +
+                      (skipped > 0 ? $" (ещё {skipped} уже было назначено)" : "");
+            }
+        }
+        else
+        {
+            await LoadDataAsync();
+        }
 
         return Page();
     }

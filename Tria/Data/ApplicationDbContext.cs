@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<UserNotification> UserNotifications { get; set; } = null!;
     public DbSet<TeacherStudentAssignment> TeacherStudentAssignments { get; set; } = null!;
     public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
+    public DbSet<CourseReview> CourseReviews { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -61,6 +62,16 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
         builder.Entity<ChatMessage>()
             .HasIndex(m => new { m.SenderId, m.ReceiverId, m.SentAt });
+
+        builder.Entity<CourseReview>()
+            .HasOne<IdentityUser>()
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CourseReview>()
+            .HasIndex(r => new { r.UserId, r.CourseId })
+            .IsUnique();
 
         // Seed roles: Admin, Teacher, Student, Expert
         // ConcurrencyStamp is pinned to static GUIDs to prevent EF non-deterministic model warnings.

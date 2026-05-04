@@ -8,7 +8,7 @@ namespace Tria.Pages;
 
 public record Achievement(string Title, string Description, string Tier, bool Earned, string Icon);
 
-[Authorize]
+[Authorize(Roles = "Student")]
 public class AchievementsModel : PageModel
 {
     private readonly ILearningService _learning;

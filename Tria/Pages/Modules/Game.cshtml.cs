@@ -6,7 +6,7 @@ using Tria.Services;
 
 namespace Tria.Pages.Modules;
 
-[Authorize]
+[Authorize(Roles = "Admin,Student")]
 public class ModulesGameModel : PageModel
 {
     private readonly ILearningService _learning;

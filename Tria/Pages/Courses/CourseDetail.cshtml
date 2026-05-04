@@ -53,6 +53,40 @@
         .progress-fill { height:100%; background:var(--accent); border-radius:3px; }
         .progress-label { display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px; }
         .game-tag { font-size:11px; color:var(--text-muted); }
+
+        /* Reviews */
+        .reviews-section { margin-top:40px; border-top:1px solid var(--border); padding-top:32px; }
+        .reviews-header { display:flex; align-items:baseline; gap:14px; margin-bottom:20px; }
+        .reviews-header h2 { font-size:17px; font-weight:700; }
+        .avg-badge { display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:600; color:var(--text-muted); }
+        .avg-badge .stars { color:#f59e0b; font-size:14px; }
+        .review-form { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:24px; }
+        .review-form h3 { font-size:14px; font-weight:700; margin-bottom:14px; }
+        .star-row { display:flex; gap:4px; margin-bottom:14px; }
+        .star-row input[type=radio] { display:none; }
+        .star-row label { font-size:26px; cursor:pointer; color:var(--border); transition:color 0.12s; line-height:1; }
+        .star-row label:hover,
+        .star-row label:hover ~ label,
+        .star-row input[type=radio]:checked ~ label { color:var(--border); }
+        .star-row label:hover,
+        .star-row input[type=radio]:checked + label,
+        .star-row input[type=radio]:checked + label ~ label:not(:hover) { color:#f59e0b; }
+        /* reverse trick for CSS-only stars */
+        .star-row { flex-direction:row-reverse; justify-content:flex-end; }
+        .star-row label:hover,
+        .star-row label:hover ~ label { color:#f59e0b; }
+        .star-row input[type=radio]:checked ~ label { color:#f59e0b; }
+        .review-textarea { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); color:var(--text); font-size:13px; font-family:inherit; resize:vertical; min-height:80px; outline:none; transition:border-color 0.15s; }
+        .review-textarea:focus { border-color:var(--accent); }
+        .btn-submit-review { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; margin-top:12px; transition:background 0.15s; }
+        .btn-submit-review:hover { background:var(--accent-h); }
+        .review-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px 18px; margin-bottom:12px; }
+        .review-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+        .review-author { font-size:13px; font-weight:600; }
+        .review-stars { color:#f59e0b; font-size:14px; }
+        .review-date { font-size:11px; color:var(--text-muted); }
+        .review-comment { font-size:13px; color:var(--text-sub); line-height:1.5; margin-top:6px; }
+        .no-reviews { color:var(--text-muted); font-size:14px; text-align:center; padding:28px 0; }
     </style>
 </head>
 <body>
@@ -105,6 +139,67 @@
                     </a>
                 }
             </div>
+        <!-- Reviews -->
+        <div class="reviews-section">
+            <div class="reviews-header">
+                <h2>Отзывы</h2>
+                @if (Model.Reviews.Any())
+                {
+                    <span class="avg-badge">
+                        <span class="stars">★</span>
+                        @Model.AverageRating.ToString("F1")
+                        <span style="color:var(--text-muted);font-weight:400;">(@Model.Reviews.Count)</span>
+                    </span>
+                }
+            </div>
+
+            @if (Model.IsEnrolled)
+            {
+                <div class="review-form">
+                    <h3>@(Model.MyReview != null ? "Ваш отзыв" : "Оставить отзыв")</h3>
+                    <form method="post" asp-page-handler="Review" asp-route-courseId="@Model.Course!.Id">
+                        @Html.AntiForgeryToken()
+                        <div class="star-row" id="star-row">
+                            @for (int s = 5; s >= 1; s--)
+                            {
+                                var sid = $"star{s}";
+                                var checked_ = Model.MyReview?.Rating == s ? "checked" : "";
+                                <input type="radio" name="ReviewRating" id="@sid" value="@s" @checked_ />
+                                <label for="@sid">★</label>
+                            }
+                        </div>
+                        <textarea class="review-textarea" name="ReviewComment" placeholder="Напишите ваш отзыв...">@(Model.MyReview?.Comment ?? "")</textarea>
+                        <button type="submit" class="btn-submit-review">
+                            @(Model.MyReview != null ? "Обновить отзыв" : "Опубликовать")
+                        </button>
+                    </form>
+                </div>
+            }
+
+            @if (!Model.Reviews.Any())
+            {
+                <div class="no-reviews">Отзывов пока нет. Будьте первым!</div>
+            }
+            else
+            {
+                @foreach (var r in Model.Reviews)
+                {
+                    <div class="review-card">
+                        <div class="review-card-top">
+                            <div>
+                                <span class="review-author">@r.AuthorEmail</span>
+                                <span class="review-stars" style="margin-left:8px;">@(new string('★', r.Rating))@(new string('☆', 5 - r.Rating))</span>
+                            </div>
+                            <span class="review-date">@r.CreatedAt.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(r.Comment))
+                        {
+                            <div class="review-comment">@r.Comment</div>
+                        }
+                    </div>
+                }
+            }
+        </div>
         }
 
     </div>

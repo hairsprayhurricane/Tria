@@ -6,7 +6,7 @@ using Tria.Services;
 
 namespace Tria.Pages;
 
-[Authorize]
+[Authorize(Roles = "Student")]
 public class ProgressModel : PageModel
 {
     private readonly ILearningService _learning;
