@@ -369,7 +369,7 @@ app.MapPost("/api/messenger/ai", async (
     var userRole = roles.FirstOrDefault() ?? "Student";
     var userEmail = user?.Email ?? "";
 
-    var history = await messenger.GetAiConversationAsync(userId, 10);
+    var history = await messenger.GetAiConversationAsync(userId, 30);
     var historyList = history
         .Select(m => (Role: m.IsFromAi ? "assistant" : "user", Content: m.Content))
         .ToList();
@@ -387,6 +387,10 @@ app.MapPost("/api/messenger/ai", async (
     }
 
     await messenger.SaveAiExchangeAsync(userId, body.Content.Trim(), reply);
+
+    var sentinelLog = ctx.RequestServices.GetRequiredService<SentinelLogger>();
+    sentinelLog.Log($"МЕССЕНДЖЕР | Ответ отправлен пользователю: {userEmail}");
+
     return Results.Ok(new { reply });
 }).RequireAuthorization(p => p.RequireRole("Teacher", "Student"));
 
