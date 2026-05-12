@@ -1,0 +1,891 @@
+@page
+@model Tria.Pages.WelcomeModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tria — Образовательная платформа</title>
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark')
+                document.documentElement.setAttribute('data-theme', 'dark');
+        })();
+    </script>
+    <style>
+        :root {
+            --bg:           #f5f5f7;
+            --surface:      #ffffff;
+            --surface-2:    #f9fafb;
+            --surface-alt:  #f0f0f2;
+            --border:       #d1d5db;
+            --border-2:     #e5e7eb;
+            --text:         #111827;
+            --text-muted:   #6b7280;
+            --text-sub:     #4b5563;
+            --shadow:       rgba(0,0,0,0.07);
+            --shadow-lg:    rgba(0,0,0,0.12);
+            --logo-filter:  invert(1);
+            --accent:       #2563eb;
+        }
+        [data-theme="dark"] {
+            --bg:           #0d0f18;
+            --surface:      #141620;
+            --surface-2:    #1a1d2e;
+            --surface-alt:  #12141e;
+            --border:       #252838;
+            --border-2:     #1e2030;
+            --text:         #f1f5f9;
+            --text-muted:   #8892a4;
+            --text-sub:     #c4cdd8;
+            --shadow:       rgba(0,0,0,0.4);
+            --shadow-lg:    rgba(0,0,0,0.6);
+            --logo-filter:  none;
+            --accent:       #3b82f6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        /* ─── Topbar ─── */
+        .topbar {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 40px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+        }
+        .topbar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .topbar-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+        .topbar-controls { display: flex; align-items: center; gap: 10px; }
+        .theme-btn {
+            width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 7px;
+            background: var(--surface-2); cursor: pointer; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            transition: border-color 0.2s;
+        }
+        .theme-btn:hover { border-color: var(--text-muted); }
+        .btn-login {
+            padding: 7px 18px; font-size: 13px; border-radius: 7px;
+            border: 1px solid var(--border); background: var(--surface-2);
+            color: var(--text); text-decoration: none;
+            transition: border-color 0.2s;
+        }
+        .btn-login:hover { border-color: var(--text-muted); }
+
+        /* ─── Shared section styles ─── */
+        section { padding: 96px 40px; }
+        .section-inner { max-width: 1060px; margin: 0 auto; }
+        .section-tag {
+            display: inline-block; font-size: 11px; letter-spacing: 0.1em;
+            text-transform: uppercase; color: var(--text-muted);
+            border: 1px solid var(--border); border-radius: 20px;
+            padding: 4px 12px; margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: clamp(28px, 3.5vw, 42px);
+            font-weight: 700; letter-spacing: -0.025em;
+            line-height: 1.12; margin-bottom: 18px;
+        }
+        .section-sub {
+            font-size: 16px; color: var(--text-muted);
+            line-height: 1.7; max-width: 560px; margin-bottom: 52px;
+        }
+
+        /* ─── Reviews section ─── */
+        .reviews-section { background: var(--surface-alt); }
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .review-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 24px 22px;
+            display: flex; flex-direction: column; gap: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .review-card:hover { border-color: var(--text-muted); box-shadow: 0 4px 20px var(--shadow); }
+        .review-header { display: flex; align-items: center; justify-content: space-between; }
+        .review-author { display: flex; align-items: center; gap: 10px; }
+        .review-avatar {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: var(--surface-2); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 600; color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .review-author-name { font-size: 13px; font-weight: 600; }
+        .review-course { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+        .review-stars { display: flex; gap: 2px; }
+        .star { font-size: 13px; color: #f59e0b; }
+        .star.empty { color: var(--border); }
+        .review-text { font-size: 13px; color: var(--text-sub); line-height: 1.65; flex: 1; }
+        .review-date { font-size: 11px; color: var(--text-muted); }
+        .reviews-empty {
+            text-align: center; padding: 48px 24px;
+            color: var(--text-muted); font-size: 14px;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            min-height: 88vh;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 80px 40px;
+            background: var(--surface);
+        }
+        .hero-inner { max-width: 700px; }
+
+        .hero-brand {
+            display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 40px;
+        }
+        .hero-brand img {
+            height: 120px; width: auto;
+            filter: var(--logo-filter);
+            transition: filter 0.3s;
+            margin-bottom: 20px;
+        }
+        .hero-brand-name {
+            font-size: clamp(48px, 9vw, 88px);
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            line-height: 1;
+            color: var(--text);
+            text-transform: uppercase;
+        }
+        .hero-brand-line {
+            width: 48px; height: 2px;
+            background: var(--border);
+            margin: 16px auto 0;
+        }
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase;
+            color: var(--text-muted); border: 1px solid var(--border);
+            border-radius: 20px; padding: 5px 14px; margin-bottom: 20px;
+        }
+        .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+        .hero-title {
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 700; letter-spacing: -0.025em;
+            line-height: 1.12; margin-bottom: 20px;
+        }
+        .hero-sub {
+            font-size: 17px; color: var(--text-muted);
+            line-height: 1.7; max-width: 520px; margin: 0 auto 44px;
+        }
+        .hero-actions { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .btn-primary {
+            padding: 12px 32px; font-size: 14px; border-radius: 8px;
+            border: 1px solid var(--text); background: var(--text); color: var(--bg);
+            text-decoration: none; transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.82; }
+        .btn-ghost {
+            padding: 12px 32px; font-size: 14px; border-radius: 8px;
+            border: 1px solid var(--border); background: transparent; color: var(--text);
+            text-decoration: none; transition: border-color 0.2s;
+        }
+        .btn-ghost:hover { border-color: var(--text-muted); }
+        .hero-stat-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 32px; margin-top: 56px; flex-wrap: wrap;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat-val { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+        .hero-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .hero-stat-sep { width: 1px; height: 36px; background: var(--border); }
+
+        /* ─── Courses section ─── */
+        .courses-section { background: var(--bg); }
+        .free-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; padding: 5px 14px; border-radius: 20px;
+            background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;
+            margin-bottom: 24px; font-weight: 500;
+        }
+        [data-theme="dark"] .free-badge {
+            background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.25); color: #4ade80;
+        }
+        .free-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px; margin-bottom: 56px;
+        }
+        .course-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 28px 24px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .course-card:hover { border-color: var(--text-muted); box-shadow: 0 6px 24px var(--shadow); }
+        .course-free {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 11px; padding: 3px 9px; border-radius: 20px;
+            background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d;
+            font-weight: 500; margin-bottom: 14px;
+        }
+        [data-theme="dark"] .course-free {
+            background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.25); color: #4ade80;
+        }
+        .course-icon { font-size: 30px; margin-bottom: 12px; }
+        .course-label {
+            font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase;
+            color: var(--text-muted); margin-bottom: 8px;
+        }
+        .course-name { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+        .course-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        .course-modules {
+            display: flex; flex-direction: column; gap: 7px;
+            padding-top: 16px; border-top: 1px solid var(--border-2);
+        }
+        .course-module {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 12px; color: var(--text-sub);
+        }
+        .course-module-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--text-muted); flex-shrink: 0;
+        }
+
+        .structure-block {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 36px 40px;
+            display: grid; grid-template-columns: 1fr 1px 1fr;
+            gap: 40px; align-items: start;
+        }
+        .structure-divider { background: var(--border); }
+        .structure-title { font-size: 13px; font-weight: 600; margin-bottom: 20px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+        .structure-tree { display: flex; flex-direction: column; gap: 12px; }
+        .tree-node { display: flex; align-items: flex-start; gap: 12px; }
+        .tree-icon {
+            width: 32px; height: 32px; border-radius: 7px;
+            border: 1px solid var(--border); background: var(--surface-2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+        }
+        .tree-text-title { font-size: 13px; font-weight: 600; }
+        .tree-text-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+        .tree-connector {
+            width: 1px; height: 12px; background: var(--border);
+            margin-left: 15px;
+        }
+        .material-types { display: flex; flex-direction: column; gap: 10px; }
+        .material-type {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; border-radius: 8px;
+            border: 1px solid var(--border-2); background: var(--surface-2);
+        }
+        .material-emoji { font-size: 18px; }
+        .material-name { font-size: 13px; font-weight: 500; }
+        .material-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+        /* ─── Gamification section ─── */
+        .game-section { background: var(--surface-alt); }
+        .game-top { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .xp-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 28px; margin-bottom: 20px;
+        }
+        .xp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .xp-label { font-size: 12px; color: var(--text-muted); }
+        .xp-val { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+        .xp-bar-bg {
+            height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+        }
+        .xp-bar-fill { height: 100%; background: var(--text); border-radius: 3px; transition: width 1s ease; }
+        .xp-next { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+        .achievements-mini { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .ach-chip {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px; border-radius: 9px;
+            border: 1px solid var(--border); background: var(--surface);
+        }
+        .ach-chip-icon { font-size: 22px; }
+        .ach-chip-name { font-size: 12px; font-weight: 600; }
+        .ach-chip-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+        .ach-chip.locked { opacity: 0.45; }
+
+        .game-features { display: flex; flex-direction: column; gap: 20px; }
+        .game-feature { display: flex; align-items: flex-start; gap: 16px; }
+        .game-feature-icon {
+            width: 44px; height: 44px; border-radius: 10px;
+            border: 1px solid var(--border); background: var(--surface);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .game-feature-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+        .game-feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        /* ─── Messenger / Sentinel section ─── */
+        .ai-section { background: var(--bg); }
+        .ai-top { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .chat-mockup {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+        }
+        .chat-header {
+            padding: 12px 16px; border-bottom: 1px solid var(--border);
+            background: var(--surface-2); display: flex; align-items: center; gap: 10px;
+        }
+        .chat-avatar {
+            width: 32px; height: 32px; border-radius: 8px;
+            background: var(--text); display: flex; align-items: center; justify-content: center;
+            font-size: 15px; color: var(--bg);
+        }
+        .chat-contact-name { font-size: 13px; font-weight: 600; }
+        .chat-contact-status { font-size: 11px; color: #22c55e; }
+        .chat-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-msg { display: flex; gap: 8px; align-items: flex-start; }
+        .chat-msg.right { flex-direction: row-reverse; }
+        .chat-bubble {
+            max-width: 75%; padding: 10px 13px; border-radius: 10px;
+            font-size: 12px; line-height: 1.55;
+            background: var(--surface-2); border: 1px solid var(--border-2); color: var(--text-sub);
+        }
+        .chat-msg.right .chat-bubble {
+            background: var(--text); color: var(--bg); border-color: transparent;
+        }
+        .chat-bubble-name { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
+        .chat-msg.right .chat-bubble-name { text-align: right; }
+        .chat-footer {
+            padding: 10px 16px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .chat-input-mock {
+            flex: 1; height: 34px; border-radius: 7px;
+            border: 1px solid var(--border); background: var(--surface-2);
+            display: flex; align-items: center; padding: 0 12px;
+            font-size: 12px; color: var(--text-muted);
+        }
+        .chat-send {
+            width: 34px; height: 34px; border-radius: 7px; border: none;
+            background: var(--text); color: var(--bg); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
+        }
+
+        .ai-features { display: flex; flex-direction: column; gap: 24px; }
+        .ai-feature { display: flex; align-items: flex-start; gap: 16px; }
+        .ai-feature-icon {
+            width: 44px; height: 44px; border-radius: 10px;
+            border: 1px solid var(--border); background: var(--surface);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0; margin-top: 2px;
+        }
+        .ai-feature-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+        .ai-feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+        /* ─── CTA ─── */
+        .cta-section {
+            background: var(--surface);
+            text-align: center; padding: 96px 40px;
+        }
+        .cta-title { font-size: clamp(28px, 4vw, 44px); font-weight: 700; letter-spacing: -0.03em; margin-bottom: 16px; }
+        .cta-sub { font-size: 16px; color: var(--text-muted); margin-bottom: 36px; }
+        .cta-actions { display: flex; align-items: center; justify-content: center; gap: 12px; }
+
+        /* ─── Footer ─── */
+        .footer {
+            padding: 20px 40px; border-top: 1px solid var(--border);
+            text-align: center; font-size: 11px; color: var(--text-muted);
+            background: var(--bg);
+        }
+
+        /* ─── Responsive ─── */
+        @@media (max-width: 768px) {
+            section { padding: 64px 20px; }
+            .topbar { padding: 12px 20px; }
+            .courses-grid { grid-template-columns: 1fr; }
+            .game-top, .ai-top { grid-template-columns: 1fr; }
+            .structure-block { grid-template-columns: 1fr; }
+            .structure-divider { display: none; }
+            .reviews-grid { grid-template-columns: 1fr; }
+        }
+        @@media (max-width: 900px) {
+            .courses-grid { grid-template-columns: 1fr 1fr; }
+            .reviews-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Topbar ── -->
+    <header class="topbar">
+        <a href="/" class="topbar-logo">
+            <span class="topbar-logo-text">Tria</span>
+        </a>
+        <div class="topbar-controls">
+            <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+            <a href="/Login" class="btn-login">Войти</a>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════
+         HERO
+    ══════════════════════════════════════════════════ -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-brand">
+                <img src="/img/logo.png" alt="Tria" />
+                <div class="hero-brand-name">Tria</div>
+                <div class="hero-brand-line"></div>
+            </div>
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Образовательная платформа
+            </div>
+            <h1 class="hero-title">Учитесь.<br>Практикуйтесь.<br>Растите.</h1>
+            <p class="hero-sub">
+                Tria — платформа для обучения цифровым навыкам. Структурированные курсы,
+                проверка заданий через AI, игровые симуляции и личный наставник в одном месте.
+            </p>
+            <div class="hero-actions">
+                <a href="/Register" class="btn-primary">Начать бесплатно</a>
+                <a href="/Login" class="btn-ghost">Войти в аккаунт</a>
+            </div>
+            <div class="hero-stat-row">
+                <div class="hero-stat">
+                    <div class="hero-stat-val">@Model.CourseCount</div>
+                    <div class="hero-stat-label">@(Model.CourseCount == 1 ? "Курс" : Model.CourseCount is >= 2 and <= 4 ? "Курса" : "Курсов")</div>
+                </div>
+                <div class="hero-stat-sep"></div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val">AI</div>
+                    <div class="hero-stat-label">Проверка ответов</div>
+                </div>
+                <div class="hero-stat-sep"></div>
+                <div class="hero-stat">
+                    <div class="hero-stat-val">24/7</div>
+                    <div class="hero-stat-label">Ассистент Сентинел</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         COURSES
+    ══════════════════════════════════════════════════ -->
+    <section class="courses-section">
+        <div class="section-inner">
+            <div class="section-tag">Курсы</div>
+            <h2 class="section-title">Три направления.<br>Один путь к цифровым навыкам.</h2>
+            <p class="section-sub">
+                Каждый курс разбит на модули и уроки с теорией, видео, материалами для изучения
+                и тестами. Прогресс сохраняется — вы можете продолжать в любое время.
+            </p>
+
+            <div class="courses-grid">
+                <div class="course-card">
+                    <div class="course-icon">🔒</div>
+                    <div class="course-free"><span class="free-dot"></span> Бесплатно при регистрации</div>
+                    <div class="course-label">Курс 1</div>
+                    <div class="course-name">Кибербезопасность</div>
+                    <div class="course-desc">
+                        От базовых принципов защиты данных до разбора реальных атак.
+                        Практические лабораторные в игровых симуляциях.
+                    </div>
+                    <div class="course-modules">
+                        <div class="course-module"><span class="course-module-dot"></span>Угрозы и векторы атак</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Фишинг и социальная инженерия</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Пароли и аутентификация</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Сетевая безопасность</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Реагирование на инциденты</div>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="course-icon">💻</div>
+                    <div class="course-free"><span class="free-dot"></span> Бесплатно при регистрации</div>
+                    <div class="course-label">Курс 2</div>
+                    <div class="course-name">Цифровая грамотность</div>
+                    <div class="course-desc">
+                        Уверенная работа с цифровыми инструментами, понимание устройства
+                        интернета и навыки безопасной онлайн-жизни.
+                    </div>
+                    <div class="course-modules">
+                        <div class="course-module"><span class="course-module-dot"></span>Облачные сервисы и хранение данных</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Критическое мышление в сети</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Приватность и цифровой след</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Инструменты для совместной работы</div>
+                    </div>
+                </div>
+
+                <div class="course-card">
+                    <div class="course-icon">⌨️</div>
+                    <div class="course-free"><span class="free-dot"></span> Бесплатно при регистрации</div>
+                    <div class="course-label">Курс 3</div>
+                    <div class="course-name">Основы программирования</div>
+                    <div class="course-desc">
+                        Введение в программирование с нуля. Упор на логику и решение
+                        задач, а не на зазубривание синтаксиса.
+                    </div>
+                    <div class="course-modules">
+                        <div class="course-module"><span class="course-module-dot"></span>Алгоритмическое мышление</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Переменные, условия, циклы</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Функции и структуры данных</div>
+                        <div class="course-module"><span class="course-module-dot"></span>Отладка и работа с ошибками</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="structure-block">
+                <div>
+                    <div class="structure-title">Как устроен курс</div>
+                    <div class="structure-tree">
+                        <div class="tree-node">
+                            <div class="tree-icon">📚</div>
+                            <div><div class="tree-text-title">Курс</div><div class="tree-text-sub">Тема — кибербезопасность, программирование и др.</div></div>
+                        </div>
+                        <div class="tree-connector"></div>
+                        <div class="tree-node">
+                            <div class="tree-icon">📦</div>
+                            <div><div class="tree-text-title">Модуль</div><div class="tree-text-sub">Раздел внутри курса — несколько уроков по теме</div></div>
+                        </div>
+                        <div class="tree-connector"></div>
+                        <div class="tree-node">
+                            <div class="tree-icon">📄</div>
+                            <div><div class="tree-text-title">Урок</div><div class="tree-text-sub">Теория + материалы + тест</div></div>
+                        </div>
+                        <div class="tree-connector"></div>
+                        <div class="tree-node">
+                            <div class="tree-icon">✅</div>
+                            <div><div class="tree-text-title">Тест</div><div class="tree-text-sub">Тест с выбором ответа или развёрнутым ответом</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="structure-divider"></div>
+
+                <div>
+                    <div class="structure-title">Форматы материалов</div>
+                    <div class="material-types">
+                        <div class="material-type">
+                            <div class="material-emoji">▶️</div>
+                            <div>
+                                <div class="material-name">Видеоуроки</div>
+                                <div class="material-desc">Встроенный плеер прямо в платформе</div>
+                            </div>
+                        </div>
+                        <div class="material-type">
+                            <div class="material-emoji">📄</div>
+                            <div>
+                                <div class="material-name">PDF-документы</div>
+                                <div class="material-desc">Памятки, инструкции, справочные материалы</div>
+                            </div>
+                        </div>
+                        <div class="material-type">
+                            <div class="material-emoji">🎮</div>
+                            <div>
+                                <div class="material-name">Игровые симуляции</div>
+                                <div class="material-desc">Unity WebGL — работает прямо в браузере</div>
+                            </div>
+                        </div>
+                        <div class="material-type">
+                            <div class="material-emoji">🤖</div>
+                            <div>
+                                <div class="material-name">AI-тесты</div>
+                                <div class="material-desc">Развёрнутые ответы проверяет нейросеть</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         GAMIFICATION
+    ══════════════════════════════════════════════════ -->
+    <section class="game-section">
+        <div class="section-inner">
+            <div class="section-tag">Геймификация</div>
+            <h2 class="section-title">Учёба, которая<br>мотивирует продолжать.</h2>
+            <p class="section-sub">
+                Система опыта, уровней и достижений превращает прохождение курсов
+                в нечто большее, чем просто чтение теории.
+            </p>
+
+            <div class="game-top">
+                <div>
+                    <div class="xp-card">
+                        <div class="xp-header">
+                            <div>
+                                <div class="xp-label">Уровень 7 · Аналитик</div>
+                                <div class="xp-val">2 840 XP</div>
+                            </div>
+                            <div style="font-size:28px">⚡</div>
+                        </div>
+                        <div class="xp-bar-bg">
+                            <div class="xp-bar-fill" style="width: 71%"></div>
+                        </div>
+                        <div class="xp-next">До уровня 8 — 1 160 XP</div>
+                    </div>
+                    <div class="achievements-mini">
+                        <div class="ach-chip">
+                            <div class="ach-chip-icon">🔥</div>
+                            <div>
+                                <div class="ach-chip-name">7 дней подряд</div>
+                                <div class="ach-chip-desc">Серия занятий</div>
+                            </div>
+                        </div>
+                        <div class="ach-chip">
+                            <div class="ach-chip-icon">🎯</div>
+                            <div>
+                                <div class="ach-chip-name">Снайпер</div>
+                                <div class="ach-chip-desc">10 тестов на 100%</div>
+                            </div>
+                        </div>
+                        <div class="ach-chip">
+                            <div class="ach-chip-icon">🛡️</div>
+                            <div>
+                                <div class="ach-chip-name">Защитник</div>
+                                <div class="ach-chip-desc">Курс кибербез пройден</div>
+                            </div>
+                        </div>
+                        <div class="ach-chip locked">
+                            <div class="ach-chip-icon">🏆</div>
+                            <div>
+                                <div class="ach-chip-name">Мастер</div>
+                                <div class="ach-chip-desc">Все курсы пройдены</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-features">
+                    <div class="game-feature">
+                        <div class="game-feature-icon">⚡</div>
+                        <div>
+                            <div class="game-feature-title">Опыт (XP) за каждое действие</div>
+                            <div class="game-feature-desc">
+                                Просмотр урока, сдача теста, использование симуляции — всё приносит
+                                очки опыта. Чем сложнее задание и выше результат, тем больше XP.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-feature">
+                        <div class="game-feature-icon">📈</div>
+                        <div>
+                            <div class="game-feature-title">Уровни и звания</div>
+                            <div class="game-feature-desc">
+                                Накапливайте опыт и повышайте уровень от «Новичка» до «Эксперта».
+                                Каждый уровень отражает реальный прогресс в обучении.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-feature">
+                        <div class="game-feature-icon">🏅</div>
+                        <div>
+                            <div class="game-feature-title">Достижения</div>
+                            <div class="game-feature-desc">
+                                Серии занятий, идеальные тесты, прохождение курсов, активность
+                                в мессенджере — каждое достижение фиксирует важный момент в обучении.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-feature">
+                        <div class="game-feature-icon">📊</div>
+                        <div>
+                            <div class="game-feature-title">Страница прогресса</div>
+                            <div class="game-feature-desc">
+                                Детальная статистика по каждому курсу, модулю и уроку. Видно, что
+                                пройдено, что на проверке и что ещё предстоит.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         MESSENGER + SENTINEL
+    ══════════════════════════════════════════════════ -->
+    <section class="ai-section">
+        <div class="section-inner">
+            <div class="section-tag">Мессенджер и AI</div>
+            <h2 class="section-title">Преподаватель и Сентинел<br>всегда рядом.</h2>
+            <p class="section-sub">
+                Задайте вопрос живому преподавателю или получите мгновенный ответ
+                от AI-ассистента — прямо внутри платформы, не переключаясь.
+            </p>
+
+            <div class="ai-top">
+                <div class="chat-mockup">
+                    <div class="chat-header">
+                        <div class="chat-avatar">🤖</div>
+                        <div>
+                            <div class="chat-contact-name">Сентинел</div>
+                            <div class="chat-contact-status">● онлайн</div>
+                        </div>
+                    </div>
+                    <div class="chat-body">
+                        <div class="chat-msg right">
+                            <div class="chat-bubble">
+                                <div class="chat-bubble-name">Вы</div>
+                                Чем отличается симметричное шифрование от асимметричного?
+                            </div>
+                        </div>
+                        <div class="chat-msg">
+                            <div class="chat-bubble">
+                                <div class="chat-bubble-name">Сентинел</div>
+                                В симметричном — один ключ на двоих. Быстро, но нужно как-то передать его безопасно. Асимметричное решает именно это: есть открытый ключ для шифрования и закрытый — для расшифровки. Они математически связаны, но не выводятся друг из друга.
+                            </div>
+                        </div>
+                        <div class="chat-msg right">
+                            <div class="chat-bubble">
+                                <div class="chat-bubble-name">Вы</div>
+                                Где применяется асимметричное на практике?
+                            </div>
+                        </div>
+                        <div class="chat-msg">
+                            <div class="chat-bubble">
+                                <div class="chat-bubble-name">Сентинел</div>
+                                HTTPS, SSH, подпись кода, электронная почта с PGP. Каждый раз когда браузер говорит «соединение защищено» — там работает асимметричное шифрование. Оно медленнее симметричного, поэтому ключ сессии передают через него, а дальше переходят на AES.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-footer">
+                        <div class="chat-input-mock">Напишите сообщение…</div>
+                        <button class="chat-send">↑</button>
+                    </div>
+                </div>
+
+                <div class="ai-features">
+                    <div class="ai-feature">
+                        <div class="ai-feature-icon">💬</div>
+                        <div>
+                            <div class="ai-feature-title">Чат с преподавателем</div>
+                            <div class="ai-feature-desc">
+                                Встроенный мессенджер для прямого общения с вашим преподавателем.
+                                Задавайте вопросы по курсу, просите разобрать тему, получайте
+                                обратную связь — без выхода из платформы.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-feature">
+                        <div class="ai-feature-icon">🤖</div>
+                        <div>
+                            <div class="ai-feature-title">Сентинел — AI-собеседник</div>
+                            <div class="ai-feature-desc">
+                                Сентинел — персонаж с характером. Он доступен 24/7, отвечает
+                                на вопросы по материалам курса, объясняет темы другими словами
+                                и не даёт заскучать. Разговаривать с ним можно как с живым.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-feature">
+                        <div class="ai-feature-icon">✍️</div>
+                        <div>
+                            <div class="ai-feature-title">Автопроверка развёрнутых ответов</div>
+                            <div class="ai-feature-desc">
+                                Когда в тесте есть вопросы с развёрнутым ответом, Сентинел
+                                проверяет их автоматически после отправки. Он оценивает суть,
+                                а не точные слова — и оставляет личный комментарий прямо в тесте.
+                                Результат приходит в уведомлениях.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-feature">
+                        <div class="ai-feature-icon">🔒</div>
+                        <div>
+                            <div class="ai-feature-title">Локальная модель — данные не уходят</div>
+                            <div class="ai-feature-desc">
+                                Сентинел работает на сервере платформы через Ollama.
+                                Ответы студентов и переписка не передаются в облако
+                                и не используются для обучения внешних моделей.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         REVIEWS
+    ══════════════════════════════════════════════════ -->
+    <section class="reviews-section">
+        <div class="section-inner">
+            <div class="section-tag">Отзывы</div>
+            <h2 class="section-title">Что говорят студенты.</h2>
+            <p class="section-sub">
+                Реальные отзывы о курсах от участников платформы.
+            </p>
+
+            @if (Model.Reviews.Count == 0)
+            {
+                <div class="reviews-empty">Отзывов пока нет — будьте первым!</div>
+            }
+            else
+            {
+                <div class="reviews-grid">
+                    @foreach (var r in Model.Reviews)
+                    {
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="review-author">
+                                    <div class="review-avatar">@(r.AuthorName.Length > 0 ? r.AuthorName[0].ToString() : "?")</div>
+                                    <div>
+                                        <div class="review-author-name">@r.AuthorName</div>
+                                        <div class="review-course">@r.CourseTitle</div>
+                                    </div>
+                                </div>
+                                <div class="review-stars">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <span class="star @(i <= r.Rating ? "" : "empty")">★</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="review-text">@r.Comment</div>
+                            <div class="review-date">@r.CreatedAt.ToString("d MMMM yyyy", new System.Globalization.CultureInfo("ru-RU"))</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         CTA
+    ══════════════════════════════════════════════════ -->
+    <section class="cta-section">
+        <div class="cta-title">Готовы начать?</div>
+        <p class="cta-sub">Создайте аккаунт бесплатно и начните первый урок уже сегодня.</p>
+        <div class="cta-actions">
+            <a href="/Register" class="btn-primary">Зарегистрироваться</a>
+            <a href="/Login" class="btn-ghost">Войти</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        © 2025 Tria. Образовательная платформа.
+    </footer>
+
+    <script>
+        const btn = document.getElementById('theme-btn');
+        btn.textContent = localStorage.getItem('theme') === 'dark' ? '☀️' : '🌙';
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            btn.textContent = isDark ? '🌙' : '☀️';
+        }
+    </script>
+</body>
+</html>

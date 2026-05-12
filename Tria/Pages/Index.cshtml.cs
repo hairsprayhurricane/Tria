@@ -10,6 +10,6 @@ public class IndexModel : PageModel
         if (User.Identity?.IsAuthenticated == true)
             return RedirectToPage("/Dashboard");
 
-        return RedirectToPage("/Login");
+        return RedirectToPage("/Welcome");
     }
 }

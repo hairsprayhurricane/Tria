@@ -38,13 +38,12 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// Localization — cookie-first, reads ui.{lang}.xml from Content/
+// Localization — only Russian, reads ui.ru.xml from Content/
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
-    var cultures = new[] { "ru", "en" };
     options.SetDefaultCulture("ru");
-    options.AddSupportedCultures(cultures);
-    options.AddSupportedUICultures(cultures);
+    options.AddSupportedCultures("ru");
+    options.AddSupportedUICultures("ru");
     options.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
 });
 
@@ -160,24 +159,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Language switch — GET, sets culture cookie and redirects back
-app.MapGet("/set-language", (HttpContext ctx, string culture, string returnUrl = "/") =>
-{
-    if (!new[] { "ru", "en" }.Contains(culture)) culture = "en";
-
-    ctx.Response.Cookies.Append(
-        CookieRequestCultureProvider.DefaultCookieName,
-        CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-        new CookieOptions
-        {
-            Expires = DateTimeOffset.UtcNow.AddYears(1),
-            IsEssential = true,
-            SameSite = SameSiteMode.Lax
-        });
-
-    return Results.LocalRedirect(returnUrl);
-});
 
 app.MapRazorPages();
 

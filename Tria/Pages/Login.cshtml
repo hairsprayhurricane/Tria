@@ -5,11 +5,10 @@
 @{
     ViewData["Title"] = T["Login_Title"];
     Layout = null;
-    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
 }
 
 <!DOCTYPE html>
-<html lang="@lang">
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] – Tria</title>
@@ -102,28 +101,6 @@
         }
         .theme-btn:hover { border-color: var(--text-muted); }
 
-        .lang-switcher { position: relative; display: inline-block; }
-        .lang-btn {
-            display: flex; align-items: center; gap: 4px; padding: 3px 8px; font-size: 13px;
-            border: 1px solid var(--border); border-radius: 4px;
-            background: var(--surface); cursor: pointer; color: var(--text-light);
-            transition: border-color 0.2s, background-color 0.3s;
-        }
-        .lang-btn .arrow { font-size: 9px; color: var(--text-muted); }
-        .lang-dropdown {
-            display: none; position: absolute; right: 0; top: calc(100% + 4px);
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 6px; box-shadow: 0 6px 16px var(--shadow);
-            min-width: 150px; z-index: 100; overflow: hidden;
-        }
-        .lang-dropdown.open { display: block; }
-        .lang-option {
-            display: block; text-decoration: none; width: 100%; padding: 7px 12px;
-            font-size: 13px; text-align: left; background: none; border: none;
-            cursor: pointer; color: var(--text); transition: background-color 0.15s;
-        }
-        .lang-option:hover { background: var(--border-2); }
-        .lang-option.active { background: var(--border-2); color: #2563eb; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -133,15 +110,6 @@
                 <div class="window-title">@T["Login_Title"]</div>
                 <div class="controls">
                     <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
-                    <div class="lang-switcher">
-                        <button type="button" class="lang-btn" onclick="toggleLang(event)">
-                            @(lang == "ru" ? "🇷🇺" : "🇬🇧") <span class="arrow">▼</span>
-                        </button>
-                        <div class="lang-dropdown" id="lang-dropdown">
-                            <a href="/set-language?culture=en&returnUrl=/Login" class="lang-option @(lang == "en" ? "active" : "")">🇬🇧 English</a>
-                            <a href="/set-language?culture=ru&returnUrl=/Login" class="lang-option @(lang == "ru" ? "active" : "")">🇷🇺 Русский</a>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="window-body">
@@ -185,13 +153,6 @@
             btn.textContent = isDark ? '🌙' : '☀️';
         }
 
-        function toggleLang(e) {
-            e.stopPropagation();
-            document.getElementById('lang-dropdown').classList.toggle('open');
-        }
-        document.addEventListener('click', function() {
-            document.getElementById('lang-dropdown').classList.remove('open');
-        });
     </script>
 </body>
 </html>

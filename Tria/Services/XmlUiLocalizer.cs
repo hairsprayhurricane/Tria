@@ -32,15 +32,7 @@ namespace Tria.Services
                 if (strings.TryGetValue(key, out var value))
                     return value;
 
-                // Fallback to English
-                if (lang != "en")
-                {
-                    var fallback = GetStrings("en");
-                    if (fallback.TryGetValue(key, out var fallbackValue))
-                        return fallbackValue;
-                }
-
-                return key; // Last resort: return the key itself
+                return key;
             }
         }
 
