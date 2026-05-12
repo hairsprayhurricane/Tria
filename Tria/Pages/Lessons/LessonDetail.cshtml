@@ -1,0 +1,165 @@
+@page "/Lesson/{lessonId:int}"
+@model Tria.Pages.Lessons.LessonDetailModel
+@using Tria.Services
+@using Tria.Models
+@inject IUiLocalizer T
+@{
+    ViewData["Title"] = Model.Lesson?.Title ?? "Урок";
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var matDone   = Model.Progress?.MaterialsCompleted == true;
+    var testPassed = Model.LatestAttempt?.Status == TestStatus.Passed;
+    var testFailed = Model.LatestAttempt?.Status == TestStatus.Failed;
+    var testChecking = Model.LatestAttempt?.Status == TestStatus.Checking;
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>@ViewData["Title"] – Tria</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --text-sub:#4b5563; --shadow:rgba(0,0,0,0.06); --accent:#2563eb; --accent-h:#1d4ed8; }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --text-sub:#cbd5e1; --shadow:rgba(0,0,0,0.4); }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); transition:background-color 0.3s,color 0.3s; }
+        a { color:var(--accent); text-decoration:none; }
+        a:hover { text-decoration:underline; }
+        .page { min-height:100vh; padding:24px; }
+        .shell { max-width:700px; margin:0 auto; }
+        .top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:12px; flex-wrap:wrap; }
+        .breadcrumbs { display:flex; gap:8px; align-items:center; font-size:14px; color:var(--text-muted); flex-wrap:wrap; }
+        .breadcrumbs a { color:var(--text-muted); }
+        .breadcrumbs a:hover { color:var(--text); }
+        .breadcrumbs span.cur { color:var(--text); font-weight:500; }
+        .theme-btn { width:34px; height:34px; border:1px solid var(--border); border-radius:6px; background:var(--surface); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:border-color 0.2s,background-color 0.3s; }
+        .theme-btn:hover { border-color:var(--text-muted); }
+        .lesson-header { margin-bottom:28px; }
+        .lesson-header h1 { font-size:22px; font-weight:700; margin-bottom:6px; }
+        .lesson-header p { font-size:14px; color:var(--text-muted); }
+
+        .nav-cards { display:flex; flex-direction:column; gap:14px; }
+        .nav-card { display:flex; align-items:center; gap:16px; padding:18px 20px; background:var(--surface); border:1px solid var(--border); border-radius:12px; text-decoration:none; color:var(--text); transition:border-color 0.2s, box-shadow 0.2s; cursor:pointer; }
+        .nav-card:hover { border-color:var(--accent); box-shadow:0 2px 8px var(--shadow); text-decoration:none; color:var(--text); }
+        .nav-card-icon { font-size:28px; flex-shrink:0; width:44px; text-align:center; }
+        .nav-card-body { flex:1; }
+        .nav-card-title { font-size:16px; font-weight:600; margin-bottom:3px; }
+        .nav-card-desc { font-size:13px; color:var(--text-muted); }
+        .nav-card-badge { font-size:12px; font-weight:500; padding:3px 10px; border-radius:20px; flex-shrink:0; }
+        .badge-done { background:#d1fae5; color:#065f46; }
+        [data-theme="dark"] .badge-done { background:#064e3b; color:#6ee7b7; }
+        .badge-failed { background:#fee2e2; color:#991b1b; }
+        [data-theme="dark"] .badge-failed { background:#450a0a; color:#fca5a5; }
+        .badge-checking { background:var(--surface-2); color:var(--text-muted); border:1px solid var(--border-2); }
+        .nav-card-arrow { font-size:16px; color:var(--text-muted); flex-shrink:0; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="shell">
+
+        <div class="top-bar">
+            <div class="breadcrumbs">
+                <a href="/Dashboard">Дашборд</a>
+                <span>/</span>
+                @if (Model.Course != null)
+                {
+                    <a href="/Course/@Model.Course.Id">@Model.Course.Title</a>
+                    <span>/</span>
+                }
+                @if (Model.Module != null)
+                {
+                    <a href="/Module/@Model.Module.Id">@Model.Module.Title</a>
+                    <span>/</span>
+                }
+                <span class="cur">@(Model.Lesson?.Title ?? "Урок")</span>
+            </div>
+            <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+        </div>
+
+        @if (Model.Lesson == null)
+        {
+            <p style="color:var(--text-muted)">Урок не найден.</p>
+        }
+        else
+        {
+            <div class="lesson-header">
+                <h1>@Model.Lesson.Title</h1>
+                <p>Выберите раздел урока</p>
+            </div>
+
+            <div class="nav-cards">
+
+                @* Материалы *@
+                @if (Model.Lesson.Materials.Any())
+                {
+                    <a href="/Lesson/@Model.Lesson.Id/Materials" class="nav-card">
+                        <div class="nav-card-icon">📚</div>
+                        <div class="nav-card-body">
+                            <div class="nav-card-title">Материалы</div>
+                            <div class="nav-card-desc">Видео, PDF и изображения по теме урока</div>
+                        </div>
+                        @if (matDone)
+                        {
+                            <span class="nav-card-badge badge-done">✓ Пройдено</span>
+                        }
+                        <span class="nav-card-arrow">›</span>
+                    </a>
+                }
+
+                @* Тест *@
+                @if (Model.Lesson.Test != null)
+                {
+                    <a href="/Lesson/@Model.Lesson.Id/Test" class="nav-card">
+                        <div class="nav-card-icon">📝</div>
+                        <div class="nav-card-body">
+                            <div class="nav-card-title">Тест</div>
+                            <div class="nav-card-desc">Проверьте свои знания</div>
+                        </div>
+                        @if (testPassed)
+                        {
+                            <span class="nav-card-badge badge-done">✓ @Model.LatestAttempt!.ScorePercent%</span>
+                        }
+                        else if (testFailed)
+                        {
+                            <span class="nav-card-badge badge-failed">✗ @Model.LatestAttempt!.ScorePercent%</span>
+                        }
+                        else if (testChecking)
+                        {
+                            <span class="nav-card-badge badge-checking">⏳ На проверке</span>
+                        }
+                        <span class="nav-card-arrow">›</span>
+                    </a>
+                }
+
+                @* Игра *@
+                @if (Model.Module?.HasGame == true)
+                {
+                    <a href="/Module/@Model.Module.Id/Game" class="nav-card">
+                        <div class="nav-card-icon">🎮</div>
+                        <div class="nav-card-body">
+                            <div class="nav-card-title">Игра</div>
+                            <div class="nav-card-desc">Интерактивная игра по материалам модуля</div>
+                        </div>
+                        <span class="nav-card-arrow">›</span>
+                    </a>
+                }
+
+            </div>
+        }
+
+    </div>
+</div>
+<script>
+    var btn = document.getElementById("theme-btn");
+    btn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var d = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", d ? "light" : "dark");
+        localStorage.setItem("theme", d ? "light" : "dark");
+        btn.textContent = d ? "🌙" : "☀️";
+    }
+</script>
+</body>
+</html>

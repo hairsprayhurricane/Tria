@@ -103,3 +103,5 @@ _ReSharper*/
 *.cachefile
 *.VC.db
 *.VC.opendb
+Tria/.claude/settings.local.json
+Tria/SentinelLog.txt

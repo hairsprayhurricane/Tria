@@ -1,0 +1,393 @@
+@page "/Messenger"
+@model Tria.Pages.Messenger.IndexModel
+@{
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var backUrl = Model.UserRole == "Teacher" ? "/Teacher" : "/Dashboard";
+    var backLabel = Model.UserRole == "Teacher" ? "Панель преподавателя" : "Дашборд";
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>Мессенджер – Tria</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --accent:#2563eb; --accent-h:#1d4ed8; }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        html, body { height:100%; overflow:hidden; }
+        body { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); display:flex; flex-direction:column; height:100vh; transition:background-color 0.2s,color 0.2s; }
+        a { color:var(--accent); text-decoration:none; }
+
+        .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 20px; height:52px; display:flex; align-items:center; gap:16px; flex-shrink:0; }
+        .topbar-back { font-size:13px; color:var(--text-muted); display:flex; align-items:center; gap:6px; transition:color 0.15s; }
+        .topbar-back:hover { color:var(--text); text-decoration:none; }
+        .topbar-title { font-size:15px; font-weight:700; flex:1; }
+        .theme-btn { width:32px; height:32px; border:1px solid var(--border); border-radius:6px; background:var(--surface); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
+
+        .messenger-body { display:flex; flex:1; overflow:hidden; }
+
+        /* Conversations panel */
+        .conv-panel { width:280px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+        .conv-panel-header { padding:14px 16px; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; border-bottom:1px solid var(--border); flex-shrink:0; }
+        .conv-list { flex:1; overflow-y:auto; }
+        .conv-item { display:flex; align-items:center; gap:12px; padding:12px 14px; cursor:pointer; transition:background 0.1s; border-bottom:1px solid var(--border-2); }
+        .conv-item:hover { background:var(--surface-2); }
+        .conv-item.active { background:rgba(37,99,235,0.08); }
+        .conv-avatar { width:38px; height:38px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
+        .conv-avatar.ai-avatar { background:linear-gradient(135deg,#7c3aed,#4f46e5); font-size:18px; }
+        .conv-info { flex:1; min-width:0; }
+        .conv-name { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .conv-preview { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+        .conv-meta { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+        .conv-time { font-size:11px; color:var(--text-muted); white-space:nowrap; }
+        .conv-unread { background:var(--accent); color:#fff; font-size:10px; font-weight:700; border-radius:99px; min-width:18px; height:18px; display:flex; align-items:center; justify-content:center; padding:0 5px; }
+        .conv-empty { padding:40px 20px; text-align:center; color:var(--text-muted); font-size:13px; line-height:1.6; }
+
+        /* Chat area */
+        .chat-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+        .chat-header { padding:12px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--surface); flex-shrink:0; }
+        .chat-header-avatar { width:36px; height:36px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; flex-shrink:0; }
+        .chat-header-avatar.ai-avatar { background:linear-gradient(135deg,#7c3aed,#4f46e5); font-size:18px; }
+        .chat-header-name { font-size:15px; font-weight:700; }
+        .chat-header-sub { font-size:12px; color:var(--text-muted); }
+        .chat-messages { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:12px; }
+        .chat-placeholder { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:var(--text-muted); font-size:14px; text-align:center; }
+        .chat-placeholder-icon { font-size:48px; opacity:0.2; }
+
+        /* Message bubbles */
+        .msg-row { display:flex; align-items:flex-end; gap:8px; }
+        .msg-row.from-me { flex-direction:row-reverse; }
+        .msg-avatar-sm { width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .msg-avatar-sm.ai { background:linear-gradient(135deg,#7c3aed,#4f46e5); font-size:13px; }
+        .msg-col { display:flex; flex-direction:column; max-width:70%; }
+        .from-me .msg-col { align-items:flex-end; }
+        .msg-bubble { padding:10px 14px; border-radius:16px; font-size:14px; line-height:1.55; word-break:break-word; white-space:pre-wrap; }
+        .from-me .msg-bubble { background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+        .from-other .msg-bubble { background:var(--surface-2); border:1px solid var(--border-2); border-bottom-left-radius:4px; }
+        .from-ai .msg-bubble { background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2); border-bottom-left-radius:4px; }
+        .msg-time { font-size:10px; color:var(--text-muted); margin-top:3px; }
+
+        /* Typing indicator */
+        .typing-row { display:none; align-items:flex-end; gap:8px; padding-bottom:4px; }
+        .typing-row.visible { display:flex; }
+        .typing-dots { display:flex; gap:4px; padding:10px 14px; background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2); border-radius:16px; border-bottom-left-radius:4px; }
+        .typing-dots span { width:6px; height:6px; border-radius:50%; background:#7c3aed; opacity:0.6; animation:tdot 1.2s infinite; }
+        .typing-dots span:nth-child(2) { animation-delay:0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay:0.4s; }
+        @@keyframes tdot { 0%,60%,100% { transform:translateY(0); opacity:0.4; } 30% { transform:translateY(-5px); opacity:1; } }
+
+        /* Input area */
+        .chat-input-area { padding:12px 16px; border-top:1px solid var(--border); display:flex; gap:10px; align-items:flex-end; background:var(--surface); flex-shrink:0; }
+        .chat-input { flex:1; resize:none; border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:14px; font-family:inherit; background:var(--bg); color:var(--text); outline:none; min-height:42px; max-height:120px; transition:border-color 0.15s; line-height:1.4; }
+        .chat-input:focus { border-color:var(--accent); }
+        .send-btn { width:40px; height:40px; border-radius:10px; background:var(--accent); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 0.15s; }
+        .send-btn:hover { background:var(--accent-h); }
+        .send-btn:disabled { background:var(--border); cursor:not-allowed; }
+
+        /* No conversation selected */
+        .no-chat { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:var(--text-muted); font-size:14px; }
+        .no-chat-icon { font-size:56px; opacity:0.15; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <a href="@backUrl" class="topbar-back">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        @backLabel
+    </a>
+    <span class="topbar-title">Мессенджер</span>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="messenger-body">
+    <div class="conv-panel">
+        <div class="conv-panel-header">Диалоги</div>
+        <div class="conv-list" id="conv-list">
+            <div class="conv-empty">Загрузка...</div>
+        </div>
+    </div>
+
+    <div class="chat-area" id="chat-area">
+        <div class="no-chat" id="no-chat">
+            <div class="no-chat-icon">💬</div>
+            <div>Выберите диалог</div>
+        </div>
+
+        <div id="chat-main" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+            <div class="chat-header">
+                <div class="chat-header-avatar" id="header-avatar"></div>
+                <div>
+                    <div class="chat-header-name" id="header-name"></div>
+                    <div class="chat-header-sub" id="header-sub"></div>
+                </div>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="typing-row" id="typing-row" style="padding:0 20px 8px;">
+                <div class="msg-avatar-sm ai">С</div>
+                <div class="typing-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="msg-input" placeholder="Написать сообщение..." rows="1"></textarea>
+                <button class="send-btn" id="send-btn">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var themeBtn = document.getElementById("theme-btn");
+    themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+    }
+
+    var activeContact = null;
+    var activeIsAi = false;
+    var pollTimer = null;
+    var aiWaiting = false;
+    var lastMsgCount = 0;
+
+    function esc(s) {
+        if (!s) return '';
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function timeAgo(dateStr) {
+        if (!dateStr) return '';
+        var d = new Date(dateStr), now = new Date(), diff = now - d;
+        if (diff < 60000) return 'только что';
+        if (diff < 3600000) return Math.floor(diff / 60000) + ' мин.';
+        if (diff < 86400000) return d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+        return d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit'});
+    }
+    function msgTime(dateStr) {
+        if (!dateStr) return '';
+        return new Date(dateStr).toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+    }
+    function avatarLetter(email) {
+        return email ? email[0].toUpperCase() : '?';
+    }
+
+    async function loadConversations() {
+        try {
+            var r = await fetch('/api/messenger/conversations');
+            if (!r.ok) return;
+            var list = await r.json();
+            renderConversations(list);
+        } catch(e) {}
+    }
+
+    function renderConversations(list) {
+        var el = document.getElementById('conv-list');
+        if (!list.length) {
+            el.innerHTML = '<div class="conv-empty">Нет доступных диалогов.<br>Администратор может назначить вам собеседников.</div>';
+            return;
+        }
+        el.innerHTML = '';
+        list.forEach(function(c) {
+            var item = document.createElement('div');
+            item.className = 'conv-item' + (c.contactId === activeContact ? ' active' : '');
+            item.dataset.id = c.contactId;
+            var preview = c.lastMessage ? c.lastMessage.substring(0, 55) + (c.lastMessage.length > 55 ? '…' : '') : 'Начните диалог';
+            item.innerHTML =
+                '<div class="conv-avatar' + (c.isAi ? ' ai-avatar' : '') + '">' + (c.isAi ? '🤖' : esc(avatarLetter(c.contactEmail))) + '</div>' +
+                '<div class="conv-info">' +
+                  '<div class="conv-name">' + esc(c.contactEmail) + '</div>' +
+                  '<div class="conv-preview">' + esc(preview) + '</div>' +
+                '</div>' +
+                '<div class="conv-meta">' +
+                  (c.lastMessageAt ? '<div class="conv-time">' + timeAgo(c.lastMessageAt) + '</div>' : '') +
+                  (c.unreadCount > 0 ? '<div class="conv-unread">' + c.unreadCount + '</div>' : '') +
+                '</div>';
+            item.onclick = function() { openConversation(c); };
+            el.appendChild(item);
+        });
+    }
+
+    function openConversation(conv) {
+        activeContact = conv.contactId;
+        activeIsAi = conv.isAi;
+        lastMsgCount = 0;
+
+        document.querySelectorAll('.conv-item').forEach(function(el) {
+            el.classList.toggle('active', el.dataset.id === activeContact);
+        });
+
+        var avatar = document.getElementById('header-avatar');
+        avatar.className = 'chat-header-avatar' + (conv.isAi ? ' ai-avatar' : '');
+        avatar.textContent = conv.isAi ? '🤖' : avatarLetter(conv.contactEmail);
+        document.getElementById('header-name').textContent = conv.contactEmail;
+        document.getElementById('header-sub').textContent = conv.isAi ? 'Хранитель архива Tria' : 'Участник платформы';
+
+        document.getElementById('no-chat').style.display = 'none';
+        var main = document.getElementById('chat-main');
+        main.style.display = 'flex';
+        main.style.flexDirection = 'column';
+        main.style.flex = '1';
+        main.style.overflow = 'hidden';
+
+        // Reset AI state so send button is usable in non-AI conversations too
+        aiWaiting = false;
+        document.getElementById('send-btn').disabled = false;
+
+        // Очищаем сразу, чтобы не светились сообщения прошлого диалога
+        document.getElementById('chat-messages').innerHTML =
+            '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:40px 20px;">Загрузка...</div>';
+        setTyping(false);
+
+        loadMessages(true);
+
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(function() { loadMessages(false); }, 3000);
+    }
+
+    async function loadMessages(scrollToBottom) {
+        if (!activeContact) return;
+        var contactSnapshot = activeContact;
+        try {
+            var r = await fetch('/api/messenger/messages/' + contactSnapshot);
+            if (!r.ok) return;
+            var msgs = await r.json();
+            if (contactSnapshot !== activeContact) return;
+            if (msgs.length !== lastMsgCount || scrollToBottom) {
+                var wasAtBottom = isAtBottom();
+                lastMsgCount = msgs.length;
+                renderMessages(msgs);
+                if (scrollToBottom || wasAtBottom) scrollBottom();
+                loadConversations();
+            }
+        } catch(e) {}
+    }
+
+    function isAtBottom() {
+        var el = document.getElementById('chat-messages');
+        return el.scrollHeight - el.scrollTop - el.clientHeight < 60;
+    }
+    function scrollBottom() {
+        var el = document.getElementById('chat-messages');
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function renderMessages(msgs) {
+        var el = document.getElementById('chat-messages');
+        el.innerHTML = '';
+        if (!msgs.length) {
+            el.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:40px 20px;">Напишите первое сообщение!</div>';
+            return;
+        }
+        msgs.forEach(function(m) {
+            var rowClass = m.isFromMe ? 'from-me' : m.isFromAi ? 'from-ai' : 'from-other';
+            var row = document.createElement('div');
+            row.className = 'msg-row ' + rowClass;
+            var avatarHtml = '';
+            if (!m.isFromMe) {
+                avatarHtml = '<div class="msg-avatar-sm' + (m.isFromAi ? ' ai' : '') + '">' + (m.isFromAi ? 'С' : esc(avatarLetter(activeContact))) + '</div>';
+            }
+            row.innerHTML = avatarHtml +
+                '<div class="msg-col">' +
+                  '<div class="msg-bubble">' + esc(m.content) + '</div>' +
+                  '<div class="msg-time">' + msgTime(m.sentAt) + '</div>' +
+                '</div>';
+            el.appendChild(row);
+        });
+    }
+
+    function appendError(text) {
+        var el = document.getElementById('chat-messages');
+        var div = document.createElement('div');
+        div.style.cssText = 'text-align:center;color:#ef4444;font-size:13px;padding:8px 20px;border-radius:8px;';
+        div.textContent = text;
+        el.appendChild(div);
+        scrollBottom();
+    }
+
+    async function sendMessage() {
+        var input = document.getElementById('msg-input');
+        var content = input.value.trim();
+        if (!content || !activeContact || aiWaiting) return;
+        input.value = '';
+        input.style.height = 'auto';
+        appendOptimistic(content);
+
+        if (activeIsAi) {
+            aiWaiting = true;
+            document.getElementById('send-btn').disabled = true;
+            setTyping(true);
+            try {
+                var r = await fetch('/api/messenger/ai', {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({content: content})
+                });
+                setTyping(false);
+                aiWaiting = false;
+                document.getElementById('send-btn').disabled = false;
+                if (r.ok) {
+                    if (activeIsAi) await loadMessages(true);
+                } else {
+                    var errMsg = '⚠ Сентинел не отвечает. Убедитесь, что Ollama запущена.';
+                    try {
+                        var body = await r.json();
+                        if (body && body.detail) errMsg = '⚠ ' + body.detail;
+                    } catch {}
+                    appendError(errMsg);
+                }
+            } catch(e) {
+                setTyping(false);
+                aiWaiting = false;
+                document.getElementById('send-btn').disabled = false;
+                appendError('⚠ Ошибка соединения. Попробуйте ещё раз.');
+            }
+        } else {
+            try {
+                await fetch('/api/messenger/messages/' + activeContact, {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({content: content})
+                });
+                await loadMessages(false);
+            } catch(e) {
+                appendError('⚠ Не удалось отправить сообщение. Попробуйте ещё раз.');
+            }
+        }
+    }
+
+    function appendOptimistic(content) {
+        var el = document.getElementById('chat-messages');
+        var placeholder = el.querySelector('div[style*="padding"]');
+        if (placeholder) el.innerHTML = '';
+        var row = document.createElement('div');
+        row.className = 'msg-row from-me';
+        row.innerHTML = '<div class="msg-col"><div class="msg-bubble">' + esc(content) + '</div><div class="msg-time">сейчас</div></div>';
+        el.appendChild(row);
+        scrollBottom();
+    }
+
+    function setTyping(show) {
+        document.getElementById('typing-row').classList.toggle('visible', show);
+        if (show) scrollBottom();
+    }
+
+    var msgInput = document.getElementById('msg-input');
+    msgInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    msgInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    document.getElementById('send-btn').onclick = sendMessage;
+
+    loadConversations();
+    setInterval(loadConversations, 5000);
+</script>
+</body>
+</html>

@@ -90,9 +90,6 @@
         .link-block { margin-top: 10px; text-align: center; font-size: 13px; color: var(--text-sub); }
         .link-block a { color: var(--text); text-decoration: none; }
         .link-block a:hover { text-decoration: underline; }
-        .guest-block { margin-top: 10px; padding: 8px 10px; border-radius: 4px; background-color: var(--border-2); text-align: center; font-size: 13px; transition: background-color 0.3s; }
-        .guest-button { border: none; background: none; color: #2563eb; cursor: pointer; padding: 0; }
-        .guest-button:hover { text-decoration: underline; }
         .footer-note { margin-top: 12px; font-size: 11px; text-align: center; color: var(--text-muted); }
 
         /* Controls */
@@ -171,10 +168,6 @@
                 <div class="link-block">
                     @T["Login_NoAccount"] <a asp-page="./Register">@T["Login_Register"]</a>
                 </div>
-
-                <form method="post" asp-page-handler="Guest" class="guest-block">
-                    <button type="submit" class="guest-button">@T["Login_Guest"]</button>
-                </form>
 
                 <div class="footer-note">@T["Login_Footer"]</div>
             </div>

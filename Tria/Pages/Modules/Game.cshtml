@@ -1,13 +1,13 @@
-@page "/Modules/game/{blockId:int}"
-@model ModulesGameModel
+@page "/Module/{moduleId:int}/Game"
+@model Tria.Pages.Modules.ModulesGameModel
 @using Tria.Services
 @inject IUiLocalizer T
 @{
-ViewData["Title"] = Model.Block?.Title ?? "Game";
-Layout = null;
-var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-var gamePath = Model.GameBasePath;
-var blockKey = (string?)Model.Block?.Key ?? "";
+    ViewData["Title"] = Model.Module?.Title ?? "Game";
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var gamePath = Model.GameBasePath;
+    var gameKey = Model.Module?.GameKey ?? "";
 }
 
 <!DOCTYPE html>
@@ -50,18 +50,18 @@ var blockKey = (string?)Model.Block?.Key ?? "";
     <div class="shell">
 
         <div class="top-bar">
-            <a href="/" class="back-link">@T["Game_Back"]</a>
+            <a href="/Module/@Model.Module?.Id" class="back-link">← Назад к модулю</a>
             <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
         </div>
 
-        @if (Model.Block != null)
+        @if (Model.Module != null)
         {
         <section class="game-box">
             <header class="game-header">
-                <div class="game-title">🎮 @Model.Block.Title</div>
-                @if (!string.IsNullOrEmpty((string?)Model.Block.Description))
+                <div class="game-title">🎮 @Model.Module.Title</div>
+                @if (!string.IsNullOrEmpty(Model.Module.Description))
                 {
-                <div class="game-desc">@Model.Block.Description</div>
+                <div class="game-desc">@Model.Module.Description</div>
                 }
             </header>
             <div class="game-content">
@@ -83,18 +83,18 @@ var blockKey = (string?)Model.Block?.Key ?? "";
         }
         else
         {
-        <div class="empty-box">@T["Game_NotFound"]</div>
+        <div class="empty-box">Игра не найдена.</div>
         }
 
     </div>
 </div>
 
-@if (Model.Block != null)
+@if (Model.Module != null)
 {
 <script>
     (function () {
         var gp = "@gamePath";
-        var bn = "@blockKey" + "_Game";
+        var bn = "@gameKey";
         var s = document.createElement("script");
         s.src = gp + "/Build/" + bn + ".loader.js";
         s.onerror = showUnityError;

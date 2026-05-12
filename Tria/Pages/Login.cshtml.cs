@@ -1,19 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 
 namespace Tria.Pages
 {
     public class LoginModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager)
+        public LoginModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -34,47 +34,30 @@ namespace Tria.Pages
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
-
             if (!ModelState.IsValid)
                 return Page();
-
-            await HttpContext.SignOutAsync("Guest");
 
             var result = await _signInManager.PasswordSignInAsync(
                 Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
+            {
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+                    return LocalRedirect("/Admin");
+
+                if (user != null && await _userManager.IsInRoleAsync(user, "Teacher"))
+                    return LocalRedirect("/Teacher");
+
+                if (user != null && await _userManager.IsInRoleAsync(user, "Student"))
+                    return LocalRedirect("/Dashboard");
+
+                returnUrl ??= Url.Content("~/");
                 return LocalRedirect(returnUrl);
+            }
 
             ModelState.AddModelError(string.Empty, "Неверный email или пароль.");
             return Page();
-        }
-
-        public async Task<IActionResult> OnPostGuestAsync()
-        {
-            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, "guest:" + Guid.NewGuid().ToString("N")),
-                new Claim(ClaimTypes.Name, "Guest"),
-                new Claim("IsGuest", "true")
-            };
-
-            var identity = new ClaimsIdentity(claims, "Guest");
-            var principal = new ClaimsPrincipal(identity);
-
-            await HttpContext.SignInAsync(
-                "Guest",
-                principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24)
-                });
-
-            return RedirectToPage("/Index");
         }
     }
 }

@@ -1,0 +1,259 @@
+@page "/Admin/Reviews"
+@model Tria.Pages.Admin.ReviewsModel
+@{
+    Layout = null;
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<!DOCTYPE html>
+<html lang="@lang">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>Отзывы – Tria Admin</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --text-sub:#4b5563; --shadow:rgba(0,0,0,0.06); --accent:#2563eb; --accent-h:#1d4ed8; --danger:#dc2626; --danger-h:#b91c1c; --success:#16a34a; --warn:#d97706; --sidebar-bg:#1c1010; --sidebar-text:#f1e8e8; --sidebar-muted:#b89898; --sidebar-active:#dc2626; --sidebar-hover:rgba(255,255,255,0.06); }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; --text-sub:#cbd5e1; --shadow:rgba(0,0,0,0.4); --sidebar-bg:#110808; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+        a { color: var(--accent); text-decoration: none; }
+        .sidebar { width: 240px; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 0; flex-shrink: 0; min-height: 100vh; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+        .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-brand .logo { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .sidebar-brand .badge { display: inline-block; margin-left: 8px; background: var(--sidebar-active); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.5px; vertical-align: middle; }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .nav-section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--sidebar-muted); padding: 8px 8px 6px; margin-top: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--sidebar-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; text-decoration: none; margin-bottom: 2px; }
+        .nav-item:hover { background: var(--sidebar-hover); color: var(--sidebar-text); text-decoration: none; }
+        .nav-item.active { background: rgba(220,38,38,0.20); color: #fca5a5; }
+        .nav-item .icon { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.8; }
+        .sidebar-footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .user-chip { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--sidebar-active); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .user-info { min-width: 0; }
+        .user-email { font-size: 12px; color: var(--sidebar-text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .user-role { font-size: 11px; color: var(--sidebar-muted); }
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; position: sticky; top: 0; z-index: 10; }
+        .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+        .breadcrumb a { color: var(--text-muted); }
+        .breadcrumb a:hover { color: var(--text); }
+        .breadcrumb .sep { color: var(--text-muted); }
+        .breadcrumb .current { font-weight: 600; color: var(--text); }
+        .theme-btn { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .content { padding: 28px 32px; flex: 1; }
+
+        .filter-bar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+        select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); font-size: 13px; outline: none; transition: border-color 0.15s; min-width: 160px; }
+        select:focus { border-color: var(--accent); }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s; text-decoration: none; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-h); }
+        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--surface-2); }
+
+        .alert { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 9px; font-size: 13px; font-weight: 600; margin-bottom: 18px; }
+        .alert-success { background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.25); color: var(--success); }
+
+        .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .summary-bar { padding: 10px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text-muted); font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--surface-2); }
+        th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+        td { padding: 13px 14px; font-size: 13px; border-bottom: 1px solid var(--border-2); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: var(--surface-2); }
+        tbody tr.hidden-row { opacity: 0.5; }
+
+        .stars-col { color: #f59e0b; letter-spacing: 1px; font-size: 14px; white-space: nowrap; }
+        .comment-cell { max-width: 320px; color: var(--text-sub); line-height: 1.4; }
+        .course-tag { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; background: rgba(37,99,235,0.1); color: var(--accent); }
+        .date-cell { color: var(--text-muted); white-space: nowrap; }
+        .actions-cell { display: flex; gap: 6px; align-items: center; white-space: nowrap; }
+        .vis-badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+        .vis-on  { background: rgba(22,163,74,0.12); color: var(--success); }
+        .vis-off { background: rgba(220,38,38,0.1); color: var(--danger); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 7px; }
+        .btn-hide { background: var(--surface-2); color: var(--warn); border: 1px solid rgba(217,119,6,0.25); }
+        .btn-hide:hover { background: rgba(217,119,6,0.08); }
+        .btn-show { background: var(--surface-2); color: var(--success); border: 1px solid rgba(22,163,74,0.25); }
+        .btn-show:hover { background: rgba(22,163,74,0.08); }
+        .btn-del { background: transparent; color: var(--danger); border: 1px solid rgba(220,38,38,0.25); border-radius: 7px; padding: 5px 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .btn-del:hover { background: rgba(220,38,38,0.08); }
+        .empty-row td { text-align: center; color: var(--text-muted); padding: 48px; }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="logo">Tria</span><span class="badge">Admin</span>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Главное</div>
+        <a href="/Admin" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Обзор
+        </a>
+        <a href="/Admin/AssignCourse" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Назначить курс
+        </a>
+        <a href="/Admin/AssignTeacher" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Назначить учеников
+        </a>
+        <a href="/Admin/CreateUser" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Добавить пользователя
+        </a>
+        <div class="nav-section-title">Аналитика</div>
+        <a href="/Admin/Reviews" class="nav-item active">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Отзывы
+        </a>
+        <div class="nav-section-title">Инструменты</div>
+        <a href="/Admin/SqlConsole" class="nav-item">
+            <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            SQL Консоль
+        </a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="user-chip">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+                <div class="user-email">@User.Identity!.Name</div>
+                <div class="user-role">Администратор</div>
+            </div>
+        </div>
+        <form method="post" action="/Logout" style="margin-top:8px;padding:0 10px;">
+            @Html.AntiForgeryToken()
+            <button type="submit" style="background:none;border:none;color:var(--sidebar-muted);font-size:13px;cursor:pointer;padding:4px 0;">Выйти</button>
+        </form>
+    </div>
+</aside>
+
+<div class="main">
+    <div class="topbar">
+        <div class="breadcrumb">
+            <a href="/Admin">Администрирование</a>
+            <span class="sep">›</span>
+            <span class="current">Отзывы</span>
+        </div>
+        <button type="button" class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+    </div>
+
+    <div class="content">
+
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            <div class="alert alert-success">✓ @Model.StatusMessage</div>
+        }
+
+        <!-- Filters -->
+        <form method="get" class="filter-bar">
+            <div class="filter-group">
+                <label>Курс</label>
+                <select name="courseId" onchange="this.form.submit()">
+                    <option value="">Все курсы</option>
+                    @foreach (var c in Model.Courses)
+                    {
+                        if (Model.FilterCourseId == c.Id)
+                        { <option value="@c.Id" selected>@c.Title</option> }
+                        else
+                        { <option value="@c.Id">@c.Title</option> }
+                    }
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Оценка</label>
+                <select name="rating" onchange="this.form.submit()">
+                    <option value="">Все</option>
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        if (Model.FilterRating == i)
+                        { <option value="@i" selected>@(new string('★', i))</option> }
+                        else
+                        { <option value="@i">@(new string('★', i))</option> }
+                    }
+                </select>
+            </div>
+            @if (Model.FilterCourseId.HasValue || Model.FilterRating.HasValue)
+            {
+                <a href="/Admin/Reviews" class="btn btn-ghost" style="align-self:flex-end;">Сбросить</a>
+            }
+        </form>
+
+        <div class="table-wrap">
+            <div class="summary-bar">Отзывов: @Model.Reviews.Count</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Студент</th>
+                        <th>Курс</th>
+                        <th>Оценка</th>
+                        <th>Комментарий</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Reviews.Any())
+                    {
+                        <tr class="empty-row"><td colspan="7">Отзывов не найдено</td></tr>
+                    }
+                    else
+                    {
+                        @foreach (var r in Model.Reviews)
+                        {
+                            <tr class="@(!r.IsVisible ? "hidden-row" : "")">
+                                <td style="font-weight:500;">@r.AuthorEmail</td>
+                                <td><span class="course-tag">@r.CourseTitle</span></td>
+                                <td><span class="stars-col">@(new string('★', r.Rating))@(new string('☆', 5 - r.Rating))</span></td>
+                                <td class="comment-cell">@(string.IsNullOrWhiteSpace(r.Comment) ? "—" : r.Comment)</td>
+                                <td class="date-cell">@r.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                <td><span class="vis-badge @(r.IsVisible ? "vis-on" : "vis-off")">@(r.IsVisible ? "Виден" : "Скрыт")</span></td>
+                                <td>
+                                    <div class="actions-cell">
+                                        <form method="post" asp-page-handler="ToggleVisibility" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="reviewId" value="@r.Id" />
+                                            <input type="hidden" name="courseId" value="@Model.FilterCourseId" />
+                                            <input type="hidden" name="rating" value="@Model.FilterRating" />
+                                            <button type="submit" class="btn btn-sm @(r.IsVisible ? "btn-hide" : "btn-show")">
+                                                @(r.IsVisible ? "Скрыть" : "Показать")
+                                            </button>
+                                        </form>
+                                        <form method="post" asp-page-handler="Delete" style="display:inline;" onsubmit="return confirm('Удалить отзыв?')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="reviewId" value="@r.Id" />
+                                            <input type="hidden" name="courseId" value="@Model.FilterCourseId" />
+                                            <input type="hidden" name="rating" value="@Model.FilterRating" />
+                                            <button type="submit" class="btn-del">Удалить</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var themeBtn = document.getElementById("theme-btn");
+    themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+    }
+</script>
+</body>
+</html>
