@@ -45,7 +45,7 @@ public class OllamaChatService : IOllamaChatService
         {
             model = _opts.Model,
             stream = false,
-            options = new { num_predict = 600 },
+            options = new { num_predict = _opts.NumPredictChat },
             messages
         };
 

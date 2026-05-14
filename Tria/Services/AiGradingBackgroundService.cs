@@ -124,8 +124,13 @@ public class AiGradingBackgroundService : BackgroundService
             {
                 _sentinel.LogError($"Оценка вопроса #{answer.QuestionIndex + 1}", ex);
                 _logger.LogWarning(ex,
-                    "Could not grade attempt {Id} question {Index} — will retry next tick",
+                    "Could not grade attempt {Id} question {Index} — marking as ungraded to prevent infinite retry",
                     attempt.Id, answer.QuestionIndex);
+                answer.IsCorrect    = false;
+                answer.PointsEarned = 0;
+                answer.AiComment    = "Не удалось получить оценку от ИИ. Обратитесь к преподавателю.";
+                answer.AiCheckedAt  = DateTime.UtcNow;
+                anyUpdated = true;
             }
         }
 

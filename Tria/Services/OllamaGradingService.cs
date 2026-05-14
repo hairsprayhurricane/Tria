@@ -48,7 +48,7 @@ public class OllamaGradingService : IOllamaGradingService
         {
             model = _opts.Model,
             stream = false,
-            options = new { num_predict = 350 },
+            options = new { num_predict = _opts.NumPredictGrading },
             messages = new[]
             {
                 new { role = "system", content = systemPrompt },
@@ -79,8 +79,9 @@ public class OllamaGradingService : IOllamaGradingService
                 .GetProperty("content")
                 .GetString() ?? "";
 
-            var start = content.IndexOf('{');
-            var end   = content.LastIndexOf('}');
+            var start = content.LastIndexOf("{\"isCorrect\"", StringComparison.OrdinalIgnoreCase);
+            if (start < 0) start = content.LastIndexOf('{');
+            var end = content.LastIndexOf('}');
             if (start >= 0 && end > start)
                 content = content[start..(end + 1)];
             else if (start >= 0)
