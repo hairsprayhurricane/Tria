@@ -92,13 +92,19 @@
                 {
                     var mat = Model.Lesson.Materials[i];
 
-                    @if (mat.Type == "Video" && mat.YoutubeId != null)
+                    @if (mat.Type == "Video")
                     {
+                        var srcLabel = mat.VideoSource switch {
+                            "VKVideo" => "VK Video",
+                            "RuTube"  => "RuTube",
+                            "MP4"     => "MP4",
+                            _         => "YouTube"
+                        };
                         <a href="/Lesson/@Model.Lesson.Id/Video/@i" class="mat-btn">
                             <span class="mat-icon">▶️</span>
                             <span class="mat-body">
                                 <span class="mat-title">@mat.Title</span>
-                                <span class="mat-type">Видео · YouTube</span>
+                                <span class="mat-type">Видео · @srcLabel</span>
                             </span>
                             <span class="mat-arrow">›</span>
                         </a>

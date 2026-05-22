@@ -134,10 +134,12 @@ public class LearningService : ILearningService
                 {
                     lesson.Materials.Add(new LessonMaterial
                     {
-                        Type      = (string?)mat.Attribute("Type") ?? "",
-                        Title     = (string?)mat.Attribute("Title") ?? "",
-                        YoutubeId = (string?)mat.Attribute("YoutubeId"),
-                        FilePath  = (string?)mat.Attribute("FilePath"),
+                        Type        = (string?)mat.Attribute("Type") ?? "",
+                        Title       = (string?)mat.Attribute("Title") ?? "",
+                        VideoSource = (string?)mat.Attribute("VideoSource") ?? "YouTube",
+                        YoutubeId   = (string?)mat.Attribute("YoutubeId"),
+                        EmbedUrl    = (string?)mat.Attribute("EmbedUrl"),
+                        FilePath    = (string?)mat.Attribute("FilePath"),
                     });
                 }
 

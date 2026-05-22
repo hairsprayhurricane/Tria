@@ -31,7 +31,13 @@
         .theme-btn:hover { border-color:var(--text-muted); }
         .video-title { font-size:20px; font-weight:700; margin-bottom:18px; }
         .video-wrap { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; background:#000; box-shadow:0 4px 24px var(--shadow); }
-        .video-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; border-radius:12px; }
+        .video-wrap iframe, .video-wrap video { position:absolute; top:0; left:0; width:100%; height:100%; border:none; border-radius:12px; }
+        .sentinel-block { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:32px; border-radius:12px; background:var(--surface); text-align:center; }
+        .sentinel-glyph { font-size:40px; opacity:0.7; }
+        .sentinel-title { font-size:15px; font-weight:700; color:var(--text); font-family:monospace; letter-spacing:0.5px; }
+        .sentinel-msg { font-size:14px; color:var(--text-muted); max-width:400px; line-height:1.65; }
+        .sentinel-btn { display:inline-flex; align-items:center; gap:7px; padding:10px 22px; background:var(--accent); color:#fff; border-radius:8px; font-size:14px; font-weight:600; text-decoration:none; transition:background 0.15s; margin-top:4px; }
+        .sentinel-btn:hover { background:var(--accent-h); text-decoration:none; color:#fff; }
         .back-link { display:inline-flex; align-items:center; gap:6px; margin-top:20px; font-size:14px; color:var(--text-muted); }
         .back-link:hover { color:var(--text); text-decoration:none; }
     </style>
@@ -69,9 +75,29 @@
         <div class="video-title">▶️ @Model.Material?.Title</div>
 
         <div class="video-wrap">
-            <iframe src="https://www.youtube.com/embed/@Model.Material!.YoutubeId"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
+            @if (Model.Material!.VideoSource == "MP4")
+            {
+                <video controls>
+                    <source src="@Model.Material.FilePath" type="video/mp4" />
+                </video>
+            }
+            else if (Model.Material.VideoSource == "VKVideo")
+            {
+                <div class="sentinel-block">
+                    <div class="sentinel-glyph">📡</div>
+                    <div class="sentinel-title">Сентинел обнаружил ошибку</div>
+                    <div class="sentinel-msg">Похоже, нам не разрешено смотреть это видео здесь.</div>
+                    <a href="@Model.WatchUrl" target="_blank" rel="noopener" class="sentinel-btn">
+                        ↗ Открыть VK Video
+                    </a>
+                </div>
+            }
+            else
+            {
+                <iframe src="@Model.EmbedSrc"
+                        allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;"
+                        allowfullscreen></iframe>
+            }
         </div>
 
         <a href="/Lesson/@Model.Lesson!.Id/Materials" class="back-link">← Назад к материалам</a>

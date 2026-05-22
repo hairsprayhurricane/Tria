@@ -62,8 +62,11 @@ public class LessonMaterial
     /// <summary>Video, PDF, Image</summary>
     public string Type { get; set; } = "";
     public string Title { get; set; } = "";
-    public string? YoutubeId { get; set; }   // for Type=Video
-    public string? FilePath { get; set; }    // for Type=PDF or Image (path under wwwroot)
+    /// <summary>YouTube, VKVideo, RuTube, MP4</summary>
+    public string VideoSource { get; set; } = "YouTube";
+    public string? YoutubeId { get; set; }   // for VideoSource=YouTube
+    public string? EmbedUrl { get; set; }    // for VideoSource=VKVideo or RuTube
+    public string? FilePath { get; set; }    // for Type=PDF, Image, or VideoSource=MP4
 }
 
 public class LessonTest

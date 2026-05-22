@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace Tria.Pages.Teacher;
 
 [Authorize(Roles = "Teacher")]
+[RequestFormLimits(MultipartBodyLengthLimit = 104_857_600)]
+[RequestSizeLimit(104_857_600)]
 public class CourseEditorModel : PageModel
 {
     private readonly IWebHostEnvironment _env;
@@ -37,6 +39,53 @@ public class CourseEditorModel : PageModel
         if (saved == true)
             ResultMessage = "Курс успешно сохранён!";
         ResultSuccess = saved == true;
+    }
+
+    public async Task<IActionResult> OnPostUploadFileAsync(IFormFile file, string courseKey, string fileType)
+    {
+        if (file == null || file.Length == 0)
+            return new JsonResult(new { success = false, error = "Файл не выбран" });
+
+        if (string.IsNullOrWhiteSpace(courseKey))
+            return new JsonResult(new { success = false, error = "Укажите ключ курса перед загрузкой файла" });
+
+        courseKey = SanitizeKey(courseKey);
+        if (string.IsNullOrEmpty(courseKey))
+            return new JsonResult(new { success = false, error = "Некорректный ключ курса" });
+
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var allowed = fileType switch
+        {
+            "Video" => new[] { ".mp4" },
+            "PDF"   => new[] { ".pdf" },
+            "Image" => new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" },
+            _       => Array.Empty<string>()
+        };
+        if (!allowed.Contains(ext))
+            return new JsonResult(new { success = false, error = $"Недопустимый тип файла: {ext}" });
+
+        var subFolder = fileType switch
+        {
+            "Video" => "video",
+            "PDF"   => "pdf",
+            "Image" => "images",
+            _       => "misc"
+        };
+
+        var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", courseKey, subFolder);
+        Directory.CreateDirectory(uploadsDir);
+
+        var nameBase = Regex.Replace(
+            Path.GetFileNameWithoutExtension(file.FileName).ToLower(),
+            @"[^a-z0-9_\-]", "_");
+        var uniqueSuffix = Guid.NewGuid().ToString("N")[..6];
+        var fileName = $"{nameBase}_{uniqueSuffix}{ext}";
+        var filePath = Path.Combine(uploadsDir, fileName);
+
+        using (var stream = System.IO.File.Create(filePath))
+            await file.CopyToAsync(stream);
+
+        return new JsonResult(new { success = true, path = $"/uploads/{courseKey}/{subFolder}/{fileName}" });
     }
 
     public IActionResult OnPostDelete(string courseKey)
@@ -210,10 +259,12 @@ public class CourseEditorModel : PageModel
                 {
                     lesson.Materials.Add(new MaterialDto
                     {
-                        Type      = (string?)mat.Attribute("Type") ?? "Video",
-                        Title     = (string?)mat.Attribute("Title") ?? "",
-                        YoutubeId = (string?)mat.Attribute("YoutubeId") ?? "",
-                        FilePath  = (string?)mat.Attribute("FilePath") ?? "",
+                        Type        = (string?)mat.Attribute("Type") ?? "Video",
+                        Title       = (string?)mat.Attribute("Title") ?? "",
+                        VideoSource = (string?)mat.Attribute("VideoSource") ?? "YouTube",
+                        YoutubeId   = (string?)mat.Attribute("YoutubeId") ?? "",
+                        EmbedUrl    = (string?)mat.Attribute("EmbedUrl") ?? "",
+                        FilePath    = (string?)mat.Attribute("FilePath") ?? "",
                     });
                 }
 
@@ -295,8 +346,17 @@ public class CourseEditorModel : PageModel
                                             var el = new XElement("Material",
                                                 new XAttribute("Type", mat.Type ?? "Video"),
                                                 new XAttribute("Title", mat.Title ?? ""));
-                                            if (mat.Type == "Video" && !string.IsNullOrEmpty(mat.YoutubeId))
-                                                el.Add(new XAttribute("YoutubeId", mat.YoutubeId));
+                                            if (mat.Type == "Video")
+                                            {
+                                                var vs = string.IsNullOrEmpty(mat.VideoSource) ? "YouTube" : mat.VideoSource;
+                                                el.Add(new XAttribute("VideoSource", vs));
+                                                if (vs == "YouTube" && !string.IsNullOrEmpty(mat.YoutubeId))
+                                                    el.Add(new XAttribute("YoutubeId", mat.YoutubeId));
+                                                else if ((vs == "VKVideo" || vs == "RuTube") && !string.IsNullOrEmpty(mat.EmbedUrl))
+                                                    el.Add(new XAttribute("EmbedUrl", mat.EmbedUrl));
+                                                else if (vs == "MP4" && !string.IsNullOrEmpty(mat.FilePath))
+                                                    el.Add(new XAttribute("FilePath", mat.FilePath));
+                                            }
                                             else if (!string.IsNullOrEmpty(mat.FilePath))
                                                 el.Add(new XAttribute("FilePath", mat.FilePath));
                                             return el;
@@ -380,7 +440,9 @@ public class CourseEditorModel : PageModel
     {
         public string Type { get; set; } = "Video";
         public string Title { get; set; } = "";
+        public string VideoSource { get; set; } = "YouTube";
         public string YoutubeId { get; set; } = "";
+        public string EmbedUrl { get; set; } = "";
         public string FilePath { get; set; } = "";
     }
 

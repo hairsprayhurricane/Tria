@@ -130,8 +130,17 @@
         /* Materials */
         .mat-section { margin-top: 16px; border-top: 1px solid var(--border-2); padding-top: 14px; }
         .sub-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 10px; }
-        .mat-row { display: grid; grid-template-columns: 110px 1fr 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border-2); border-radius: 9px; }
-        .mat-row select, .mat-row input { margin: 0; }
+        .mat-row { margin-bottom: 8px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border-2); border-radius: 9px; }
+        .mat-row-top { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .mat-row-top select { width: 100px; flex-shrink: 0; margin: 0; }
+        .mat-row-top input { flex: 1; margin: 0; }
+        .mat-detail { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .mat-detail select { width: 120px; flex-shrink: 0; margin: 0; }
+        .mat-detail input { flex: 1; min-width: 180px; margin: 0; }
+        .btn-pick-file { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface-2); color: var(--text); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: border-color 0.15s, color 0.15s; flex-shrink: 0; }
+        .btn-pick-file:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-pick-file:disabled { opacity: 0.6; cursor: not-allowed; }
+        .file-path-display { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
 
         /* Test section */
         .test-section { margin-top: 16px; border-top: 1px solid var(--border-2); padding-top: 14px; }
@@ -501,26 +510,112 @@ function addMaterial(containerId, data) {
     var id = uid();
     var type = data.type || 'Video';
     var html = '<div class="mat-row" id="' + id + '">' +
-        '<select class="mat-type" onchange="onMatTypeChange(\'' + id + '\')">' +
-            ['Video','PDF','Image'].map(function(t) {
-                return '<option value="' + t + '"' + (t===type?' selected':'') + '>' + t + '</option>';
-            }).join('') +
-        '</select>' +
-        '<input type="text" class="mat-title" value="' + esc(data.title||'') + '" placeholder="Название материала" />' +
-        '<div class="mat-url-wrap" id="' + id + '-url">' + matUrlHtml(id, type, data) + '</div>' +
-        '<button class="btn-del-sm" onclick="removeCard(\'' + id + '\',event)" title="Удалить">✕</button>' +
+        '<div class="mat-row-top">' +
+            '<select class="mat-type" onchange="onMatTypeChange(\'' + id + '\')">' +
+                ['Video','PDF','Image'].map(function(t) {
+                    return '<option value="' + t + '"' + (t===type?' selected':'') + '>' + t + '</option>';
+                }).join('') +
+            '</select>' +
+            '<input type="text" class="mat-title" value="' + esc(data.title||'') + '" placeholder="Название материала" />' +
+            '<button class="btn-del-sm" onclick="removeCard(\'' + id + '\',event)" title="Удалить">✕</button>' +
+        '</div>' +
+        '<div class="mat-detail" id="' + id + '-detail">' + matDetailHtml(id, type, data) + '</div>' +
     '</div>';
     document.getElementById(containerId).insertAdjacentHTML('beforeend', html);
 }
-function matUrlHtml(id, type, data) {
-    if (type === 'Video')
-        return '<input type="text" class="mat-youtube" value="' + esc((data&&data.youtubeId)||'') + '" placeholder="YouTube ID (напр. dQw4w9WgXcQ)" />';
-    return '<input type="text" class="mat-filepath" value="' + esc((data&&data.filePath)||'') + '" placeholder="Путь к файлу (/files/doc.pdf)" />';
+
+function matDetailHtml(id, type, data) {
+    if (type === 'Video') {
+        var src = (data && data.videoSource) || 'YouTube';
+        var srcOpts = [{v:'YouTube',l:'YouTube'},{v:'VKVideo',l:'VK Video'},{v:'RuTube',l:'RuTube'},{v:'MP4',l:'MP4 файл'}];
+        return '<select class="mat-videosrc" onchange="onVideoSrcChange(\'' + id + '\')">' +
+            srcOpts.map(function(s){ return '<option value="' + s.v + '"' + (s.v===src?' selected':'') + '>' + s.l + '</option>'; }).join('') +
+        '</select>' +
+        '<div style="flex:1;min-width:180px;" id="' + id + '-srcdetail">' + videoSrcDetailHtml(id, src, data) + '</div>';
+    }
+    var fp = (data && data.filePath) || '';
+    return '<input type="hidden" class="mat-filepath" value="' + esc(fp) + '" />' +
+        '<button type="button" class="btn-pick-file" onclick="pickFile(\'' + id + '\',\'' + type + '\')">' +
+            (fp ? '📎 Изменить файл' : '📂 Выбрать файл') +
+        '</button>' +
+        '<span class="file-path-display" id="' + id + '-fpath">' + esc(fp ? fp.split('/').pop() : 'Файл не выбран') + '</span>';
 }
+
+function videoSrcDetailHtml(id, src, data) {
+    if (src === 'YouTube')
+        return '<input type="text" class="mat-youtube" value="' + esc((data&&data.youtubeId)||'') + '" placeholder="Ссылка или ID (напр. https://youtu.be/dQw4w9WgXcQ)" />';
+    if (src === 'VKVideo')
+        return '<input type="text" class="mat-embedurl" value="' + esc((data&&data.embedUrl)||'') + '" placeholder="Ссылка на видео VK (из адресной строки или «Поделиться»)" />';
+    if (src === 'RuTube')
+        return '<input type="text" class="mat-embedurl" value="' + esc((data&&data.embedUrl)||'') + '" placeholder="Ссылка на видео RuTube (из адресной строки или «Поделиться»)" />';
+    if (src === 'MP4') {
+        var fp = (data&&data.filePath)||'';
+        return '<input type="hidden" class="mat-filepath" value="' + esc(fp) + '" />' +
+            '<button type="button" class="btn-pick-file" onclick="pickFile(\'' + id + '\',\'Video\')">' +
+                (fp ? '📎 Изменить .mp4' : '📂 Выбрать .mp4') +
+            '</button>' +
+            '<span class="file-path-display" id="' + id + '-fpath">' + esc(fp ? fp.split('/').pop() : 'Файл не выбран') + '</span>';
+    }
+    return '';
+}
+
 function onMatTypeChange(rowId) {
     var row = document.getElementById(rowId);
     var type = row.querySelector('.mat-type').value;
-    row.querySelector('.mat-url-wrap').innerHTML = matUrlHtml(rowId, type, {});
+    document.getElementById(rowId + '-detail').innerHTML = matDetailHtml(rowId, type, {});
+}
+
+function onVideoSrcChange(rowId) {
+    var row = document.getElementById(rowId);
+    var src = row.querySelector('.mat-videosrc').value;
+    document.getElementById(rowId + '-srcdetail').innerHTML = videoSrcDetailHtml(rowId, src, {});
+}
+
+function pickFile(matRowId, fileType) {
+    var input = document.createElement('input');
+    input.type = 'file';
+    if (fileType === 'PDF') input.accept = '.pdf,application/pdf';
+    else if (fileType === 'Image') input.accept = '.jpg,.jpeg,.png,.gif,.webp,image/*';
+    else if (fileType === 'Video') input.accept = '.mp4,video/mp4';
+    input.onchange = function() {
+        if (!this.files || !this.files[0]) return;
+        var courseKey = document.getElementById('c-key').value.trim();
+        if (!courseKey) { alert('Сначала укажите ключ курса!'); return; }
+        uploadFile(matRowId, this.files[0], courseKey, fileType);
+    };
+    input.click();
+}
+
+async function uploadFile(matRowId, file, courseKey, fileType) {
+    var row = document.getElementById(matRowId);
+    var fpDisplay = document.getElementById(matRowId + '-fpath');
+    var btn = row.querySelector('.btn-pick-file');
+    if (fpDisplay) fpDisplay.textContent = 'Загрузка...';
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Загрузка...'; }
+    try {
+        var fd = new FormData();
+        fd.append('file', file);
+        fd.append('courseKey', courseKey);
+        fd.append('fileType', fileType);
+        var token = document.querySelector('#save-form input[name="__RequestVerificationToken"]').value;
+        var resp = await fetch('?handler=UploadFile', { method: 'POST', headers: { 'RequestVerificationToken': token }, body: fd });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        var result = await resp.json();
+        if (result.success) {
+            var fpInput = row.querySelector('.mat-filepath');
+            if (fpInput) fpInput.value = result.path;
+            if (fpDisplay) fpDisplay.textContent = result.path.split('/').pop();
+            if (btn) { btn.disabled = false; btn.textContent = '📎 Изменить файл'; }
+        } else {
+            alert('Ошибка: ' + result.error);
+            if (fpDisplay) fpDisplay.textContent = 'Ошибка';
+            if (btn) { btn.disabled = false; btn.textContent = '📂 Выбрать файл'; }
+        }
+    } catch(e) {
+        alert('Ошибка загрузки: ' + e.message);
+        if (fpDisplay) fpDisplay.textContent = 'Ошибка';
+        if (btn) { btn.disabled = false; btn.textContent = '📂 Выбрать файл'; }
+    }
 }
 
 // ─── Question management ──────────────────────────────────────────────────────
@@ -628,13 +723,19 @@ function collectData() {
             };
 
             lEl.querySelectorAll('.mat-row').forEach(function(matEl) {
-                var yt = matEl.querySelector('.mat-youtube');
-                var fp = matEl.querySelector('.mat-filepath');
+                var type = matEl.querySelector('.mat-type').value;
+                var vsSel = matEl.querySelector('.mat-videosrc');
+                var videoSrc = vsSel ? vsSel.value : 'YouTube';
+                var ytEl = matEl.querySelector('.mat-youtube');
+                var euEl = matEl.querySelector('.mat-embedurl');
+                var fpEl = matEl.querySelector('.mat-filepath');
                 lesson.materials.push({
-                    type: matEl.querySelector('.mat-type').value,
+                    type: type,
                     title: matEl.querySelector('.mat-title').value.trim(),
-                    youtubeId: yt ? yt.value.trim() : '',
-                    filePath: fp ? fp.value.trim() : ''
+                    videoSource: type === 'Video' ? videoSrc : '',
+                    youtubeId: ytEl ? ytEl.value.trim() : '',
+                    embedUrl: euEl ? euEl.value.trim() : '',
+                    filePath: fpEl ? fpEl.value.trim() : ''
                 });
             });
 
