@@ -261,6 +261,26 @@
         localStorage.setItem("theme", d ? "light" : "dark");
         btn.textContent = d ? "🌙" : "☀️";
     }
+
+    @if (!showForm && Model.LatestAttempt?.Status == TestStatus.Checking)
+    {
+        <text>
+    (function() {
+        var lessonId = @lessonId;
+        var timer = setInterval(async function() {
+            try {
+                var r = await fetch("/api/test-status/" + lessonId);
+                if (!r.ok) return;
+                var data = await r.json();
+                if (data.status !== "Checking") {
+                    clearInterval(timer);
+                    location.reload();
+                }
+            } catch (e) { /* network hiccup, try again next tick */ }
+        }, 3000);
+    })();
+        </text>
+    }
 </script>
 </body>
 </html>

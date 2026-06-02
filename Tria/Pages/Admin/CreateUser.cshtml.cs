@@ -60,7 +60,7 @@ public class CreateUserModel : PageModel
             return Page();
         }
 
-        var validRoles = new[] { "Admin", "Teacher", "Student", "Expert" };
+        var validRoles = new[] { "Admin", "Teacher", "Student" };
         var role = validRoles.Contains(Input.Role) ? Input.Role : "Student";
         await _userManager.AddToRoleAsync(user, role);
 

@@ -162,6 +162,15 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
+app.MapGet("/api/test-status/{lessonId:int}", async (int lessonId, HttpContext ctx, IProgressService progress) =>
+{
+    var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId == null) return Results.Unauthorized();
+    var attempt = await progress.GetLatestAttemptAsync(userId, lessonId);
+    if (attempt == null) return Results.NotFound();
+    return Results.Ok(new { status = attempt.Status.ToString() });
+}).RequireAuthorization();
+
 app.MapGet("/api/notifications/unread-count", async (HttpContext ctx, INotificationService notif) =>
 {
     var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
