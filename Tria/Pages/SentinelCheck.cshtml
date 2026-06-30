@@ -1,0 +1,652 @@
+@page "/SentinelCheck"
+@model Tria.Pages.SentinelCheckModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>(function(){ if(localStorage.getItem("theme")==="dark") document.documentElement.setAttribute("data-theme","dark"); })();</script>
+    <title>Проверка тестовых пар — Сентинел</title>
+    <style>
+        :root { --bg:#f3f4f6; --surface:#ffffff; --surface-2:#f9fafb; --border:#d1d5db; --border-2:#e5e7eb; --text:#111827; --text-muted:#6b7280; --accent:#2563eb; --accent-h:#1d4ed8; --ok:#16a34a; --bad:#dc2626; --purple:#7c3aed; }
+        [data-theme="dark"] { --bg:#0f1117; --surface:#1a1d2e; --surface-2:#151826; --border:#2a2d3e; --border-2:#222536; --text:#f1f5f9; --text-muted:#94a3b8; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        html, body { height:100%; overflow:hidden; }
+        body { font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--text); display:flex; flex-direction:column; height:100vh; }
+
+        /* ── Topbar ── */
+        .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 20px; height:56px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+        .topbar-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; flex-shrink:0; }
+        .topbar-title { font-size:15px; font-weight:700; }
+        .topbar-sub { font-size:12px; color:var(--text-muted); }
+        .topbar-spacer { flex:1; }
+        .progress-text { font-size:13px; color:var(--text-muted); margin-right:4px; }
+        .theme-btn { width:32px; height:32px; border:1px solid var(--border); border-radius:6px; background:var(--surface); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
+        .start-btn { padding:9px 18px; border-radius:8px; background:var(--accent); color:#fff; border:none; cursor:pointer; font-size:13px; font-weight:600; }
+        .start-btn:hover { background:var(--accent-h); }
+        .start-btn:disabled { background:var(--border); cursor:not-allowed; }
+
+        /* ── History chips ── */
+        .history-bar { display:flex; align-items:center; gap:10px; padding:10px 20px; background:var(--surface-2); border-bottom:1px solid var(--border); flex-shrink:0; overflow-x:auto; }
+        .history-label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; flex-shrink:0; }
+        .history-empty { font-size:12px; color:var(--text-muted); }
+        .run-chip { flex-shrink:0; padding:6px 12px; border-radius:8px; border:1px solid var(--border-2); background:var(--surface); font-size:12px; cursor:pointer; white-space:nowrap; color:var(--text); }
+        .run-chip:hover { border-color:var(--accent); }
+        .run-chip.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+        /* ── Action bar (report button lives here) ── */
+        .action-bar { display:flex; align-items:center; gap:10px; padding:8px 20px; background:var(--surface); border-bottom:1px solid var(--border-2); flex-shrink:0; }
+        .report-btn { padding:6px 14px; border-radius:7px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; }
+        .report-btn:hover { border-color:var(--purple); color:var(--purple); }
+        .report-btn:disabled { opacity:0.4; cursor:not-allowed; }
+        .log-btn { padding:6px 14px; border-radius:7px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; }
+        .log-btn:hover { border-color:var(--ok); color:var(--ok); }
+        .log-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+        /* ── Summary bar ── */
+        .summary-bar { display:flex; gap:18px; padding:10px 20px; background:var(--surface-2); border-bottom:1px solid var(--border); font-size:13px; flex-shrink:0; }
+        .summary-item { display:flex; align-items:center; gap:6px; }
+        .summary-item b { font-size:14px; }
+
+        /* ── Feed ── */
+        .feed { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; max-width:880px; margin:0 auto; width:100%; }
+        .feed-empty { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; color:var(--text-muted); font-size:14px; text-align:center; }
+        .feed-empty-icon { font-size:48px; opacity:0.2; }
+
+        .row-card { background:var(--surface); border:1px solid var(--border-2); border-radius:12px; padding:14px 16px; }
+        .row-head { display:flex; align-items:baseline; gap:8px; margin-bottom:6px; }
+        .row-id { font-size:11px; color:var(--text-muted); font-weight:700; }
+        .row-question { font-size:14px; font-weight:700; }
+        .row-answer { font-size:13px; color:var(--text-muted); margin-bottom:10px; line-height:1.5; }
+        .badge-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+        .badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:99px; }
+        .badge.ok { background:rgba(22,163,74,0.12); color:var(--ok); }
+        .badge.bad { background:rgba(220,38,38,0.12); color:var(--bad); }
+        .badge.neutral { background:var(--surface-2); color:var(--text-muted); border:1px solid var(--border-2); }
+        .badge.match { background:rgba(124,58,237,0.1); color:var(--purple); }
+        .badge.mismatch { background:rgba(234,179,8,0.12); color:#a16207; }
+
+        .ai-comment-row { display:flex; align-items:flex-start; gap:8px; }
+        .ai-avatar-sm { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#4f46e5); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .ai-bubble { background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2); border-radius:12px; border-top-left-radius:4px; padding:10px 14px; font-size:13px; line-height:1.55; white-space:pre-wrap; }
+
+        .typing-row { display:none; align-items:center; gap:8px; padding:4px; }
+        .typing-row.visible { display:flex; }
+        .typing-dots { display:flex; gap:4px; padding:10px 14px; background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2); border-radius:16px; border-top-left-radius:4px; }
+        .typing-dots span { width:6px; height:6px; border-radius:50%; background:var(--purple); opacity:0.6; animation:tdot 1.2s infinite; }
+        .typing-dots span:nth-child(2) { animation-delay:0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay:0.4s; }
+        @@keyframes tdot { 0%,60%,100% { transform:translateY(0); opacity:0.4; } 30% { transform:translateY(-5px); opacity:1; } }
+
+        .error-banner { margin:0 20px; padding:10px 14px; background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.3); color:var(--bad); border-radius:8px; font-size:13px; }
+
+        /* ── Report modal ── */
+        .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.45); backdrop-filter:blur(3px); z-index:100; display:flex; align-items:center; justify-content:center; }
+        .modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px 32px; width:min(720px, 95vw); max-height:85vh; overflow-y:auto; position:relative; }
+        .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+        .modal-title { font-size:18px; font-weight:800; }
+        .modal-sub { font-size:12px; color:var(--text-muted); margin-top:2px; }
+        .modal-close { width:32px; height:32px; border-radius:8px; border:1px solid var(--border); background:var(--surface-2); cursor:pointer; font-size:18px; color:var(--text-muted); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .modal-close:hover { color:var(--text); }
+
+        .report-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:26px; }
+        .stat-card { border-radius:12px; padding:16px 18px; text-align:center; }
+        .stat-card.strict { background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.2); }
+        .stat-card.lenient { background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.2); }
+        .stat-card.avg { background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2); }
+        .stat-pct { font-size:36px; font-weight:800; line-height:1; margin-bottom:4px; }
+        .stat-card.strict .stat-pct { color:var(--bad); }
+        .stat-card.lenient .stat-pct { color:var(--ok); }
+        .stat-card.avg .stat-pct { color:var(--purple); }
+        .stat-label { font-size:12px; font-weight:700; color:var(--text-muted); }
+        .stat-hint { font-size:11px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
+
+        .report-section { margin-bottom:22px; }
+        .report-section-title { font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:10px; }
+
+        .breakdown-table { width:100%; border-collapse:collapse; font-size:13px; }
+        .breakdown-table th { text-align:left; padding:7px 10px; font-size:11px; font-weight:700; color:var(--text-muted); border-bottom:2px solid var(--border); }
+        .breakdown-table td { padding:8px 10px; border-bottom:1px solid var(--border-2); vertical-align:middle; }
+        .breakdown-table tr:last-child td { border-bottom:none; }
+        .breakdown-table .lbl { font-weight:700; font-family:monospace; font-size:12px; padding:2px 7px; border-radius:5px; }
+        .lbl-correct { background:rgba(22,163,74,0.1); color:var(--ok); }
+        .lbl-partial { background:rgba(234,179,8,0.1); color:#a16207; }
+        .lbl-incorrect { background:rgba(220,38,38,0.1); color:var(--bad); }
+        .lbl-junk { background:var(--surface-2); color:var(--text-muted); }
+        .mini-bar-wrap { display:flex; align-items:center; gap:8px; }
+        .mini-bar { height:8px; border-radius:99px; background:var(--border-2); flex:1; overflow:hidden; }
+        .mini-bar-fill { height:100%; border-radius:99px; background:var(--purple); }
+        .mini-pct { font-size:11px; color:var(--text-muted); width:36px; text-align:right; }
+
+        .totals-row { display:flex; gap:20px; font-size:13px; }
+        .totals-item { display:flex; gap:6px; align-items:center; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-avatar">🤖</div>
+    <div>
+        <div class="topbar-title">Сентинел — проверка тестовых пар</div>
+        <div class="topbar-sub">Источник: wwwroot/Resources/sentinel_test_pairs.csv (не изменяется)</div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="progress-text" id="progress-text"></div>
+    <button class="start-btn" id="start-btn">Начать новую проверку</button>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="history-bar">
+    <span class="history-label">Прошлые проверки</span>
+    <span class="history-empty" id="history-empty">пока нет сохранённых</span>
+    <div id="history-list" style="display:flex; gap:8px;"></div>
+</div>
+
+<div class="action-bar">
+    <button class="report-btn" id="report-btn" disabled>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Сгенерировать отчёт
+    </button>
+    <button class="log-btn" id="log-btn" disabled>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Скачать лог (PDF)
+    </button>
+</div>
+
+<div class="summary-bar" id="summary-bar" style="display:none;">
+    <div class="summary-item">✅ Верно: <b id="sum-ok">0</b></div>
+    <div class="summary-item">❌ Неверно: <b id="sum-bad">0</b></div>
+    <div class="summary-item">🎯 Совпало с ожидаемой меткой: <b id="sum-match">0</b> / <span id="sum-match-total">0</span></div>
+</div>
+
+<div id="error-banner-wrap"></div>
+
+<div class="feed" id="feed">
+    <div class="feed-empty" id="feed-empty">
+        <div class="feed-empty-icon">📋</div>
+        <div>Нажмите «Начать новую проверку», чтобы Сентинел прошёл по CSV вживую,<br>либо выберите одну из прошлых проверок выше.</div>
+    </div>
+</div>
+
+<!-- Report modal (hidden by default) -->
+<div class="modal-backdrop" id="report-modal" style="display:none;" onclick="if(event.target===this)closeReport()">
+    <div class="modal" id="report-content"></div>
+</div>
+
+<script>
+    var themeBtn = document.getElementById("theme-btn");
+    themeBtn.textContent = localStorage.getItem("theme") === "dark" ? "☀️" : "🌙";
+    function toggleTheme() {
+        var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+        localStorage.setItem("theme", isDark ? "light" : "dark");
+        themeBtn.textContent = isDark ? "🌙" : "☀️";
+    }
+
+    var renderedCount = 0;
+    var pollTimer = null;
+    var viewedRunNumber = null;
+    var allResults = []; // all row objects currently displayed — source for the report
+
+    function esc(s) {
+        if (!s) return '';
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function isAtBottom() {
+        var el = document.getElementById('feed');
+        return el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    }
+    function scrollBottom() {
+        var el = document.getElementById('feed');
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function clearFeed() {
+        document.getElementById('feed').innerHTML = '';
+        renderedCount = 0;
+        allResults = [];
+        document.getElementById('summary-bar').style.display = 'none';
+        document.getElementById('report-btn').disabled = true;
+        document.getElementById('log-btn').disabled = true;
+    }
+
+    function rowCard(r) {
+        var wasAtBottom = isAtBottom();
+        var empty = document.getElementById('feed-empty');
+        if (empty) empty.remove();
+
+        allResults.push(r);
+        document.getElementById('report-btn').disabled = false;
+        document.getElementById('log-btn').disabled = false;
+
+        var card = document.createElement('div');
+        card.className = 'row-card';
+
+        var badges = '';
+        if (r.isError) {
+            badges += '<span class="badge neutral">⚠ ошибка проверки</span>';
+        } else {
+            badges += r.aiIsCorrect
+                ? '<span class="badge ok">✅ Верно</span>'
+                : '<span class="badge bad">❌ Неверно</span>';
+            badges += '<span class="badge neutral">ожидалось: ' + esc(r.expectedLabel) + '</span>';
+            var expectedCorrect = r.expectedLabel === 'correct';
+            var matches = r.aiIsCorrect === expectedCorrect;
+            badges += matches
+                ? '<span class="badge match">🎯 совпадает с ожидаемым</span>'
+                : '<span class="badge mismatch">⚠ расходится с ожидаемым</span>';
+        }
+
+        card.innerHTML =
+            '<div class="row-head"><span class="row-id">#' + r.id + '</span><span class="row-question">' + esc(r.question) + '</span></div>' +
+            '<div class="row-answer">' + esc(r.studentAnswer) + '</div>' +
+            '<div class="badge-row">' + badges + '</div>' +
+            '<div class="ai-comment-row">' +
+                '<div class="ai-avatar-sm">С</div>' +
+                '<div class="ai-bubble">' + esc(r.aiComment) + '</div>' +
+            '</div>';
+
+        document.getElementById('feed').appendChild(card);
+        if (wasAtBottom) scrollBottom();
+    }
+
+    function updateSummary(results) {
+        var ok = 0, bad = 0, match = 0, matchTotal = 0;
+        results.forEach(function(r) {
+            if (r.isError) return;
+            if (r.aiIsCorrect) ok++; else bad++;
+            matchTotal++;
+            if (r.aiIsCorrect === (r.expectedLabel === 'correct')) match++;
+        });
+        document.getElementById('sum-ok').textContent = ok;
+        document.getElementById('sum-bad').textContent = bad;
+        document.getElementById('sum-match').textContent = match;
+        document.getElementById('sum-match-total').textContent = matchTotal;
+        document.getElementById('summary-bar').style.display = results.length ? 'flex' : 'none';
+    }
+
+    function showError(msg) {
+        document.getElementById('error-banner-wrap').innerHTML =
+            msg ? '<div class="error-banner">⚠ ' + esc(msg) + '</div>' : '';
+    }
+
+    // ── Отчёт ────────────────────────────────────────────────────────────────
+
+    document.getElementById('report-btn').onclick = function() { generateReport(); };
+
+    function pct(n, d) { return d === 0 ? '—' : (n / d * 100).toFixed(1) + '%'; }
+    function pctNum(n, d) { return d === 0 ? null : n / d * 100; }
+
+    function generateReport() {
+        var rows = allResults.filter(function(r) { return !r.isError; });
+        var total = rows.length;
+        var runLabel = viewedRunNumber !== null
+            ? 'Проверка #' + viewedRunNumber
+            : 'Текущая живая проверка';
+
+        // Per-label counts
+        var labels = ['correct', 'partial', 'incorrect', 'junk'];
+        var labelCount = {}, aiTrueByLabel = {}, aiMatchStrict = {}, aiMatchLenient = {};
+        labels.forEach(function(l) { labelCount[l]=0; aiTrueByLabel[l]=0; aiMatchStrict[l]=0; aiMatchLenient[l]=0; });
+
+        var strictMatches = 0, lenientMatches = 0;
+        rows.forEach(function(r) {
+            var l = r.expectedLabel;
+            if (!labelCount.hasOwnProperty(l)) { labelCount[l]=0; aiTrueByLabel[l]=0; aiMatchStrict[l]=0; aiMatchLenient[l]=0; }
+            labelCount[l]++;
+            if (r.aiIsCorrect) aiTrueByLabel[l]++;
+
+            // Strict: partial = wrong
+            var expStrict = l === 'correct';
+            if (r.aiIsCorrect === expStrict) { strictMatches++; aiMatchStrict[l]++; }
+
+            // Lenient: partial = correct
+            var expLenient = l === 'correct' || l === 'partial';
+            if (r.aiIsCorrect === expLenient) { lenientMatches++; aiMatchLenient[l]++; }
+        });
+
+        var strictPct = pctNum(strictMatches, total);
+        var lenientPct = pctNum(lenientMatches, total);
+        var avgPct = (strictPct !== null && lenientPct !== null)
+            ? ((strictPct + lenientPct) / 2).toFixed(1) + '%'
+            : '—';
+
+        function labelClass(l) {
+            return l === 'correct' ? 'lbl-correct' : l === 'partial' ? 'lbl-partial' : l === 'incorrect' ? 'lbl-incorrect' : 'lbl-junk';
+        }
+        function miniBar(match, count) {
+            if (count === 0) return '<span style="color:var(--text-muted);font-size:11px;">—</span>';
+            var p = match / count * 100;
+            return '<div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-bar-fill" style="width:' + p.toFixed(1) + '%"></div></div><span class="mini-pct">' + p.toFixed(0) + '%</span></div>';
+        }
+
+        var tableRows = labels.map(function(l) {
+            var n = labelCount[l];
+            if (n === 0) return '';
+            return '<tr>' +
+                '<td><span class="lbl ' + labelClass(l) + '">' + l + '</span></td>' +
+                '<td style="text-align:center">' + n + '</td>' +
+                '<td style="text-align:center">✅ ' + aiTrueByLabel[l] + ' / ❌ ' + (n - aiTrueByLabel[l]) + '</td>' +
+                '<td>' + miniBar(aiMatchStrict[l], n) + '</td>' +
+                '<td>' + miniBar(aiMatchLenient[l], n) + '</td>' +
+            '</tr>';
+        }).join('');
+
+        var html =
+            '<div class="modal-header">' +
+                '<div>' +
+                    '<div class="modal-title">📊 Отчёт по проверке</div>' +
+                    '<div class="modal-sub">' + esc(runLabel) + ' · ' + total + ' строк проверено</div>' +
+                '</div>' +
+                '<button class="modal-close" onclick="closeReport()">×</button>' +
+            '</div>' +
+
+            '<div class="report-stats">' +
+                '<div class="stat-card strict">' +
+                    '<div class="stat-pct">' + (strictPct !== null ? strictPct.toFixed(1) + '%' : '—') + '</div>' +
+                    '<div class="stat-label">Строгий режим</div>' +
+                    '<div class="stat-hint">partial считается<br>неверным ответом</div>' +
+                '</div>' +
+                '<div class="stat-card lenient">' +
+                    '<div class="stat-pct">' + (lenientPct !== null ? lenientPct.toFixed(1) + '%' : '—') + '</div>' +
+                    '<div class="stat-label">Мягкий режим</div>' +
+                    '<div class="stat-hint">partial считается<br>верным ответом</div>' +
+                '</div>' +
+                '<div class="stat-card avg">' +
+                    '<div class="stat-pct">' + avgPct + '</div>' +
+                    '<div class="stat-label">Среднее</div>' +
+                    '<div class="stat-hint">(строгий + мягкий) / 2</div>' +
+                '</div>' +
+            '</div>' +
+
+            '<div class="report-section">' +
+                '<div class="report-section-title">Точность по категориям ожидаемой метки</div>' +
+                '<table class="breakdown-table">' +
+                    '<thead><tr>' +
+                        '<th>Метка</th>' +
+                        '<th>Кол-во</th>' +
+                        '<th>ИИ вынес</th>' +
+                        '<th>Точность (строгий)</th>' +
+                        '<th>Точность (мягкий)</th>' +
+                    '</tr></thead>' +
+                    '<tbody>' + tableRows + '</tbody>' +
+                '</table>' +
+            '</div>' +
+
+            '<div class="report-section">' +
+                '<div class="report-section-title">Итог</div>' +
+                '<div class="totals-row">' +
+                    '<div class="totals-item">📦 Всего строк (без ошибок): <b>' + total + '</b></div>' +
+                    '<div class="totals-item">✅ Строгих совпадений: <b>' + strictMatches + '</b></div>' +
+                    '<div class="totals-item">✅ Мягких совпадений: <b>' + lenientMatches + '</b></div>' +
+                '</div>' +
+            '</div>';
+
+        document.getElementById('report-content').innerHTML = html;
+        document.getElementById('report-modal').style.display = 'flex';
+    }
+
+    function closeReport() {
+        document.getElementById('report-modal').style.display = 'none';
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeReport(); });
+
+    // ── Скачать лог (PDF через браузерную печать) ─────────────────────────────
+
+    document.getElementById('log-btn').onclick = function() { downloadLog(); };
+
+    function downloadLog() {
+        var rows = allResults;
+        var validRows = rows.filter(function(r) { return !r.isError; });
+        var total = validRows.length;
+        var runLabel = viewedRunNumber !== null
+            ? 'Проверка #' + viewedRunNumber
+            : 'Текущая живая проверка';
+        var now = new Date().toLocaleString('ru-RU');
+
+        // ── Вычисляем статистику (те же формулы что в generateReport) ──
+        var labels = ['correct', 'partial', 'incorrect', 'junk'];
+        var labelCount = {}, aiTrueByLabel = {}, aiMatchStrict = {}, aiMatchLenient = {};
+        labels.forEach(function(l) { labelCount[l]=0; aiTrueByLabel[l]=0; aiMatchStrict[l]=0; aiMatchLenient[l]=0; });
+        var strictMatches = 0, lenientMatches = 0;
+        validRows.forEach(function(r) {
+            var l = r.expectedLabel;
+            if (!labelCount.hasOwnProperty(l)) { labelCount[l]=0; aiTrueByLabel[l]=0; aiMatchStrict[l]=0; aiMatchLenient[l]=0; }
+            labelCount[l]++;
+            if (r.aiIsCorrect) aiTrueByLabel[l]++;
+            if (r.aiIsCorrect === (l === 'correct'))                      { strictMatches++;  aiMatchStrict[l]++; }
+            if (r.aiIsCorrect === (l === 'correct' || l === 'partial'))   { lenientMatches++; aiMatchLenient[l]++; }
+        });
+        var strictPct  = total > 0 ? (strictMatches  / total * 100).toFixed(1) : '—';
+        var lenientPct = total > 0 ? (lenientMatches / total * 100).toFixed(1) : '—';
+        var avgPct = total > 0
+            ? ((strictMatches / total * 100 + lenientMatches / total * 100) / 2).toFixed(1)
+            : '—';
+
+        // ── Первая страница: сводный отчёт ──
+        var labelBg    = { correct:'#d1fae5', partial:'#fef9c3', incorrect:'#fee2e2', junk:'#f3f4f6' };
+        var labelColor = { correct:'#065f46',  partial:'#92400e', incorrect:'#991b1b', junk:'#6b7280' };
+
+        var tableRows = labels.map(function(l) {
+            if (!labelCount[l]) return '';
+            var n = labelCount[l];
+            var sP = n > 0 ? (aiMatchStrict[l]  / n * 100).toFixed(0) + '%' : '—';
+            var lP = n > 0 ? (aiMatchLenient[l] / n * 100).toFixed(0) + '%' : '—';
+            return '<tr>' +
+                '<td><span style="background:' + labelBg[l] + ';color:' + labelColor[l] + ';padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700;font-family:monospace">' + l + '</span></td>' +
+                '<td style="text-align:center">' + n + '</td>' +
+                '<td style="text-align:center">✅ ' + aiTrueByLabel[l] + ' / ❌ ' + (n - aiTrueByLabel[l]) + '</td>' +
+                '<td style="text-align:center;font-weight:700">' + sP + '</td>' +
+                '<td style="text-align:center;font-weight:700">' + lP + '</td>' +
+            '</tr>';
+        }).join('');
+
+        var reportPage =
+            '<div style="min-height:90vh;display:flex;flex-direction:column;justify-content:center;padding:20px 0 40px">' +
+                '<h1 style="font-size:26px;font-weight:900;margin-bottom:6px">📊 Отчёт по проверке</h1>' +
+                '<div style="font-size:13px;color:#6b7280;margin-bottom:32px">' + escHtml(runLabel) + ' · ' + total + ' строк · ' + escHtml(now) + '</div>' +
+
+                '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">' +
+                    '<div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:12px;padding:20px;text-align:center">' +
+                        '<div style="font-size:42px;font-weight:900;color:#dc2626;line-height:1">' + strictPct + (strictPct !== '—' ? '%' : '') + '</div>' +
+                        '<div style="font-size:12px;font-weight:700;color:#6b7280;margin-top:6px">СТРОГИЙ РЕЖИМ</div>' +
+                        '<div style="font-size:11px;color:#6b7280;margin-top:4px">partial = неверный</div>' +
+                    '</div>' +
+                    '<div style="background:#d1fae5;border:1px solid #6ee7b7;border-radius:12px;padding:20px;text-align:center">' +
+                        '<div style="font-size:42px;font-weight:900;color:#16a34a;line-height:1">' + lenientPct + (lenientPct !== '—' ? '%' : '') + '</div>' +
+                        '<div style="font-size:12px;font-weight:700;color:#6b7280;margin-top:6px">МЯГКИЙ РЕЖИМ</div>' +
+                        '<div style="font-size:11px;color:#6b7280;margin-top:4px">partial = верный</div>' +
+                    '</div>' +
+                    '<div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:12px;padding:20px;text-align:center">' +
+                        '<div style="font-size:42px;font-weight:900;color:#7c3aed;line-height:1">' + avgPct + (avgPct !== '—' ? '%' : '') + '</div>' +
+                        '<div style="font-size:12px;font-weight:700;color:#6b7280;margin-top:6px">СРЕДНЕЕ</div>' +
+                        '<div style="font-size:11px;color:#6b7280;margin-top:4px">(строгий + мягкий) / 2</div>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Точность по категориям</div>' +
+                '<table style="width:100%;border-collapse:collapse;font-size:13px">' +
+                    '<thead><tr style="border-bottom:2px solid #e5e7eb">' +
+                        '<th style="text-align:left;padding:7px 10px;font-size:11px;font-weight:700;color:#6b7280">Метка</th>' +
+                        '<th style="padding:7px 10px;font-size:11px;font-weight:700;color:#6b7280">Кол-во</th>' +
+                        '<th style="padding:7px 10px;font-size:11px;font-weight:700;color:#6b7280">ИИ вынес</th>' +
+                        '<th style="padding:7px 10px;font-size:11px;font-weight:700;color:#6b7280">Строгий</th>' +
+                        '<th style="padding:7px 10px;font-size:11px;font-weight:700;color:#6b7280">Мягкий</th>' +
+                    '</tr></thead>' +
+                    '<tbody>' + tableRows + '</tbody>' +
+                '</table>' +
+
+                '<div style="margin-top:24px;font-size:13px;color:#6b7280;display:flex;gap:24px">' +
+                    '<span>Всего строк (без ошибок): <b style="color:#111827">' + total + '</b></span>' +
+                    '<span>Строгих совпадений: <b style="color:#111827">' + strictMatches + '</b></span>' +
+                    '<span>Мягких совпадений: <b style="color:#111827">' + lenientMatches + '</b></span>' +
+                '</div>' +
+            '</div>';
+
+        // ── Остальные страницы: карточки по каждой строке ──
+        var rowsHtml = rows.map(function(r) {
+            var verdict = r.isError
+                ? '<span style="color:#dc2626">⚠ ошибка при проверке</span>'
+                : (r.aiIsCorrect
+                    ? '<span style="color:#16a34a;font-weight:700">✅ Верно</span>'
+                    : '<span style="color:#dc2626;font-weight:700">❌ Неверно</span>');
+            var expBg  = labelBg[r.expectedLabel]    || '#f3f4f6';
+            var expClr = labelColor[r.expectedLabel] || '#6b7280';
+            var expBadge = '<span style="background:' + expBg + ';color:' + expClr + ';padding:1px 8px;border-radius:99px;font-size:11px;font-weight:700">' + escHtml(r.expectedLabel || '—') + '</span>';
+            var matchNote = r.isError ? '' : (r.aiIsCorrect === (r.expectedLabel === 'correct')
+                ? '<span style="color:#7c3aed;font-size:11px">🎯 совпадает со строгой меткой</span>'
+                : '<span style="color:#a16207;font-size:11px">⚠ расходится со строгой меткой</span>');
+
+            return '<div style="border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;break-inside:avoid">' +
+                '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">' +
+                    '<span style="font-size:11px;color:#9ca3af;font-weight:700">#' + r.id + '</span>' +
+                    '<span style="font-size:14px;font-weight:700">' + escHtml(r.question) + '</span>' +
+                '</div>' +
+                '<div style="font-size:13px;color:#6b7280;margin-bottom:10px;line-height:1.5">' + escHtml(r.studentAnswer) + '</div>' +
+                '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">' + verdict + ' ' + expBadge + ' ' + matchNote + '</div>' +
+                '<div style="display:flex;gap:10px;align-items:flex-start">' +
+                    '<div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">С</div>' +
+                    '<div style="background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.18);border-radius:10px;border-top-left-radius:3px;padding:9px 13px;font-size:13px;line-height:1.55;white-space:pre-wrap;flex:1">' + escHtml(r.aiComment) + '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+
+        var html = '<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">' +
+            '<title>Лог проверки — ' + escHtml(runLabel) + '</title>' +
+            '<style>' +
+                'body{font-family:system-ui,-apple-system,sans-serif;max-width:780px;margin:0 auto;padding:32px 24px;color:#111827}' +
+                'table td{padding:8px 10px;border-bottom:1px solid #f3f4f6;vertical-align:middle}' +
+                '.page-break{page-break-after:always;break-after:page}' +
+                '@@media print{body{padding:16px}@@page{margin:20mm}}' +
+            '</style></head><body>' +
+            '<div class="page-break">' + reportPage + '</div>' +
+            '<h2 style="font-size:18px;font-weight:800;margin-bottom:18px">📋 Полный лог — ' + escHtml(runLabel) + '</h2>' +
+            rowsHtml +
+            '</body></html>';
+
+        var w = window.open('', '_blank');
+        w.document.write(html);
+        w.document.close();
+        w.focus();
+        setTimeout(function() { w.print(); }, 400);
+    }
+
+    function escHtml(s) {
+        if (!s) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── История ───────────────────────────────────────────────────────────────
+
+    async function loadHistory() {
+        try {
+            var r = await fetch('/api/sentinel-check/runs');
+            if (!r.ok) return;
+            renderHistory(await r.json());
+        } catch (e) {}
+    }
+
+    function renderHistory(runs) {
+        var list = document.getElementById('history-list');
+        var empty = document.getElementById('history-empty');
+        empty.style.display = runs.length ? 'none' : 'inline';
+        list.innerHTML = '';
+        runs.forEach(function(run) {
+            var chip = document.createElement('button');
+            chip.className = 'run-chip' + (viewedRunNumber === run.number ? ' active' : '');
+            var when = new Date(run.modifiedAtUtc).toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
+            chip.textContent = 'Проверка #' + run.number + ' · ' + run.rowCount + ' стр. · ' + when;
+            chip.onclick = function() { viewRun(run.number); };
+            list.appendChild(chip);
+        });
+    }
+
+    async function viewRun(number) {
+        stopPolling();
+        viewedRunNumber = number;
+        showError(null);
+        clearFeed();
+        document.getElementById('start-btn').disabled = false;
+        document.getElementById('start-btn').textContent = 'Начать новую проверку';
+        toggleTyping(false);
+        try {
+            var r = await fetch('/api/sentinel-check/runs/' + number);
+            if (!r.ok) { showError('Не удалось загрузить проверку #' + number); return; }
+            var data = await r.json();
+            document.getElementById('progress-text').textContent = 'Проверка #' + number + ' · ' + data.results.length + ' строк (сохранено)';
+            data.results.forEach(rowCard);
+            renderedCount = data.results.length;
+            updateSummary(allResults);
+            loadHistory();
+        } catch (e) { showError('Не удалось загрузить проверку #' + number); }
+    }
+
+    // ── Живая проверка ────────────────────────────────────────────────────────
+
+    async function poll() {
+        try {
+            var r = await fetch('/api/sentinel-check/status');
+            if (!r.ok) return null;
+            var data = await r.json();
+
+            if (data.total) {
+                var txt = 'Обработано: ' + data.processed + ' / ' + data.total;
+                if (data.outputFile) txt += ' · SentinelCheck/' + data.outputFile;
+                document.getElementById('progress-text').textContent = txt;
+            } else if (viewedRunNumber === null) {
+                document.getElementById('progress-text').textContent = '';
+            }
+
+            if (data.results.length > renderedCount) {
+                for (var i = renderedCount; i < data.results.length; i++) rowCard(data.results[i]);
+                renderedCount = data.results.length;
+                updateSummary(allResults);
+            }
+
+            var running = data.status === 'running';
+            document.getElementById('start-btn').disabled = running;
+            document.getElementById('start-btn').textContent = running ? 'Проверка идёт...' : 'Начать новую проверку';
+            toggleTyping(running);
+
+            if (data.status === 'error') { showError(data.errorMessage || 'Неизвестная ошибка'); stopPolling(); }
+            else if (data.status === 'done') { showError(null); stopPolling(); loadHistory(); }
+            return data;
+        } catch (e) { return null; }
+    }
+
+    function toggleTyping(show) {
+        var existing = document.getElementById('typing-row');
+        if (show && !existing) {
+            var row = document.createElement('div');
+            row.className = 'typing-row visible'; row.id = 'typing-row';
+            row.innerHTML = '<div class="ai-avatar-sm">С</div><div class="typing-dots"><span></span><span></span><span></span></div>';
+            document.getElementById('feed').appendChild(row);
+            if (isAtBottom()) scrollBottom();
+        } else if (!show && existing) { existing.remove(); }
+    }
+
+    function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+    function startPolling() { if (!pollTimer) pollTimer = setInterval(poll, 1500); }
+
+    document.getElementById('start-btn').onclick = async function() {
+        this.disabled = true;
+        showError(null);
+        viewedRunNumber = null;
+        try {
+            var r = await fetch('/api/sentinel-check/start', { method: 'POST' });
+            var data = await r.json();
+            if (data.started) clearFeed();
+            startPolling();
+            poll();
+        } catch (e) { this.disabled = false; }
+    };
+
+    loadHistory();
+    poll().then(function(data) { if (data && data.status === 'running') startPolling(); });
+</script>
+</body>
+</html>

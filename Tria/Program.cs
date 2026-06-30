@@ -89,6 +89,7 @@ builder.Services.AddSingleton<IOllamaChatService>(sp =>
         sp.GetRequiredService<ILogger<OllamaChatService>>());
 });
 builder.Services.AddHostedService<AiGradingBackgroundService>();
+builder.Services.AddSingleton<SentinelCsvCheckRunner>();
 
 builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, RoleBasedAuthHandler>();
 builder.Services.AddRazorPages();
@@ -183,6 +184,31 @@ app.MapPost("/Logout", async (HttpContext ctx, SignInManager<IdentityUser> signI
 {
     await signInManager.SignOutAsync();
     return Results.LocalRedirect("/Login");
+});
+
+// ── Sentinel CSV check (демо для защиты диплома, без авторизации) ──────────────
+
+app.MapPost("/api/sentinel-check/start", (SentinelCsvCheckRunner runner) =>
+{
+    var started = runner.TryStart();
+    return Results.Ok(new { started });
+});
+
+app.MapGet("/api/sentinel-check/status", (SentinelCsvCheckRunner runner) =>
+{
+    return Results.Ok(runner.GetSnapshot());
+});
+
+app.MapGet("/api/sentinel-check/runs", (SentinelCsvCheckRunner runner) =>
+{
+    return Results.Ok(runner.GetPastRuns());
+});
+
+app.MapGet("/api/sentinel-check/runs/{number:int}", (int number, SentinelCsvCheckRunner runner) =>
+{
+    var rows = runner.GetRunRows(number);
+    if (rows == null) return Results.NotFound();
+    return Results.Ok(new { number, results = rows });
 });
 
 // ── Messenger API ─────────────────────────────────────────────────────────────
